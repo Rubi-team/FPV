@@ -9,7 +9,7 @@ public class BuildManager : MonoBehaviour
 
     void Awake()
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if ENABLE_FEATURE_X
         WebGLCanvas.SetActive(true);
 #endif
     }
@@ -21,7 +21,7 @@ public class BuildManager : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }
 
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if ENABLE_FEATURE_X
         if(Input.GetKeyDown(KeyCode.H))
         {
             WarningPanel.SetActive(!WarningPanel.activeSelf);
