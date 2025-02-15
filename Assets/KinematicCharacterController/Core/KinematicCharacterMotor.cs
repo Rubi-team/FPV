@@ -490,10 +490,10 @@ namespace KinematicCharacterController
             }
             private set
             {
-                _transientRotation = value;
-                _characterUp = _transientRotation * _cachedWorldUp;
-                _characterForward = _transientRotation * _cachedWorldForward;
-                _characterRight = _transientRotation * _cachedWorldRight;
+                _transientRotation = Quaternion.Normalize(value);
+                _characterUp = Quaternion.Normalize(_transientRotation) * _cachedWorldUp;
+                _characterForward = Quaternion.Normalize(_transientRotation) * _cachedWorldForward;
+                _characterRight = Quaternion.Normalize(_transientRotation) * _cachedWorldRight;
             }
         }
 

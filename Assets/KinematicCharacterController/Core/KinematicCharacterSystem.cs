@@ -159,7 +159,7 @@ namespace KinematicCharacterController
                 KinematicCharacterMotor motor = CharacterMotors[i];
 
                 motor.InitialTickPosition = motor.TransientPosition;
-                motor.InitialTickRotation = motor.TransientRotation;
+                motor.InitialTickRotation = Quaternion.Normalize(motor.TransientRotation);
 
                 motor.Transform.SetPositionAndRotation(motor.TransientPosition, motor.TransientRotation);
             }
@@ -169,11 +169,11 @@ namespace KinematicCharacterController
                 PhysicsMover mover = PhysicsMovers[i];
 
                 mover.InitialTickPosition = mover.TransientPosition;
-                mover.InitialTickRotation = mover.TransientRotation;
+                mover.InitialTickRotation = Quaternion.Normalize(mover.TransientRotation);
 
-                mover.Transform.SetPositionAndRotation(mover.TransientPosition, mover.TransientRotation);
+                mover.Transform.SetPositionAndRotation(mover.TransientPosition, Quaternion.Normalize(mover.TransientRotation));
                 mover.Rigidbody.position = mover.TransientPosition;
-                mover.Rigidbody.rotation = mover.TransientRotation;
+                mover.Rigidbody.rotation = Quaternion.Normalize(mover.TransientRotation);
             }
         }
 
@@ -203,9 +203,9 @@ namespace KinematicCharacterController
             {
                 PhysicsMover mover = movers[i];
 
-                mover.Transform.SetPositionAndRotation(mover.TransientPosition, mover.TransientRotation);
+                mover.Transform.SetPositionAndRotation(mover.TransientPosition, Quaternion.Normalize(mover.TransientRotation));
                 mover.Rigidbody.position = mover.TransientPosition;
-                mover.Rigidbody.rotation = mover.TransientRotation;
+                mover.Rigidbody.rotation = Quaternion.Normalize(mover.TransientRotation);
             }
 
             // Character controller update phase 2 and move
@@ -215,7 +215,7 @@ namespace KinematicCharacterController
 
                 motor.UpdatePhase2(deltaTime);
 
-                motor.Transform.SetPositionAndRotation(motor.TransientPosition, motor.TransientRotation);
+                motor.Transform.SetPositionAndRotation(motor.TransientPosition, Quaternion.Normalize(motor.TransientRotation));
             }
 #pragma warning restore 0162
         }
@@ -251,7 +251,7 @@ namespace KinematicCharacterController
                 else
                 {
                     mover.Rigidbody.position = (mover.TransientPosition);
-                    mover.Rigidbody.rotation = (mover.TransientRotation);
+                    mover.Rigidbody.rotation = (Quaternion.Normalize(mover.TransientRotation));
                 }
             }
         }
@@ -270,7 +270,7 @@ namespace KinematicCharacterController
 
                 motor.Transform.SetPositionAndRotation(
                     Vector3.Lerp(motor.InitialTickPosition, motor.TransientPosition, interpolationFactor),
-                    Quaternion.Slerp(motor.InitialTickRotation, motor.TransientRotation, interpolationFactor));
+                    Quaternion.Slerp(motor.InitialTickRotation, Quaternion.Normalize(motor.TransientRotation), interpolationFactor));
             }
 
             // Handle PhysicsMovers interpolation
@@ -280,7 +280,7 @@ namespace KinematicCharacterController
                 
                 mover.Transform.SetPositionAndRotation(
                     Vector3.Lerp(mover.InitialTickPosition, mover.TransientPosition, interpolationFactor),
-                    Quaternion.Slerp(mover.InitialTickRotation, mover.TransientRotation, interpolationFactor));
+                    Quaternion.Slerp(mover.InitialTickRotation, Quaternion.Normalize(mover.TransientRotation), interpolationFactor));
 
                 Vector3 newPos = mover.Transform.position;
                 Quaternion newRot = mover.Transform.rotation;
