@@ -1,36 +1,35 @@
+using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Utils
 {
+    [Flags]
+    public enum LogLevel
+    {
+        Logs = 1, // 001
+        Warnings = 2, // 010
+        Errors = 4 // 100
+    }
+
     [AddComponentMenu("_Ase/Utils/Logger")]
     public class Logger : MonoBehaviour
     {
-
-        [Header("Settings")] [SerializeField] private bool _showLogs;
+        [Header("Settings")] [SerializeField] private LogLevel logLevel;
 
         public void Log(object message, Object sender = null)
         {
-            if (_showLogs)
-            {
-                Debug.Log(message, sender);
-            }
+            if ((logLevel & LogLevel.Logs) != 0) Debug.Log(message, sender);
         }
 
         public void WarningLog(object message, Object sender = null)
         {
-            if (_showLogs)
-            {
-                Debug.LogWarning(message, sender);
-            }
+            if ((logLevel & LogLevel.Warnings) != 0) Debug.LogWarning(message, sender);
         }
 
         public void ErrorLog(object message, Object sender = null)
         {
-            if (_showLogs)
-            {
-                Debug.LogError(message, sender);
-            }
+            if ((logLevel & LogLevel.Errors) != 0) Debug.LogError(message, sender);
         }
     }
 }
-
