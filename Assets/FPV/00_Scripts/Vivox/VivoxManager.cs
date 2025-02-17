@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FMOD;
-using FMODUnity;
 using Unity.Services.Vivox;
 using UnityEngine;
 using Utils;
-using Logger = Utils.Logger;
 
 namespace Vivox
 {
     public sealed class VivoxManager : BaseInstance<VivoxManager>
     {
-        [Header("Debug")] [SerializeField] private Logger _logger;
+        [Header("Debug")] [SerializeField] private LogHandler _logHandler;
+
         private Channel channel;
         private DSP distortionDSP, echoDSP, reverbDSP, pitchDSP;
         private FMOD.System fmodSystem;
@@ -40,13 +39,13 @@ namespace Vivox
             {
                 await VivoxService.Instance.LeaveAllChannelsAsync();
                 await VivoxService.Instance.JoinEchoChannelAsync(channelName, ChatCapability.AudioOnly);
-                _logger.Log($"Joined channel: {channelName}");
+                _logHandler.Log($"Joined channel: {channelName}");
                 ChannelJoinedTaskCompletionSource.SetResult(true);
                 return await ChannelJoinedTaskCompletionSource.Task;
             }
             catch (Exception e)
             {
-                _logger.ErrorLog($"Failed to join channel {channelName}: {e}");
+                _logHandler.Error($"Failed to join channel {channelName}: {e}");
                 ChannelJoinedTaskCompletionSource.SetResult(false);
                 return false;
             }

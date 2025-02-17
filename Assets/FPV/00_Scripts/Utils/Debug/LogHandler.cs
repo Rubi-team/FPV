@@ -13,7 +13,7 @@ namespace Utils
     }
 
     [AddComponentMenu("_Ase/Utils/Logger")]
-    public class Logger : MonoBehaviour
+    public class LogHandler : MonoBehaviour
     {
         [Header("Settings")] [SerializeField] private LogLevel logLevel;
 
