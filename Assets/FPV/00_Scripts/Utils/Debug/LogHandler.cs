@@ -22,12 +22,12 @@ namespace Utils
             if ((logLevel & LogLevel.Logs) != 0) Debug.Log(message, sender);
         }
 
-        public void WarningLog(object message, Object sender = null)
+        public void Warning(object message, Object sender = null)
         {
             if ((logLevel & LogLevel.Warnings) != 0) Debug.LogWarning(message, sender);
         }
 
-        public void ErrorLog(object message, Object sender = null)
+        public void Error(object message, Object sender = null)
         {
             if ((logLevel & LogLevel.Errors) != 0) Debug.LogError(message, sender);
         }
