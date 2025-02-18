@@ -34,11 +34,15 @@ namespace Vivox
         
         void AddParticipantEffect(VivoxParticipant participant)
         {
-            var tap = GetComponent<VivoxParticipantTap>();
+            /*var tap = GetComponent<VivoxParticipantTap>();
             tap.ParticipantName = participant.DisplayName;
-            tap.ChannelName = participant.ChannelName;
+            tap.ChannelName = participant.ChannelName;*/
             
-            
+            GetComponent<VivoxToFmodConverter>().Setup(new AudioModel
+            {
+                Bank = "Master",
+                EventName = "event:/Vivox"
+            });
         }
 
 
@@ -72,7 +76,7 @@ namespace Vivox
             try
             {
                 await VivoxService.Instance.LeaveAllChannelsAsync();
-                await VivoxService.Instance.JoinEchoChannelAsync(channelName, ChatCapability.AudioOnly);
+                await VivoxService.Instance.JoinGroupChannelAsync(channelName, ChatCapability.AudioOnly);
                 _logHandler?.Log($"Joined channel: {channelName}");
                 ChannelJoinedTaskCompletionSource.SetResult(true);
             }
