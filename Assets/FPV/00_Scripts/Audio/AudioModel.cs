@@ -1,4 +1,6 @@
 ﻿using System;
+using FMOD.Studio;
+using FMODUnity;
 
 [Serializable]
 public class AudioModel

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FMOD;
 using Unity.Services.Vivox;
+using Unity.Services.Vivox.AudioTaps;
 using UnityEngine;
 using Utils;
 
@@ -19,35 +20,66 @@ namespace Vivox
 
         public async void Start()
         {
+            _logHandler?.Log("Initializing Vivox...");
             await UnityServiceAuthentification.Instance.Initialise();
+
+            _logHandler?.Log("Logging into Vivox...");
             await LoginToVivoxAsync();
+
+            _logHandler?.Log("Joining channel...");
             await JoinChannelAsync("test");
+            
+            VivoxService.Instance.ParticipantAddedToChannel += AddParticipantEffect;
         }
-
-        public async Task<Task> LoginToVivoxAsync()
+        
+        void AddParticipantEffect(VivoxParticipant participant)
         {
-            await VivoxService.Instance.InitializeAsync();
-            var options = new LoginOptions { DisplayName = "Host", EnableTTS = true };
-            await VivoxService.Instance.LoginAsync(options);
-            return Task.CompletedTask;
+            var tap = GetComponent<VivoxParticipantTap>();
+            tap.ParticipantName = participant.DisplayName;
+            tap.ChannelName = participant.ChannelName;
+            
+            
         }
 
-        public async Task<bool> JoinChannelAsync(string channelName)
+
+        private async Task LoginToVivoxAsync()
+        {
+            try
+            {
+                await VivoxService.Instance.InitializeAsync();
+            }
+            catch (Exception e)
+            {
+                _logHandler?.Error($"Failed to initialize Vivox: {e}");
+                throw;
+            }
+            
+            try
+            {
+                var options = new LoginOptions { DisplayName = "Host", EnableTTS = true };
+                await VivoxService.Instance.LoginAsync(options);
+            }
+            catch (Exception e)
+            {
+                _logHandler?.Error($"Failed to login to Vivox: {e}");
+                throw;
+            }
+        }
+
+        private async Task JoinChannelAsync(string channelName)
         {
             ChannelJoinedTaskCompletionSource = new TaskCompletionSource<bool>();
             try
             {
                 await VivoxService.Instance.LeaveAllChannelsAsync();
                 await VivoxService.Instance.JoinEchoChannelAsync(channelName, ChatCapability.AudioOnly);
-                _logHandler.Log($"Joined channel: {channelName}");
+                _logHandler?.Log($"Joined channel: {channelName}");
                 ChannelJoinedTaskCompletionSource.SetResult(true);
-                return await ChannelJoinedTaskCompletionSource.Task;
             }
             catch (Exception e)
             {
-                _logHandler.Error($"Failed to join channel {channelName}: {e}");
+                _logHandler?.Error($"Failed to join channel : {e}");
                 ChannelJoinedTaskCompletionSource.SetResult(false);
-                return false;
             }
         }
     }
