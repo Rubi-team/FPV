@@ -41,7 +41,7 @@ namespace Vivox
 
 		private bool isSpeaking;
 		
-		[SerializeField] private LogHandler logHandler;
+		[SerializeField] public LogHandler logHandler;
 
 		private AudioInstance AudioInstance { set; get; }
 
@@ -154,11 +154,14 @@ namespace Vivox
 
 		private void OnAudioFilterRead(float[] data, int channels)
 		{
-			if (channel.hasHandle())
+			/*if (channel.hasHandle())
 			{
 				audioBuffer.AddRange(data);
 				UpdateBufferLatency((uint)data.Length);
-			}
+			}*/
+			
+			audioBuffer.AddRange(data);
+			UpdateBufferLatency((uint)data.Length);
 
 			isSpeaking = false;
 			foreach (float value in data)
@@ -195,8 +198,13 @@ namespace Vivox
 				soundInfo.length = targetLatency * (uint)channels * sizeof(float);
 				soundInfo.format = SOUND_FORMAT.PCMFLOAT;
 
-				RuntimeManager.CoreSystem.createSound("voip", MODE.LOOP_NORMAL | MODE.OPENUSER, ref soundInfo,
+				RESULT resultS = RuntimeManager.CoreSystem.createSound("Vivox", MODE.LOOP_NORMAL | MODE.OPENUSER, ref soundInfo,
 					out sound);
+				if (resultS != RESULT.OK)
+				{
+					logHandler?.Error($"Failed to create sound: {result}", this);
+					return;
+				}
 				RuntimeManager.CoreSystem.playSound(sound, channelGroup, false, out channel);
 
 				return;
@@ -216,9 +224,29 @@ namespace Vivox
 
 			RESULT res = sound.@lock(bufferReadPosition, bytesRead, out IntPtr ptr1, out IntPtr ptr2, out uint len1,
 				out uint len2);
+			
+			if (!sound.hasHandle())
+			{
+				logHandler?.Error("Sound object is not initialized.", this);
+				audioBuffer.Clear();
+				return;
+			}
+			
+			if (!channel.hasHandle())
+			{
+				logHandler?.Error("Channel is not valid.", this);
+				// reset audio data
+				audioBuffer.Clear();
+				return;
+			}
+
 			if (res != RESULT.OK)
 			{
 				logHandler?.Error(res.ToString(), this);
+				// remove channel handle to recreate it
+				channel.clearHandle();
+				// clear sound handle to recreate it
+				sound.clearHandle();
 			}
 
 			// Though soundInfo.format is float, data retrieved from Sound::lock is in bytes,

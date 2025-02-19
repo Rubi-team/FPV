@@ -6,7 +6,7 @@ using Utils;
 
 namespace Audio
 {
-    public class AudioManager : BaseInstance<AudioManager>
+    public static class AudioManager 
     {
         private static readonly Dictionary<int, EventInstance> _eventInstances = new();
         private static int _nextID;

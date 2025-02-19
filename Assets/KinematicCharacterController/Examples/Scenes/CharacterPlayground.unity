@@ -3202,9 +3202,6 @@ GameObject:
   - component: {fileID: 158249184}
   - component: {fileID: 158249183}
   - component: {fileID: 158249185}
-  - component: {fileID: 158249188}
-  - component: {fileID: 158249186}
-  - component: {fileID: 158249189}
   m_Layer: 0
   m_Name: VivoxManager
   m_TagString: Untagged
@@ -3224,7 +3221,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80777dbaa53645cb9f643152d4363451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  VivoxEvent1:
+    Guid:
+      Data1: 1694851598
+      Data2: 1205821307
+      Data3: -1183326806
+      Data4: -1403122534
+    Path: event:/Vivox1
+  VivoxEvent2:
+    Guid:
+      Data1: -1796947176
+      Data2: 1247517531
+      Data3: 602591648
+      Data4: 182628109
+    Path: event:/Vivox2
+  VivoxEvent3:
+    Guid:
+      Data1: -310176522
+      Data2: 1236766637
+      Data3: -1009726560
+      Data4: 527933286
+    Path: event:/Vivox3
   _logHandler: {fileID: 1191626254}
+  echoChannel: 0
 --- !u!4 &158249184
 Transform:
   m_ObjectHideFlags: 0
@@ -3252,130 +3271,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbc7522d0ca9404b9d1463ff52b30e00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &158249186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158249182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbbf2a12c297aa044b106f014a7bc3b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  logHandler: {fileID: 1191626254}
---- !u!82 &158249188
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158249182}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 1
-  Mute: 1
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!114 &158249189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158249182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4e239a6f9250a94f8074232314da7a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ChannelUri: 
-  m_ChannelName: 
 --- !u!1 &160697610
 GameObject:
   m_ObjectHideFlags: 0
@@ -47354,7 +47249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nonRigidbodyVelocity: 0
-  attenuationObject: {fileID: 0}
+  attenuationObject: {fileID: 6508550501183087756}
 --- !u!81 &5573864683772550982
 AudioListener:
   m_ObjectHideFlags: 0
