@@ -154,14 +154,11 @@ namespace Vivox
 
 		private void OnAudioFilterRead(float[] data, int channels)
 		{
-			/*if (channel.hasHandle())
+			if (channel.hasHandle())
 			{
 				audioBuffer.AddRange(data);
 				UpdateBufferLatency((uint)data.Length);
-			}*/
-			
-			audioBuffer.AddRange(data);
-			UpdateBufferLatency((uint)data.Length);
+			}
 
 			isSpeaking = false;
 			foreach (float value in data)
@@ -228,7 +225,7 @@ namespace Vivox
 			if (!sound.hasHandle())
 			{
 				logHandler?.Error("Sound object is not initialized.", this);
-				audioBuffer.Clear();
+				sound.release();
 				return;
 			}
 			
@@ -236,7 +233,7 @@ namespace Vivox
 			{
 				logHandler?.Error("Channel is not valid.", this);
 				// reset audio data
-				audioBuffer.Clear();
+				sound.release();
 				return;
 			}
 
@@ -272,6 +269,7 @@ namespace Vivox
 			if (res != RESULT.OK)
 			{
 				logHandler?.Error(res.ToString(), this);
+				sound.release();
 			}
 
 			bufferReadPosition = readPosition;
