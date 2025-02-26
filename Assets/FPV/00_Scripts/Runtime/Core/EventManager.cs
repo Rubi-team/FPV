@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FPV.Core
+namespace FPV
 {
     internal class AppEvent { }
 
