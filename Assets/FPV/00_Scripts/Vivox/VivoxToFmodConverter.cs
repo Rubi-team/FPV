@@ -197,6 +197,7 @@ namespace Vivox
 
 				RESULT resultS = RuntimeManager.CoreSystem.createSound("Vivox", MODE.LOOP_NORMAL | MODE.OPENUSER, ref soundInfo,
 					out sound);
+				
 				if (resultS != RESULT.OK)
 				{
 					logHandler?.Error($"Failed to create sound: {result}", this);

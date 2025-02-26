@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using FMOD.Studio;
 using FMODUnity;
+using Unity.Netcode;
 using UnityEngine;
 using Utils;
 
@@ -10,6 +11,30 @@ namespace Audio
     {
         private static readonly Dictionary<int, EventInstance> _eventInstances = new();
         private static int _nextID;
+
+        /// <summary>
+        ///     Creates a new audio instance from the given AudioModel.
+        /// </summary>
+        public static void PlayOneShot(EventReference sound, Vector3 worldPos)
+        {
+            PlayOneShotRpc(sound.Path, worldPos);
+        }
+
+        [Rpc(SendTo.Everyone)] private static void PlayOneShotRpc(string soundPath, Vector3 worldPos)
+        {
+            RuntimeManager.PlayOneShot(soundPath, worldPos);
+        }
+        
+        
+        public static void PlayOneShotAttached(EventReference sound, GameObject objectAttached)
+        {
+            PlayOneShotAttachedRpc(sound.Path, objectAttached.name);
+        }
+        
+        [Rpc(SendTo.Everyone)] private static void PlayOneShotAttachedRpc(string soundPath, string objectName)
+        {
+            RuntimeManager.PlayOneShotAttached(soundPath, GameObject.Find(objectName));
+        }
 
         /// <summary>
         ///     Creates a new audio instance from the given AudioModel.
