@@ -77,6 +77,7 @@ namespace KinematicCharacterController.Examples
             if (Input.GetMouseButtonDown(1))
             {
                 CharacterCamera.TargetDistance = (CharacterCamera.TargetDistance == 0f) ? CharacterCamera.DefaultDistance : 0f;
+                //TODO change default to FPV
             }
         }
 
