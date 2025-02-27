@@ -7,14 +7,11 @@ namespace FPV
     /// </summary>
     public class MetagameView : View<MetagameApplication>
     {
-       // internal MainMenuView MainMenu => m_MainMenuView;
-
-
-        //MainMenuView m_MainMenuView;
+       internal MainMenuView MainMenu => m_MainMenuView;
+       [SerializeField] MainMenuView m_MainMenuView;
         
-        //internal LoadingScreenView LoadingScreen => m_LoadingScreenView;
-
-        //LoadingScreenView m_LoadingScreenView;
+        internal LoadingScreenView LoadingScreen => m_LoadingScreenView;
+        [SerializeField] LoadingScreenView m_LoadingScreenView;
 
         void Start()
         {

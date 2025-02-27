@@ -1,10 +1,10 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/FPV/UIToolkit/TemplateStyleSheet.uss?fileID=7433441132597879392&amp;guid=3b6d1788e8466764b9b03c57f6aea2f2&amp;type=3#TemplateStyleSheet" />
     <ui:VisualElement name="mainMenu" class="canvas" style="align-items: center; justify-content: center; align-self: auto;">
-        <ui:Label text="FPV" name="titleLabel" enabled="true" class="label title" />
-        <ui:TextField placeholder-text="Enter Code..." enabled="true" password="false" hide-placeholder-on-focus="false" readonly="false" keyboard-type="OneTimeCode" auto-correction="false" name="codeInputField" class="inputField button" style="width: 469px; -unity-text-align: middle-center; white-space: pre-wrap; text-overflow: clip; -unity-font-style: normal; font-size: 62px; visibility: visible; overflow: visible; display: flex; opacity: 1; flex-direction: column-reverse; transform-origin: center;" />
-        <ui:Button text="Find Match" display-tooltip-when-elided="true" name="findMatchButton" class="button" />
-        <ui:Button text="Start (single player)" display-tooltip-when-elided="true" name="singlePlayerButton" double-click-selects-word="false" triple-click-selects-line="false" class="button" />
+        <ui:Label text="FPV" name="titleLabel" class="label title" />
+        <ui:TextField label="Code : " placeholder-text="Enter code..." name="codeTextField" max-length="6" class="textField" style="align-self: auto; align-content: auto; align-items: center;" />
+        <ui:Button text="Create Relay&#10;" display-tooltip-when-elided="true" name="createRelayButton" class="button" />
+        <ui:Button text="Start (single player)" display-tooltip-when-elided="true" name="singlePlayerButton" class="button" />
         <ui:Button text="Quit" display-tooltip-when-elided="true" name="quitButton" class="button" />
     </ui:VisualElement>
 </ui:UXML>
