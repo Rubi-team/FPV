@@ -34,7 +34,6 @@ public class PlayerController : MonoBehaviour
     [Header("Animation")] 
     [SerializeField] private Animator animator;
     
-    
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -157,7 +156,7 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             
             //Appel Audio Saut
-            AudioManager.PlayOneShotAttached(FMODEvents.Instance.jump, gameObject);
+            AudioManager.PlayOneShotAttached(FMODEvents.Instance.jump, feet.gameObject);
 
             currentFallTime = coyoteTime + 1;
         }
@@ -165,12 +164,13 @@ public class PlayerController : MonoBehaviour
     
     private void AnimatorUpdate()
     {
-        animator.SetFloat("Speed", rb.linearVelocity.magnitude);
+        Vector3 currentSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        animator.SetFloat("Speed", currentSpeed.magnitude);
     }
 
     public void Footsteps()
     {
-        AudioManager.PlayOneShotAttached(FMODEvents.Instance.footSteep, gameObject);
+        AudioManager.PlayOneShotAttached(FMODEvents.Instance.footSteep, feet.gameObject);
     }
 
     private bool OnSlope()
