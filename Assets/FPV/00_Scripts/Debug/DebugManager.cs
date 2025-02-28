@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Utils
@@ -7,12 +8,15 @@ namespace Utils
     {
         public GameObject WebGLCanvas;
         public GameObject WarningPanel;
+        
+        [SerializeField] private TMP_Text versionText;
 
         private void Awake()
         {
 #if DEBUG_ENABLED || UNITY_EDITOR
             WebGLCanvas.SetActive(true);
 #endif
+            versionText.text = Application.version;
         }
 
         private void Update()

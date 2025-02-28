@@ -1,6 +1,8 @@
-﻿namespace FPV
+﻿using UnityEngine;
+
+namespace FPV
 {
-    public static class Constants
+    public static class CONSTANTS
     {
         internal const string GAME_NAME = "FPV";
     }
