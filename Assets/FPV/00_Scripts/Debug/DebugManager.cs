@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Utils
+namespace DEBUG
 {
     public class DebugManager : MonoBehaviour
     {

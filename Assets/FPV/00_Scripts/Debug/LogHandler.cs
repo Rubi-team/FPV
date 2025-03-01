@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Utils
+namespace DEBUG
 {
     [Flags]
     public enum LogLevel
@@ -11,8 +11,7 @@ namespace Utils
         Warnings = 2, // 010
         Errors = 4 // 100
     }
-
-    [AddComponentMenu("_Ase/Utils/Logger")]
+    
     public class LogHandler : MonoBehaviour
     {
         [Header("Settings")] [SerializeField] private LogLevel logLevel;

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Utils;
 using Button = UnityEngine.UIElements.Button;
+using DEBUG;
 
 namespace FPV
 {

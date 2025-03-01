@@ -2,52 +2,55 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
-public class DebugLogger : MonoBehaviour
+namespace DEBUG
 {
-    [SerializeField] private bool useJobSystem;
-
-    private void Update()
+    public class DebugLogger : MonoBehaviour
     {
-        var startTime = Time.realtimeSinceStartup;
+        [SerializeField] private bool useJobSystem;
 
-        if (useJobSystem)
+        private void Update()
         {
-            var jobHandles = new NativeList<JobHandle>(Allocator.Temp);
-            for (var i = 0; i < 100; i++)
+            var startTime = Time.realtimeSinceStartup;
+
+            if (useJobSystem)
             {
-                var job = HardTaskJob();
-                jobHandles.Add(job);
+                var jobHandles = new NativeList<JobHandle>(Allocator.Temp);
+                for (var i = 0; i < 100; i++)
+                {
+                    var job = HardTaskJob();
+                    jobHandles.Add(job);
+                }
+
+                JobHandle.CompleteAll(jobHandles);
+                jobHandles.Dispose();
+            }
+            else
+            {
+                for (var i = 0; i < 100; i++) HardTask();
             }
 
-            JobHandle.CompleteAll(jobHandles);
-            jobHandles.Dispose();
+            Debug.Log((Time.realtimeSinceStartup - startTime) * 1000 + "ms");
         }
-        else
+
+        private void HardTask()
         {
-            for (var i = 0; i < 100; i++) HardTask();
+            float value = 0;
+            for (var i = 0; i < 1000000; i++) value += i;
         }
 
-        Debug.Log((Time.realtimeSinceStartup - startTime) * 1000 + "ms");
+        private JobHandle HardTaskJob()
+        {
+            var job = new HardTask();
+            return job.Schedule();
+        }
     }
 
-    private void HardTask()
+    public struct HardTask : IJob
     {
-        float value = 0;
-        for (var i = 0; i < 1000000; i++) value += i;
-    }
-
-    private JobHandle HardTaskJob()
-    {
-        var job = new HardTask();
-        return job.Schedule();
-    }
-}
-
-public struct HardTask : IJob
-{
-    public void Execute()
-    {
-        float value = 0;
-        for (var i = 0; i < 1000000; i++) value += i;
+        public void Execute()
+        {
+            float value = 0;
+            for (var i = 0; i < 1000000; i++) value += i;
+        }
     }
 }

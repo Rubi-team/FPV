@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using UnityEditor;
 #endif
 
-namespace KinematicCharacterController.Examples
+namespace DEBUG
 {
     public class FrameratePanel : MonoBehaviour
     {
