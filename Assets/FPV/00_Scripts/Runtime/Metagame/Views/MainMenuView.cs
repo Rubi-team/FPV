@@ -1,47 +1,26 @@
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using Utils;
-using Button = UnityEngine.UIElements.Button;
 using DEBUG;
+using TMPro;
 
 namespace FPV
 {
     internal class MainMenuView : View<MetagameApplication>
     {
-        internal TextField CodeInputField { get; private set; }
-        Button CreateRelayButton;
-        Button m_QuitButton;
-        Button m_SinglePlayerButton;
-        Label m_TitleLabel;
-        VisualElement m_Root;
-        
+        [Header("MainMenu Elements")]
+        [SerializeField] private TMP_Text titleLabel;
+        [SerializeField] private TMP_InputField codeTextField;
+        [SerializeField] private Button createRelayButton;
+        [SerializeField] private Button singlePlayerButton;
+
         [Header("Debug")] [SerializeField] LogHandler _logHandler;
 
         void OnEnable()
         {
-            var uiDocument = GetComponent<UIDocument>();
-            m_Root = uiDocument.rootVisualElement;
-            
-            m_TitleLabel = m_Root.Query<Label>("titleLabel");
-            m_TitleLabel.text = CONSTANTS.GAME_NAME;
+            createRelayButton.onClick.AddListener(OnClickCreateRelay);
+            singlePlayerButton.onClick.AddListener(OnClickStartSinglePlayer);
+            codeTextField.onSubmit.AddListener(OnCodeInputFieldSubmitted);
 
-            // Get the input field
-            CodeInputField = m_Root.Q<TextField>("codeTextField");
-
-// Register callback for when the code input field is submitted (e.g., when the user presses Enter)
-            CodeInputField.RegisterCallback<ChangeEvent<string>>(OnCodeInputFieldSubmitted);
-
-            
-            CreateRelayButton = m_Root.Q<Button>("createRelayButton");
-            CreateRelayButton.RegisterCallback<ClickEvent>(OnClickCreateRelay);
-
-            m_SinglePlayerButton = m_Root.Q<Button>("singlePlayerButton");
-            m_SinglePlayerButton.RegisterCallback<ClickEvent>(OnClickStartSinglePlayer);
-
-            m_QuitButton = m_Root.Q<Button>("quitButton");
-            m_QuitButton.RegisterCallback<ClickEvent>(OnClickQuit);
 
             
 
@@ -55,31 +34,35 @@ namespace FPV
 
         void OnDisable()
         {
-            m_QuitButton.UnregisterCallback<ClickEvent>(OnClickQuit);
+            createRelayButton.onClick.RemoveListener(OnClickCreateRelay);
+            singlePlayerButton.onClick.RemoveListener(OnClickStartSinglePlayer);
+            codeTextField.onEndEdit.RemoveListener(OnCodeInputFieldSubmitted);
             //CustomNetworkManager.OnConfigurationLoaded -= OnGameConfigurationLoaded;
         }
         
-        void OnCodeInputFieldSubmitted(ChangeEvent<string> evt)
+        void OnCodeInputFieldSubmitted(string input)
         {
-            if (string.IsNullOrEmpty(evt.newValue) || evt.newValue.Length != 6)
+            if (string.IsNullOrEmpty(input) || input.Length != 6)
                 return;
-            
-            Broadcast(new JoinRelayEvent(evt.newValue));
+
+            _logHandler.Log("Broadcasting JoinRelayEvent with code: " + input);
+            Broadcast(new JoinRelayEvent(input));
             EnableButtonsAndInputField(false);
         }
+
         
-        void OnClickCreateRelay(ClickEvent evt)
+        void OnClickCreateRelay()
         {
-            //Broadcast(new CreateRelayEvent());
+            Broadcast(new CreateRelayEvent());
         }
         
 
-        void OnClickStartSinglePlayer(ClickEvent evt)
+        void OnClickStartSinglePlayer()
         {
             Broadcast(new StartSinglePlayerModeEvent());
         }
 
-        void OnClickQuit(ClickEvent evt)
+        void OnClickQuit()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -94,7 +77,6 @@ namespace FPV
             {
                 return;
             }*/
-            m_SinglePlayerButton.SetEnabled(false);
         }
         
         /// <summary>
@@ -103,9 +85,10 @@ namespace FPV
         /// <param name="enable"> true or false</param>
         internal void EnableButtonsAndInputField(bool enable)
         {
-            CreateRelayButton.SetEnabled(enable);
-            m_SinglePlayerButton.SetEnabled(enable);
-            CodeInputField.SetEnabled(enable);
+            createRelayButton.interactable = enable;
+            singlePlayerButton.interactable = enable;
+            codeTextField.interactable = enable;
         }
+
     }
 }

@@ -5,6 +5,8 @@
     internal class MatchLoadingEvent : AppEvent { }
     internal class ExitMatchLoadingEvent : AppEvent { }
     
+    internal class CreateRelayEvent : AppEvent { }
+    
     internal class JoinRelayEvent : AppEvent { 
         public string RelayId { get; private set; }
         public JoinRelayEvent(string relayId)
