@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace FPV
@@ -10,6 +11,8 @@ namespace FPV
         {
             AddListener<MatchLoadingEvent>(OnMatchLoading);
             AddListener<StartSinglePlayerModeEvent>(OnStartSinglePlayerMode);
+            AddListener<CreateRelayEvent>(CreateRelay);
+            AddListener<JoinRelayEvent>(JoinRelay);
         }
 
         void OnDestroy()
@@ -34,5 +37,21 @@ namespace FPV
             View.Hide();
             //CustomNetworkManager.Singleton.InitializeNetworkLogic(true, false);
         }
+        
+        
+        //TODO maybe Refact en vrai jpense pas mais a check
+        async void CreateRelay(CreateRelayEvent evt)
+        {
+            await RelayManager.CreateRelayAsync();
+            // TODO: Add Loading Screen
+            View.Hide();
+        }
+        
+        async void JoinRelay(JoinRelayEvent evt)
+        {
+            await RelayManager.JoinRelayAsync(evt.RelayId);
+            View.Hide();
+        }
+        
     }
 }

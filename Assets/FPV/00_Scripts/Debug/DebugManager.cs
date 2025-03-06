@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using FPV;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,7 @@ namespace DEBUG
         public GameObject WarningPanel;
         
         [SerializeField] private TMP_Text versionText;
+        [SerializeField] private TMP_Text relayCodeText;
 
         private void Awake()
         {
@@ -21,10 +23,11 @@ namespace DEBUG
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F1)) SceneManager.LoadScene(0);
+            relayCodeText.text = "Relay Code: " + RelayManager.JoinCode;
 
 #if DEBUG_ENABLED || UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.H)) WarningPanel.SetActive(!WarningPanel.activeSelf);
+            if (Input.GetKeyDown(KeyCode.F1)) SceneManager.LoadScene(0);
 #endif
         }
     }

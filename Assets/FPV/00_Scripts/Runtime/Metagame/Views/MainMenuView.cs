@@ -53,6 +53,7 @@ namespace FPV
         
         void OnClickCreateRelay()
         {
+            _logHandler?.Log("Broadcasting CreateRelayEvent");
             Broadcast(new CreateRelayEvent());
         }
         
