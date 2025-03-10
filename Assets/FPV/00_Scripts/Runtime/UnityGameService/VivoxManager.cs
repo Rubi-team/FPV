@@ -7,12 +7,12 @@ using Unity.Services.Matchmaker.Models;
 using Unity.Services.Vivox;
 using Unity.Services.Vivox.AudioTaps;
 using UnityEngine;
-using Utils;
 using DEBUG;
+using UnityEngine.Serialization;
 
-namespace Vivox
+namespace FPV
 {
-    public sealed class VivoxManager : BaseInstance<VivoxManager>
+    public sealed class VivoxManager : MonoBehaviour
     {
         [Header("Events References")] 
         [SerializeField] private EventReference VivoxEvent1;
@@ -20,7 +20,6 @@ namespace Vivox
         [SerializeField] private EventReference VivoxEvent3;
         
         
-        [Header("Debug")] [SerializeField] private LogHandler _logHandler;
         public bool echoChannel = false;
 
         private Channel channel;
@@ -30,19 +29,24 @@ namespace Vivox
         public TaskCompletionSource<bool> ChannelJoinedTaskCompletionSource { get; private set; }
 
         private int otherPlayersCount = 0;
+        
+        public static VivoxManager Instance { get; private set; }
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         public async void Start()
         {
-            _logHandler?.Log("Initializing Vivox...");
-            await UnityServiceAuthentification.Instance.Initialise();
 
-            _logHandler?.Log("Logging into Vivox...");
+            //console?.Log("Logging into Vivox...");
             await LoginToVivoxAsync();
             
             VivoxService.Instance.ParticipantAddedToChannel += AddParticipantEffect;
             VivoxService.Instance.ChannelJoined += JoinChannel;
 
-            _logHandler?.Log("Joining channel...");
+            //console?.Log("Joining channel...");
             await JoinChannelAsync("test");
 
             if (echoChannel) 
@@ -69,7 +73,7 @@ namespace Vivox
                     var player1Tap = participant.CreateVivoxParticipantTap("Player 1 Tap");
                     
                     var converter = player1Tap.AddComponent<VivoxToFmodConverter>();
-                    converter.logHandler = _logHandler;
+                    //converter.console = console;
                     
                     var audio1 = new AudioModel
                     {
@@ -88,7 +92,7 @@ namespace Vivox
                     var player2Tap = participant.CreateVivoxParticipantTap("Player 2 Tap");
                     
                     var converter2 = player2Tap.AddComponent<VivoxToFmodConverter>();
-                    converter2.logHandler = _logHandler;
+                    //converter2.console = console;
                     
                     var audio2 = new AudioModel
                     {
@@ -107,7 +111,7 @@ namespace Vivox
                     var player3Tap = participant.CreateVivoxParticipantTap("Player 3 Tap");
                     
                     var converter3 = player3Tap.AddComponent<VivoxToFmodConverter>();
-                    converter3.logHandler = _logHandler;
+                    //converter3.console = console;
                     
                     var audio3 = new AudioModel
                     {
@@ -144,7 +148,7 @@ namespace Vivox
             }
             catch (Exception e)
             {
-                _logHandler?.Error($"Failed to initialize Vivox: {e}");
+                //console?.Error($"Failed to initialize Vivox: {e}");
                 throw;
             }
             
@@ -155,7 +159,7 @@ namespace Vivox
             }
             catch (Exception e)
             {
-                _logHandler?.Error($"Failed to login to Vivox: {e}");
+                //console?.Error($"Failed to login to Vivox: {e}");
                 throw;
             }
         }
@@ -167,12 +171,12 @@ namespace Vivox
             {
                 await VivoxService.Instance.LeaveAllChannelsAsync();
                 await VivoxService.Instance.JoinGroupChannelAsync(channelName, ChatCapability.AudioOnly);
-                _logHandler?.Log($"Joined channel: {channelName}");
+                //console?.Log($"Joined channel: {channelName}");
                 ChannelJoinedTaskCompletionSource.SetResult(true);
             }
             catch (Exception e)
             {
-                _logHandler?.Error($"Failed to join channel : {e}");
+                //console?.Error($"Failed to join channel : {e}");
                 ChannelJoinedTaskCompletionSource.SetResult(false);
             }
         }

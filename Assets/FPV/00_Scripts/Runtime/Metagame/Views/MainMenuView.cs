@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DEBUG;
 using TMPro;
+using UnityEngine.Serialization;
 
 namespace FPV
 {
@@ -12,8 +13,7 @@ namespace FPV
         [SerializeField] private TMP_InputField codeTextField;
         [SerializeField] private Button createRelayButton;
         [SerializeField] private Button singlePlayerButton;
-
-        [Header("Debug")] [SerializeField] LogHandler _logHandler;
+        
 
         void OnEnable()
         {
@@ -45,7 +45,7 @@ namespace FPV
             if (string.IsNullOrEmpty(input) || input.Length != 6)
                 return;
 
-            _logHandler.Log("Broadcasting JoinRelayEvent with code: " + input);
+            //console.Log("Broadcasting JoinRelayEvent with code: " + input);
             Broadcast(new JoinRelayEvent(input));
             EnableButtonsAndInputField(false);
         }
@@ -53,7 +53,7 @@ namespace FPV
         
         void OnClickCreateRelay()
         {
-            _logHandler?.Log("Broadcasting CreateRelayEvent");
+            //console?.Log("Broadcasting CreateRelayEvent");
             Broadcast(new CreateRelayEvent());
         }
         

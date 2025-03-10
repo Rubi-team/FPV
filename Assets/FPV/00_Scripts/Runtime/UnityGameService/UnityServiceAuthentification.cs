@@ -1,39 +1,108 @@
-﻿using System;
+﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
+using Unity.Services.Core.Environments;
 using UnityEngine;
-using Utils;
 
-public class UnityServiceAuthentification : BaseInstance<UnityServiceAuthentification>
+namespace FPV
 {
-    public event EventHandler<EventArgs> OnAuthentificateSuccess;
-
-
-    public async Task<Task> Initialise()
+    /// <summary>
+    /// Implementation of the Unity Authentication Service for Anonymous Auth
+    /// Handles Race conditions between different sources of authentication, allowing multiple samples to be dragged into a scene without errors.
+    /// </summary>
+    internal static class UnityServiceAuthenticator
     {
-        try
+        const int k_InitializationTimeout = 10000;
+        static bool s_IsSigningIn;
+        internal static string PlayerId => AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId
+                                                                                     : string.Empty;
+
+        /// <summary>
+        /// Unity anonymous Auth grants unique ID's by editor/build and machine. This means that if you open several builds or editors on the same machine, they will all have the same ID.
+        /// Using a unique profile name forces a new ID. So the strategy is to make sure that each build/editor has its own profile name to act as multiple users for a service.
+        /// </summary>
+        /// <param name="profileName">Unique name that generates the unique ID</param>
+        /// <returns></returns>
+        public static async Task<bool> TryInitServicesAsync(string environment, string profileName)
         {
-            await UnityServices.InitializeAsync();
-
-            if (AuthenticationService.Instance.IsSignedIn) // Prevent double sign-in
-                Debug.LogWarning("Already signed in. Skipping authentication.");
-            else
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
-
-            AuthenticationService.Instance.SignedIn += () =>
+            async Task WaitForInitialized()
             {
-                Debug.Log("Signed in as: " + AuthenticationService.Instance.PlayerId);
-            };
+                while (UnityServices.State != ServicesInitializationState.Initialized)
+                {
+                    await Task.Delay(100);
+                }
+            }
 
-            OnAuthentificateSuccess?.Invoke(this, EventArgs.Empty);
+            if (UnityServices.State == ServicesInitializationState.Initialized)
+            {
+                return true;
+            }
+
+            //Another Service is mid-initialization:
+            if (UnityServices.State == ServicesInitializationState.Initializing)
+            {
+                var task = WaitForInitialized();
+                if (await Task.WhenAny(task, Task.Delay(k_InitializationTimeout)) != task)
+                {
+                    return false; // We timed out
+                }
+                return UnityServices.State == ServicesInitializationState.Initialized;
+            }
+            var initializationOptions = new InitializationOptions();
+            initializationOptions.SetEnvironmentName(environment);
+
+            if (profileName != null)
+            {
+                //ProfileNames can't contain non-alphanumeric characters
+                var rgx = new Regex("[^a-zA-Z0-9 - _]");
+                profileName = rgx.Replace(profileName, "");
+                initializationOptions.SetProfile(profileName);
+            }
+
+            //If you are using multiple unity services, make sure to initialize it only once before using your services.
+            await UnityServices.InitializeAsync(initializationOptions);
+            return UnityServices.State == ServicesInitializationState.Initialized;
         }
-        catch (Exception e)
+
+        public static async Task<bool> TrySignInAsync(string environment, string profileName)
         {
-            Debug.LogError("An error occurred during authentication: " + e.Message);
-            Initialise(); // Retry authentication
-        }
+            async Task WaitForSignedIn()
+            {
+                while (!AuthenticationService.Instance.IsSignedIn)
+                {
+                    await Task.Delay(100);
+                }
+            }
 
-        return Task.CompletedTask;
+            if (!await TryInitServicesAsync(environment, profileName))
+            {
+                return false;
+            }
+            if (s_IsSigningIn)
+            {
+                var task = WaitForSignedIn();
+                if (await Task.WhenAny(task, Task.Delay(k_InitializationTimeout)) != task)
+                {
+                    return false; // We timed out
+                }
+                return AuthenticationService.Instance.IsSignedIn;
+            }
+
+            s_IsSigningIn = true;
+            try
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Could not sign in: {ex.Message}");
+            }
+            finally
+            {
+                s_IsSigningIn = false;
+            }
+            return AuthenticationService.Instance.IsSignedIn;
+        }
     }
 }

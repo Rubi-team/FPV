@@ -1,9 +1,11 @@
-﻿using FPV;
+﻿using System;
+using FPV;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Console = UnityEngine.Console;
 
-namespace DEBUG
+namespace FPV
 {
     public class DebugManager : MonoBehaviour
     {
@@ -19,6 +21,8 @@ namespace DEBUG
             WebGLCanvas.SetActive(true);
 #endif
             versionText.text = Application.version;
+            
+            Console.Log("UI", versionText);
         }
 
         private void Update()

@@ -9,9 +9,8 @@ using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Utils;
 
-namespace Vivox
+namespace FPV
 {
 	public class VivoxToFmodConverter : MonoBehaviour
 	{
@@ -42,7 +41,6 @@ namespace Vivox
 
 		private bool isSpeaking;
 		
-		[SerializeField] public LogHandler logHandler;
 
 		private AudioInstance AudioInstance { set; get; }
 
@@ -113,7 +111,7 @@ namespace Vivox
 
 			if (!AudioManager.TryGetEventInstance(AudioInstance.ID, out EventInstance eventInstance))
 			{
-				logHandler?.Error("AudioInstance for VivoxParticipant has not being created:" + AudioInstance.ID, this);
+				//console?.Error("AudioInstance for VivoxParticipant has not being created:" + AudioInstance.ID, this);
 				return;
 			}
 
@@ -187,7 +185,7 @@ namespace Vivox
 				RESULT result = eventInstance.getChannelGroup(out ChannelGroup channelGroup);
 				if (result != RESULT.OK)
 				{
-					logHandler?.Error(result.ToString(), this);
+					//console?.Error(result.ToString(), this);
 				}
 
 				soundInfo.cbsize = Marshal.SizeOf(typeof(CREATESOUNDEXINFO));
@@ -201,7 +199,7 @@ namespace Vivox
 				
 				if (resultS != RESULT.OK)
 				{
-					logHandler?.Error($"Failed to create sound: {result}", this);
+					//console?.Error($"Failed to create sound: {result}", this);
 					return;
 				}
 				RuntimeManager.CoreSystem.playSound(sound, channelGroup, false, out channel);
@@ -226,14 +224,14 @@ namespace Vivox
 			
 			if (!sound.hasHandle())
 			{
-				logHandler?.Error("Sound object is not initialized.", this);
+				//console?.Error("Sound object is not initialized.", this);
 				sound.release();
 				return;
 			}
 			
 			if (!channel.hasHandle())
 			{
-				logHandler?.Error("Channel is not valid.", this);
+				//console?.Error("Channel is not valid.", this);
 				// reset audio data
 				sound.release();
 				return;
@@ -241,7 +239,7 @@ namespace Vivox
 
 			if (res != RESULT.OK)
 			{
-				logHandler?.Error(res.ToString(), this);
+				//console?.Error(res.ToString(), this);
 				// remove channel handle to recreate it
 				channel.clearHandle();
 				// clear sound handle to recreate it
@@ -270,7 +268,7 @@ namespace Vivox
 			res = sound.unlock(ptr1, ptr2, len1, len2);
 			if (res != RESULT.OK)
 			{
-				logHandler?.Error(res.ToString(), this);
+				//console?.Error(res.ToString(), this);
 				sound.release();
 			}
 

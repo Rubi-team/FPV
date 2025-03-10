@@ -8,7 +8,7 @@ using KinematicCharacterController.Examples;
 using Unity.Netcode;
 using UnityEngine.Serialization;
 
-namespace KinematicCharacterController.Examples
+namespace FPV
 {
     public class ExamplePlayer : NetworkBehaviour
     {
