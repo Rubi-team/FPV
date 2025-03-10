@@ -117,7 +117,9 @@ namespace FMODUnity
                 }
 
                 defaultBankFolder = RuntimeUtils.GetCommonPlatformPath(Path.Combine(settings.SourceBankPath, platform.BuildDirectory));
-            }
+            } // line 120
+
+            defaultBankFolder = RuntimeUtils.ToVirtualPlayerFriendlyPath(defaultBankFolder);
 
             string[] bankPlatforms = EditorUtils.GetBankPlatforms();
             string[] bankFolders = new string[bankPlatforms.Length];
