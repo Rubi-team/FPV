@@ -60,7 +60,7 @@ namespace SteamAudio
             }
             else
             {
-                Debug.Log(string.Format("Loaded HRTF: {0}.", (sofaFileName != null) ? sofaFileName : "default"));
+                //Debug.Log(string.Format("Loaded HRTF: {0}.", (sofaFileName != null) ? sofaFileName : "default"));
             }
 
             if (sofaData != IntPtr.Zero)

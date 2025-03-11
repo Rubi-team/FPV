@@ -3,7 +3,6 @@ using FPV;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Console = UnityEngine.Console;
 
 namespace FPV
 {
@@ -22,7 +21,7 @@ namespace FPV
 #endif
             versionText.text = Application.version;
             
-            Console.Log("UI", versionText);
+            Console.Log("UI", versionText.text);
         }
 
         private void Update()

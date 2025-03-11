@@ -4,12 +4,12 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace EditorScripts
+namespace FPV
 {
     public class SceneSwitcherWindow : EditorWindow
     {
         private string[] allScenePaths;
-        private Dictionary<string, bool> favoriteScenes = new Dictionary<string, bool>();
+        private readonly Dictionary<string, bool> favoriteScenes = new Dictionary<string, bool>();
         private Vector2 scrollPosition;
 
         [MenuItem("Tools/SceneSwitcher")]
