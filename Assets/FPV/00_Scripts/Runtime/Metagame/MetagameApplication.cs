@@ -19,6 +19,7 @@ namespace FPV
         {
             base.Awake();
             Instance = this;
+            DontDestroyOnLoad(this);
         }
 
         internal void CallOnReturnToMetagameAfterMatch()
