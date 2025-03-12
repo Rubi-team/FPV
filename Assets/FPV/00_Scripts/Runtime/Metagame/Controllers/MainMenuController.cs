@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace FPV
 {
@@ -35,7 +36,7 @@ namespace FPV
         void OnStartSinglePlayerMode(StartSinglePlayerModeEvent evt)
         {
             View.Hide();
-            //CustomNetworkManager.Singleton.InitializeNetworkLogic(true, false);
+            SceneManager.LoadScene(1, LoadSceneMode.Additive);
         }
         
         

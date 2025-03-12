@@ -130,9 +130,9 @@ namespace ERP
                 Assets =
                 {
                     LargeImage = "logo",
-                    LargeText = "Unity " + Application.unityVersion,
+                    LargeText = "Regarde Axelle je travaille",
                     SmallImage = "marshmello",
-                    SmallText = "Ouais j'ai codé ça",
+                    SmallText = "Unity " + Application.unityVersion,
                 },
             };
 

@@ -13,6 +13,7 @@ namespace FPV
         [SerializeField] private TMP_InputField codeTextField;
         [SerializeField] private Button createRelayButton;
         [SerializeField] private Button singlePlayerButton;
+        [SerializeField] private Button quitButton;
         
 
         void OnEnable()
@@ -20,24 +21,16 @@ namespace FPV
             createRelayButton.onClick.AddListener(OnClickCreateRelay);
             singlePlayerButton.onClick.AddListener(OnClickStartSinglePlayer);
             codeTextField.onSubmit.AddListener(OnCodeInputFieldSubmitted);
-
-
+            quitButton.onClick.AddListener(OnClickQuit);
             
-
-            //CustomNetworkManager.OnConfigurationLoaded += OnGameConfigurationLoaded;
         }
-
-        void OnGameConfigurationLoaded()
-        {
-            DisableControlsUnsupportedInAutoconnectMode();
-        }
-
+        
         void OnDisable()
         {
             createRelayButton.onClick.RemoveListener(OnClickCreateRelay);
             singlePlayerButton.onClick.RemoveListener(OnClickStartSinglePlayer);
             codeTextField.onEndEdit.RemoveListener(OnCodeInputFieldSubmitted);
-            //CustomNetworkManager.OnConfigurationLoaded -= OnGameConfigurationLoaded;
+            quitButton.onClick.RemoveListener(OnClickQuit);
         }
         
         void OnCodeInputFieldSubmitted(string input)
@@ -70,14 +63,6 @@ namespace FPV
 #else
             UnityEngine.Application.Quit();
 #endif
-        }
-
-        internal void DisableControlsUnsupportedInAutoconnectMode()
-        {
-            /*if (!CustomNetworkManager.Singleton.AutoConnectOnStartup)
-            {
-                return;
-            }*/
         }
         
         /// <summary>
