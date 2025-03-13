@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.Multiplayer;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 #if UNITY_SERVER || ENABLE_UCS_SERVER
@@ -20,6 +19,6 @@ namespace FPV
     [RequireComponent(typeof(NetworkManager))]
     public class CustomNetworkManager : MonoBehaviour
     {
-        
+        // TODO - Add custom logic
     }
 }

@@ -5,7 +5,6 @@ using UnityEditor;
 using UnityEngine;
 using System;
 using UnityEngine.UIElements;
-using Console = FPV.Console;
 
 namespace FPV
 {
