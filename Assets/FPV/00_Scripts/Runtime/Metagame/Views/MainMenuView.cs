@@ -74,6 +74,7 @@ namespace FPV
             createRelayButton.interactable = enable;
             singlePlayerButton.interactable = enable;
             codeTextField.interactable = enable;
+            quitButton.interactable = enable;
         }
 
     }

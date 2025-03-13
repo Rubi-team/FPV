@@ -33,10 +33,12 @@ namespace FPV
             //App.View.LoadingScreen.Show();
         }
 
-        void OnStartSinglePlayerMode(StartSinglePlayerModeEvent evt)
+        async void OnStartSinglePlayerMode(StartSinglePlayerModeEvent evt)
         {
+            View.EnableButtonsAndInputField(false);
+            await SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
             View.Hide();
-            SceneManager.LoadScene(1, LoadSceneMode.Additive);
+            
         }
         
         
