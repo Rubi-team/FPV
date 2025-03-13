@@ -16,7 +16,7 @@ namespace FPV
 
         private void Awake()
         {
-#if DEBUG_ENABLED || UNITY_EDITOR
+#if DEBUG || UNITY_EDITOR
             WebGLCanvas.SetActive(true);
 #endif
             versionText.text = Application.version;
@@ -26,9 +26,9 @@ namespace FPV
 
         private void Update()
         {
-            relayCodeText.text = "Relay Code: " + RelayManager.JoinCode;
+            //relayCodeText.text = "Relay Code: " + RelayManager.JoinCode;
 
-#if DEBUG_ENABLED || UNITY_EDITOR
+#if DEBUG || UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.H)) WarningPanel.SetActive(!WarningPanel.activeSelf);
             if (Input.GetKeyDown(KeyCode.F1)) SceneManager.LoadScene(0);
 #endif

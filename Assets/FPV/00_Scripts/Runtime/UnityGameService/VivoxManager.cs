@@ -8,6 +8,7 @@ using Unity.Services.Vivox;
 using Unity.Services.Vivox.AudioTaps;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Console = FPV.Console;
 
 namespace FPV
 {
@@ -72,7 +73,6 @@ namespace FPV
                     var player1Tap = participant.CreateVivoxParticipantTap("Player 1 Tap");
                     
                     var converter = player1Tap.AddComponent<VivoxToFmodConverter>();
-                    //converter.console = console;
                     
                     var audio1 = new AudioModel
                     {
@@ -82,16 +82,12 @@ namespace FPV
                     
                     converter.Setup(audio1);
                     
-                    /*var fmodEmitter1 = player1Tap.AddComponent<StudioEventEmitter>();
-                    fmodEmitter1.EventReference= VivoxEvent1;
-                    fmodEmitter1.Play();*/
                     otherPlayersCount++;
                     break;
                 case 1:
                     var player2Tap = participant.CreateVivoxParticipantTap("Player 2 Tap");
                     
                     var converter2 = player2Tap.AddComponent<VivoxToFmodConverter>();
-                    //converter2.console = console;
                     
                     var audio2 = new AudioModel
                     {
@@ -110,7 +106,6 @@ namespace FPV
                     var player3Tap = participant.CreateVivoxParticipantTap("Player 3 Tap");
                     
                     var converter3 = player3Tap.AddComponent<VivoxToFmodConverter>();
-                    //converter3.console = console;
                     
                     var audio3 = new AudioModel
                     {
@@ -147,7 +142,7 @@ namespace FPV
             }
             catch (Exception e)
             {
-                //console?.Error($"Failed to initialize Vivox: {e}");
+                Console.LogError("Vivox", $"Failed to initialize Vivox: {e}");
                 throw;
             }
             
@@ -158,7 +153,7 @@ namespace FPV
             }
             catch (Exception e)
             {
-                //console?.Error($"Failed to login to Vivox: {e}");
+                Console.LogError("Vivox", $"Failed to login to Vivox: {e}");
                 throw;
             }
         }
@@ -170,12 +165,12 @@ namespace FPV
             {
                 await VivoxService.Instance.LeaveAllChannelsAsync();
                 await VivoxService.Instance.JoinGroupChannelAsync(channelName, ChatCapability.AudioOnly);
-                //console?.Log($"Joined channel: {channelName}");
+                Console.Log("Vivox", $"Joined channel: {channelName}");
                 ChannelJoinedTaskCompletionSource.SetResult(true);
             }
             catch (Exception e)
             {
-                //console?.Error($"Failed to join channel : {e}");
+                Console.LogError("Vivox", $"Failed to join channel: {e}");
                 ChannelJoinedTaskCompletionSource.SetResult(false);
             }
         }

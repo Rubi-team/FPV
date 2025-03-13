@@ -1,9 +1,8 @@
-﻿// Classe Editor pour ajouter le menu "Debug"
-
-using FPV;
+﻿using System;
+using System.Collections.Generic;
+using FPV.Editor;
 using UnityEditor;
 using UnityEngine;
-using System;
 using UnityEngine.UIElements;
 
 namespace FPV
@@ -11,6 +10,8 @@ namespace FPV
     [InitializeOnLoad]
     public static class DebugConsoleButton
     {
+        private static readonly string CategoriesKey = "Debug_Categories";
+
         static DebugConsoleButton()
         {
             EditorApplication.delayCall += AddButtonToConsole;
@@ -18,25 +19,20 @@ namespace FPV
 
         private static void AddButtonToConsole()
         {
-            // Get the Console Window type
             Type consoleWindowType = typeof(EditorWindow).Assembly.GetType("UnityEditor.ConsoleWindow");
             if (consoleWindowType == null) return;
 
             EditorWindow consoleWindow = EditorWindow.GetWindow(consoleWindowType);
             if (consoleWindow == null) return;
 
-            // Get the root UI element of the Console window
             var root = consoleWindow.rootVisualElement;
             if (root == null) return;
 
-            // Find the toolbar container
             var toolbar = root.Q("Toolbar") ?? root.Q("topToolbarContainer") ?? root;
             if (toolbar == null) return;
 
-            // Check if the button already exists
             if (toolbar.Q<Button>("DebugFilterButton") != null) return;
 
-            // Create the button
             Button debugButton = null;
             debugButton = new Button(() =>
             {
@@ -47,17 +43,13 @@ namespace FPV
                 name = "DebugFilterButton"
             };
 
-            // Apply styles to keep it small and aligned
-            debugButton.style.width = 80;     // Fixed width
-            debugButton.style.height = 22;    // Match Unity button size
-            debugButton.style.marginLeft = 4; // Small spacing
-            debugButton.style.flexShrink = 0; // Prevent stretching
-            debugButton.style.alignSelf = Align.Center; // Center in the toolbar
+            debugButton.style.width = 80;
+            debugButton.style.height = 22;
+            debugButton.style.marginLeft = 4;
+            debugButton.style.flexShrink = 0;
+            debugButton.style.alignSelf = Align.Center;
 
-            // Add the button at the end of the toolbar
             toolbar.Add(debugButton);
-
-            // Force UI refresh
             consoleWindow.Repaint();
         }
 
@@ -65,12 +57,11 @@ namespace FPV
         {
             GenericMenu menu = new GenericMenu();
 
-            string[] categories = { "UI", "Player", "UnityService" };
+            List<string> categories = GetCategories();
             string[] logLevels = { "Log", "Warning", "Error" };
 
             foreach (var category in categories)
             {
-                // Check if all logs in this category are enabled
                 bool allEnabled = true;
                 foreach (var level in logLevels)
                 {
@@ -82,10 +73,9 @@ namespace FPV
                     }
                 }
 
-                // "Toggle All" option
                 menu.AddItem(new GUIContent($"{category} / Toggle All"), allEnabled, () =>
                 {
-                    bool newState = !allEnabled; // Flip state
+                    bool newState = !allEnabled;
                     foreach (var level in logLevels)
                     {
                         string key = $"Debug_{category}_{level}";
@@ -94,7 +84,6 @@ namespace FPV
                     Debug.Log($"[Debug Settings] {category}: {(newState ? "Enabled All" : "Disabled All")}");
                 });
 
-                // Individual log level toggles
                 foreach (var level in logLevels)
                 {
                     string key = $"Debug_{category}_{level}";
@@ -107,12 +96,75 @@ namespace FPV
                     });
                 }
 
-                menu.AddSeparator(""); // Separate categories
+                menu.AddItem(new GUIContent($"{category} / ❌ Remove Category"), false, () =>
+                {
+                    RemoveCategory(category);
+                });
+
+                menu.AddSeparator("");
             }
+
+            menu.AddItem(new GUIContent("➕ Add Category..."), false, () =>
+            {
+                DebugCategoryWindow.ShowWindow();
+            });
+
 
             menu.DropDown(new Rect(Event.current.mousePosition, Vector2.zero));
         }
+
+        private static List<string> GetCategories()
+        {
+            string saved = EditorPrefs.GetString(CategoriesKey, "UI,Player,UnityService");
+            return new List<string>(saved.Split(','));
+        }
+
+        private static void SaveCategories(List<string> categories)
+        {
+            EditorPrefs.SetString(CategoriesKey, string.Join(",", categories));
+        }
+
+        private static void AddCategory(string category)
+        {
+            List<string> categories = GetCategories();
+            if (!categories.Contains(category))
+            {
+                categories.Add(category);
+                SaveCategories(categories);
+                Debug.Log($"[Debug Settings] Added new category: {category}");
+            }
+            else
+            {
+                Debug.LogWarning($"[Debug Settings] Category '{category}' already exists.");
+            }
+        }
+
+        private static void RemoveCategory(string category)
+        {
+            List<string> categories = GetCategories();
+            if (categories.Contains(category))
+            {
+                categories.Remove(category);
+                SaveCategories(categories);
+
+                string[] logLevels = { "Log", "Warning", "Error" };
+                foreach (var level in logLevels)
+                {
+                    string key = $"Debug_{category}_{level}";
+                    EditorPrefs.DeleteKey(key);
+                }
+
+                Debug.Log($"[Debug Settings] Removed category: {category}");
+            }
+        }
+
+        private static string PromptCategoryName()
+        {
+            return EditorUtility.DisplayDialogComplex("New Debug Category", "Enter a new category name:", "OK", "Cancel", "") == 0
+                ? EditorUtility.DisplayDialog("New Category", "Type the category name in the Console", "OK")
+                    ? System.Console.ReadLine() // Fake input, Unity doesn't support text input directly here
+                    : ""
+                : "";
+        }
     }
 }
-
-
