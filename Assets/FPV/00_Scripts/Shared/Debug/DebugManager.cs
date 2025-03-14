@@ -21,6 +21,7 @@ namespace FPV
 #endif
             versionText.text = Application.version;
             
+            
             Console.Log("UI", versionText.text);
         }
 

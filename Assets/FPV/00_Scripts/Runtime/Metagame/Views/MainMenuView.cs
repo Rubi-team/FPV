@@ -1,3 +1,4 @@
+using FPV.Runtime.Shared;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -21,6 +22,8 @@ namespace FPV
             singlePlayerButton.onClick.AddListener(OnClickStartSinglePlayer);
             codeTextField.onSubmit.AddListener(OnCodeInputFieldSubmitted);
             quitButton.onClick.AddListener(OnClickQuit);
+            
+            titleLabel.text = CONSTANTS.GAME_NAME;
             
         }
         
