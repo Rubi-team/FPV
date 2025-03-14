@@ -124,7 +124,7 @@ namespace FPV
             EditorPrefs.SetString(CategoriesKey, string.Join(",", categories));
         }
 
-        private static void AddCategory(string category)
+        public static void AddCategory(string category)
         {
             List<string> categories = GetCategories();
             if (!categories.Contains(category))
