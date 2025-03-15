@@ -63,7 +63,7 @@ namespace Audio
         public static void AttachInstanceToGameObject(int id, Transform transform)
         {
             if (_eventInstances.TryGetValue(id, out var instance))
-                RuntimeManager.AttachInstanceToGameObject(instance, transform);
+                RuntimeManager.AttachInstanceToGameObject(instance, transform.gameObject);
         }
     }
 }

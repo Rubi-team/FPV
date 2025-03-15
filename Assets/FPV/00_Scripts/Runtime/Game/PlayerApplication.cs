@@ -1,6 +1,4 @@
-﻿
-
-namespace FPV
+﻿namespace FPV
 {
     public class PlayerApplication : BaseApplication<PlayerModel, PlayerView, PlayerController>
     {
