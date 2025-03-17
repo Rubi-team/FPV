@@ -1,0 +1,32 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="VideoTemplate" src="project://database/Assets/CodeMonkey/Toolkit/EditorWindow/Editor/Templates/VideoTemplate.uxml?fileID=9197481963319205126&amp;guid=c9d786a48a335ad4e8626c57b6423425&amp;type=3#VideoTemplate" />
+    <Style src="project://database/Assets/CodeMonkey/Toolkit/EditorWindow/Editor/MainWindow/ToolSingle.uss?fileID=7433441132597879392&amp;guid=cb3ecf6178be91845a809666823a1ec2&amp;type=3#ToolSingle" />
+    <Style src="project://database/Assets/CodeMonkey/Toolkit/EditorWindow/Editor/MainWindow/MainWindow.uss?fileID=7433441132597879392&amp;guid=b33e7af7bb189244b8e28f2f531654fa&amp;type=3#MainWindow" />
+    <engine:VisualElement name="main" style="flex-grow: 1;">
+        <engine:ScrollView>
+            <engine:VisualElement style="flex-grow: 1; flex-direction: row; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px;">
+                <engine:VisualElement name="icon" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/CodeMonkey/Toolkit/EditorWindow/Textures/ToolIcons/_Icon_160x160.png?fileID=2800000&amp;guid=9769a50e23e47854d866b8c88153f14a&amp;type=3#_Icon_160x160&quot;); -unity-background-scale-mode: scale-to-fit; width: 100px; height: 100px; background-color: rgba(0, 0, 0, 0);" />
+                <engine:VisualElement name="VisualElement" style="flex-grow: 1;">
+                    <engine:Label text="Error Detector" name="titleLabel" style="-unity-font-style: bold; font-size: 20px; margin-left: 5px;" />
+                    <engine:Label text="Description" name="descriptionLabel" style="flex-grow: 1; margin-left: 5px; white-space: normal;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement style="flex-grow: 1;">
+                <engine:Label text="If you want to modify any of the code in the Tool then I recommend you duplicate the files, put them in a different namespace, and modify those. That way you don&apos;t accidentally break a Tool that might be used by other Tools. Look at what I did in the Shop Simulator prototype for reference." name="questionsLabel" style="font-size: 10px; -unity-font-style: italic; white-space: normal; -unity-text-align: upper-center; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; border-left-color: rgb(51, 132, 156); border-right-color: rgb(51, 132, 156); border-top-color: rgb(51, 132, 156); border-bottom-color: rgb(51, 132, 156); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; margin-top: 7px; margin-right: 7px; margin-bottom: 7px; margin-left: 7px;" />
+                <engine:Button text="Open Demo Scene" name="openDemoButton" class="mainButton" />
+                <engine:Button text="Ping" name="pingButton" class="mainButton" />
+                <engine:Button text="Walkthrough Video" name="walkthroughVideoButton" class="mainButton" />
+                <engine:Label text="Post any Questions in the Comments of the Walkthrough Video and I&apos;ll do my best to help!" name="questionsLabel" style="font-size: 10px; -unity-font-style: italic; white-space: normal; -unity-text-align: upper-center; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px;" />
+                <engine:Button text="Tutorial Video" name="tutorialVideoButton" class="mainButton" />
+                <engine:VisualElement name="tutorialVideoContainer">
+                    <engine:Instance template="VideoTemplate" />
+                </engine:VisualElement>
+                <engine:Label text="NOTE: The Tool is based on the Tutorial but I have built upon it adding more features and refactored code, so the final code does not 100% match the tutorial code. But the video is still great to get a general understanding for how it works." name="noteLabel" style="font-size: 10px; -unity-font-style: italic; white-space: normal; -unity-text-align: upper-center; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="relatedVideos" style="flex-grow: 1;">
+                <engine:Label text="RELATED VIDEOS" style="-unity-font-style: bold; -unity-text-align: upper-center;" />
+                <engine:VisualElement name="relatedVideosContainer" style="flex-grow: 1; flex-wrap: wrap;" />
+            </engine:VisualElement>
+        </engine:ScrollView>
+    </engine:VisualElement>
+</engine:UXML>
