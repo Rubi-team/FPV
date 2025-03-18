@@ -1,64 +1,76 @@
 using FPV.Runtime.Shared;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.Serialization;
+using UnityEngine.UIElements;
 
 namespace FPV
 {
     internal class MainMenuView : View<MetagameApplication>
     {
-        [Header("MainMenu Elements")]
-        [SerializeField] private TMP_Text titleLabel;
-        [SerializeField] private TMP_InputField codeTextField;
-        [SerializeField] private Button createRelayButton;
-        [SerializeField] private Button singlePlayerButton;
-        [SerializeField] private Button quitButton;
-        
+        private Label titleLabel;
+        private TextField codeTextField;
+        private Button createRelayButton;
+        private Button singlePlayerButton;
+        private Button quitButton;
+        private VisualElement m_Root;
 
-        void OnEnable()
+
+        private void OnEnable()
         {
-            createRelayButton.onClick.AddListener(OnClickCreateRelay);
-            singlePlayerButton.onClick.AddListener(OnClickStartSinglePlayer);
-            codeTextField.onSubmit.AddListener(OnCodeInputFieldSubmitted);
-            quitButton.onClick.AddListener(OnClickQuit);
-            
+            var uiDocument = GetComponent<UIDocument>();
+            m_Root = uiDocument.rootVisualElement;
+
+            titleLabel = m_Root.Query<Label>("titleLabel");
             titleLabel.text = CONSTANTS.GAME_NAME;
-            
-        }
-        
-        void OnDisable()
-        {
-            createRelayButton.onClick.RemoveListener(OnClickCreateRelay);
-            singlePlayerButton.onClick.RemoveListener(OnClickStartSinglePlayer);
-            codeTextField.onEndEdit.RemoveListener(OnCodeInputFieldSubmitted);
-            quitButton.onClick.RemoveListener(OnClickQuit);
-        }
-        
-        void OnCodeInputFieldSubmitted(string input)
-        {
-            if (string.IsNullOrEmpty(input) || input.Length != 6)
-                return;
 
-            //console.Log("Broadcasting JoinRelayEvent with code: " + input);
-            Broadcast(new JoinRelayEvent(input));
-            EnableButtonsAndInputField(false);
+            codeTextField = m_Root.Query<TextField>("codeTextField");
+            codeTextField.RegisterCallback<KeyDownEvent>(OnCodeInputFieldSubmitted);
+
+            createRelayButton = m_Root.Query<Button>("createRelayButton");
+            createRelayButton.RegisterCallback<ClickEvent>(OnClickCreateRelay);
+
+            singlePlayerButton = m_Root.Query<Button>("singlePlayerButton");
+            singlePlayerButton.RegisterCallback<ClickEvent>(OnClickStartSinglePlayer);
+
+            quitButton = m_Root.Query<Button>("quitButton");
+            quitButton.RegisterCallback<ClickEvent>(OnClickQuit);
         }
 
-        
-        void OnClickCreateRelay()
+        private void OnDisable()
+        {
+            codeTextField.UnregisterCallback<KeyDownEvent>(OnCodeInputFieldSubmitted);
+            createRelayButton.UnregisterCallback<ClickEvent>(OnClickCreateRelay);
+            singlePlayerButton.UnregisterCallback<ClickEvent>(OnClickStartSinglePlayer);
+            quitButton.UnregisterCallback<ClickEvent>(OnClickQuit);
+        }
+
+        private void OnCodeInputFieldSubmitted(KeyDownEvent evt)
+        {
+            if (evt.keyCode == KeyCode.Return || evt.keyCode == KeyCode.KeypadEnter)
+            {
+                var input = codeTextField.value;
+                if (string.IsNullOrEmpty(input) || input.Length != 6)
+                    return;
+
+                // console.Log("Broadcasting JoinRelayEvent with code: " + input);
+                Broadcast(new JoinRelayEvent(input));
+                EnableButtonsAndInputField(false);
+            }
+        }
+
+
+        private void OnClickCreateRelay(ClickEvent evt)
         {
             //console?.Log("Broadcasting CreateRelayEvent");
             Broadcast(new CreateRelayEvent());
         }
-        
 
-        void OnClickStartSinglePlayer()
+
+        private void OnClickStartSinglePlayer(ClickEvent evt)
         {
             Broadcast(new StartSinglePlayerModeEvent());
         }
 
-        void OnClickQuit()
+        private void OnClickQuit(ClickEvent evt)
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -66,18 +78,17 @@ namespace FPV
             UnityEngine.Application.Quit();
 #endif
         }
-        
+
         /// <summary>
         /// Enable or disable the buttons and input field
         /// </summary>
         /// <param name="enable"> true or false</param>
         internal void EnableButtonsAndInputField(bool enable)
         {
-            createRelayButton.interactable = enable;
-            singlePlayerButton.interactable = enable;
-            codeTextField.interactable = enable;
-            quitButton.interactable = enable;
+            codeTextField.SetEnabled(enable);
+            createRelayButton.SetEnabled(enable);
+            singlePlayerButton.SetEnabled(enable);
+            quitButton.SetEnabled(enable);
         }
-
     }
 }

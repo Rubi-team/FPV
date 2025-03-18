@@ -1,0 +1,10 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/FPV/06_UIToolkit/USS/MainMenuStyles.uss?fileID=7433441132597879392&amp;guid=43706f155c4063349b8253d03ca7bdce&amp;type=3#MainMenuStyles" />
+    <engine:VisualElement name="Container" style="flex-grow: 1;">
+        <engine:Label text="Game Name" name="titleLabel" class="header" style="font-size: 120px; -unity-text-align: upper-center;" />
+        <engine:TextField placeholder-text="Enter Code..." name="codeTextField" max-length="6" class="inputField" style="padding-top: 150px;" />
+        <engine:Button text="Create Relay" name="createRelayButton" class="button" style="transition-duration: 0.3s; transition-delay: 0s;" />
+        <engine:Button text="Start Solo" name="singlePlayerButton" class="button" style="transition-duration: 0.3s; transition-delay: 0s;" />
+        <engine:Button text="Quit&#10;" name="quitButton" class="button" style="transition-duration: 0.3s; transition-delay: 0s;" />
+    </engine:VisualElement>
+</engine:UXML>
