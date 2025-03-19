@@ -72,11 +72,7 @@ namespace FPV
 
         private void OnClickQuit(ClickEvent evt)
         {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            UnityEngine.Application.Quit();
-#endif
+            Broadcast(new ApplicationQuitEvent());
         }
 
         /// <summary>
