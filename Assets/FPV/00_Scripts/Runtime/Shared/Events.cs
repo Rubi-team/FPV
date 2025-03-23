@@ -1,4 +1,4 @@
-﻿namespace FPV
+﻿namespace FPV.Runtime.Shared
 {
     /// <summary>
     /// Called when a match is entered (I.E: after matchmaking finds enough players)

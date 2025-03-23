@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace FPV
+namespace FPV.runtime.Shared
 {
     ///<summary>
     /// A collection of Coroutines Helpers

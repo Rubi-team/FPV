@@ -1,7 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace FPV.Shared
+namespace FPV.Runtime.Shared
 {
     /// <summary>
     /// Manages the connection requests of players
