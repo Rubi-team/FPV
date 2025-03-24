@@ -132,7 +132,7 @@ namespace FPV.Runtime.Shared
                 StartClientWithMatchmakerData();
             }
 
-            /*var commandLineArgumentsParser = new CommandLineArgumentsParser();
+            var commandLineArgumentsParser = new CommandLineArgumentsParser();
             var listeningPort = commandLineArgumentsParser.ServerPort != -1
                 ? (ushort)commandLineArgumentsParser.ServerPort
                 : (ushort)Configuration.GetInt(ConfigurationManager.k_Port);
@@ -142,7 +142,7 @@ namespace FPV.Runtime.Shared
                 return;
             }
 
-            if (AutoConnectOnStartup) AutoConnect(listeningPort);*/
+            if (AutoConnectOnStartup) AutoConnect(listeningPort);
         }
 
         private void StartClientAsSinglePlayer(ushort listeningPort)
@@ -301,10 +301,12 @@ namespace FPV.Runtime.Shared
             Debug.Log($"Client {ClientId} disconnected");
             if (IsServer)
             {
-                /*ReadyPlayers.RemoveWhere(p =>
+                ReadyPlayers.RemoveWhere(p =>
                     p.NetworkObject == m_NetworkManager.ConnectedClients[ClientId].PlayerObject);
                 if (GameApplication.Instance) //the game already started
-                    GameApplication.Instance.Broadcast(new PlayerDisconnected(ClientId));*/
+                {
+                    //GameApplication.Instance.Broadcast(new PlayerDisconnected(ClientId));
+                }
             }
         }
 

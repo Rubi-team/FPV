@@ -4377,36 +4377,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d1bc5515e3ab954e80599c538834774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Capsule: {fileID: 218902871}
-  CapsuleRadius: 0.5
-  CapsuleHeight: 2
-  CapsuleYOffset: 1
-  CapsulePhysicsMaterial: {fileID: 0}
-  GroundDetectionExtraDistance: 0
-  MaxStableSlopeAngle: 60
-  StableGroundLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  DiscreteCollisionEvents: 0
-  StepHandling: 1
-  MaxStepHeight: 0.5
-  AllowSteppingWithoutStableGrounding: 0
-  MinRequiredStepDepth: 0.1
-  LedgeAndDenivelationHandling: 1
-  MaxStableDistanceFromLedge: 0.5
-  MaxVelocityForLedgeSnap: 0
-  MaxStableDenivelationAngle: 180
-  InteractiveRigidbodyHandling: 1
-  RigidbodyInteractionType: 0
-  SimulatedCharacterMass: 0.2
-  PreserveAttachedRigidbodyMomentum: 1
-  HasPlanarConstraint: 0
-  PlanarConstraintAxis: {x: 0, y: 0, z: 1}
-  MaxMovementIterations: 5
-  MaxDecollisionIterations: 1
-  CheckMovementInitialOverlaps: 1
-  KillVelocityWhenExceedMaxMovementIterations: 1
-  KillRemainingMovementWhenExceedMaxMovementIterations: 1
 --- !u!114 &218902870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4419,26 +4389,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76020eee813ed7844bcea94c5d5ce76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Motor: {fileID: 218902869}
-  MaxStableMoveSpeed: 10
-  StableMovementSharpness: 15
-  OrientationSharpness: 10
-  OrientationMethod: 0
-  MaxAirMoveSpeed: 15
-  AirAccelerationSpeed: 30
-  Drag: 0.1
-  AllowJumpingWhenSliding: 0
-  JumpUpSpeed: 10
-  JumpScalableForwardSpeed: 10
-  JumpPreGroundingGraceTime: 0
-  JumpPostGroundingGraceTime: 0
-  IgnoredColliders: []
-  BonusOrientationMethod: 0
-  BonusOrientationSharpness: 10
-  Gravity: {x: 0, y: -30, z: 0}
-  MeshRoot: {fileID: 218902876}
-  CameraFollowPoint: {fileID: 218902876}
-  CrouchedCapsuleHeight: 1
 --- !u!136 &218902871
 CapsuleCollider:
   m_ObjectHideFlags: 8
@@ -7531,8 +7481,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 341945096}
-  MoveWithPhysics: 1
 --- !u!54 &341945096
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7593,15 +7541,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 341945095}
-  TranslationAxis: {x: 0, y: 1, z: 0}
-  TranslationPeriod: 4.9
-  TranslationSpeed: 2
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 0
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!1 &343322204
 GameObject:
   m_ObjectHideFlags: 0
@@ -7758,15 +7697,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 346516971}
-  TranslationAxis: {x: 0, y: 0, z: -1}
-  TranslationPeriod: 4.9
-  TranslationSpeed: 4
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 0
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!114 &346516971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7779,8 +7709,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 346516972}
-  MoveWithPhysics: 1
 --- !u!54 &346516972
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8551,8 +8479,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a743ceeddb93f0e4981433a18d793f00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToLaunch: {fileID: 54846240724770978, guid: 10c808cfbee7a32428c98c49e3fd5643, type: 3}
-  Force: 10
 --- !u!1001 &380293906
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8671,8 +8597,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 381997469}
-  MoveWithPhysics: 1
 --- !u!54 &381997469
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8733,15 +8657,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 381997468}
-  TranslationAxis: {x: 0, y: 1, z: 1}
-  TranslationPeriod: 7
-  TranslationSpeed: 1
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 30
-  OscillationAxis: {x: 1, y: 0, z: 1}
-  OscillationPeriod: 30
-  OscillationSpeed: 3
 --- !u!1 &406111820
 GameObject:
   m_ObjectHideFlags: 0
@@ -8789,7 +8704,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b74e337ef86d944adf66d1906f11e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeleportTo: {fileID: 889958838}
 --- !u!54 &406111823
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9943,7 +9857,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b74e337ef86d944adf66d1906f11e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeleportTo: {fileID: 1887326114}
 --- !u!54 &454696773
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -19839,15 +19752,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 775395789}
-  TranslationAxis: {x: 0, y: 0, z: 1}
-  TranslationPeriod: 4.9
-  TranslationSpeed: 1
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 0
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!114 &775395789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19860,8 +19764,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 775395790}
-  MoveWithPhysics: 1
 --- !u!54 &775395790
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -21684,26 +21586,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76020eee813ed7844bcea94c5d5ce76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Motor: {fileID: 846437975}
-  MaxStableMoveSpeed: 10
-  StableMovementSharpness: 15
-  OrientationSharpness: 10
-  OrientationMethod: 0
-  MaxAirMoveSpeed: 15
-  AirAccelerationSpeed: 30
-  Drag: 0.1
-  AllowJumpingWhenSliding: 0
-  JumpUpSpeed: 10
-  JumpScalableForwardSpeed: 10
-  JumpPreGroundingGraceTime: 0
-  JumpPostGroundingGraceTime: 0
-  IgnoredColliders: []
-  BonusOrientationMethod: 0
-  BonusOrientationSharpness: 10
-  Gravity: {x: 0, y: -30, z: 0}
-  MeshRoot: {fileID: 846437982}
-  CameraFollowPoint: {fileID: 846437982}
-  CrouchedCapsuleHeight: 1
 --- !u!136 &846437973
 CapsuleCollider:
   m_ObjectHideFlags: 8
@@ -21739,36 +21621,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d1bc5515e3ab954e80599c538834774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Capsule: {fileID: 846437973}
-  CapsuleRadius: 0.5
-  CapsuleHeight: 2
-  CapsuleYOffset: 1
-  CapsulePhysicsMaterial: {fileID: 0}
-  GroundDetectionExtraDistance: 0
-  MaxStableSlopeAngle: 60
-  StableGroundLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  DiscreteCollisionEvents: 0
-  StepHandling: 1
-  MaxStepHeight: 0.5
-  AllowSteppingWithoutStableGrounding: 0
-  MinRequiredStepDepth: 0.1
-  LedgeAndDenivelationHandling: 1
-  MaxStableDistanceFromLedge: 0.5
-  MaxVelocityForLedgeSnap: 0
-  MaxStableDenivelationAngle: 180
-  InteractiveRigidbodyHandling: 1
-  RigidbodyInteractionType: 0
-  SimulatedCharacterMass: 0.2
-  PreserveAttachedRigidbodyMomentum: 1
-  HasPlanarConstraint: 0
-  PlanarConstraintAxis: {x: 0, y: 0, z: 1}
-  MaxMovementIterations: 5
-  MaxDecollisionIterations: 1
-  CheckMovementInitialOverlaps: 1
-  KillVelocityWhenExceedMaxMovementIterations: 1
-  KillRemainingMovementWhenExceedMaxMovementIterations: 1
 --- !u!23 &846437976
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -22526,8 +22378,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 866391855}
-  MoveWithPhysics: 1
 --- !u!54 &866391855
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -22588,15 +22438,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 866391854}
-  TranslationAxis: {x: 0, y: 1, z: -2}
-  TranslationPeriod: 8
-  TranslationSpeed: 2
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 200
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!1 &867377790
 GameObject:
   m_ObjectHideFlags: 0
@@ -22829,7 +22670,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b74e337ef86d944adf66d1906f11e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeleportTo: {fileID: 0}
 --- !u!1 &891357318
 GameObject:
   m_ObjectHideFlags: 0
@@ -25357,7 +25197,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b74e337ef86d944adf66d1906f11e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeleportTo: {fileID: 1675296445}
 --- !u!1 &1000455065
 GameObject:
   m_ObjectHideFlags: 0
@@ -27050,8 +26889,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a743ceeddb93f0e4981433a18d793f00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToLaunch: {fileID: 54846240724770978, guid: 10c808cfbee7a32428c98c49e3fd5643, type: 3}
-  Force: 10
 --- !u!1 &1078244168
 GameObject:
   m_ObjectHideFlags: 0
@@ -28887,8 +28724,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 1155763351}
-  MoveWithPhysics: 1
 --- !u!54 &1155763351
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -28949,15 +28784,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 1155763350}
-  TranslationAxis: {x: 0, y: 0, z: 1}
-  TranslationPeriod: 4.9
-  TranslationSpeed: 1
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 0
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!1 &1156801850
 GameObject:
   m_ObjectHideFlags: 0
@@ -29836,8 +29662,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 1200780806}
-  MoveWithPhysics: 1
 --- !u!54 &1200780806
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -29898,15 +29722,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 1200780805}
-  TranslationAxis: {x: 0, y: 1, z: 0}
-  TranslationPeriod: 4.9
-  TranslationSpeed: 2
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 100
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!1001 &1208282750
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32212,15 +32027,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 1350603593}
-  TranslationAxis: {x: 0, y: 0, z: 1}
-  TranslationPeriod: 4.9
-  TranslationSpeed: 4
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 0
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!114 &1350603593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32233,8 +32039,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 1350603594}
-  MoveWithPhysics: 1
 --- !u!54 &1350603594
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -38861,7 +38665,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b74e337ef86d944adf66d1906f11e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeleportTo: {fileID: 996359860}
 --- !u!54 &1675296446
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -42940,9 +42743,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 160d994062e8fe6418c50c339a9e34e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 1852388625}
-  Speed: 0.3
-  Director: {fileID: 1852388622}
 --- !u!95 &1852388624
 Animator:
   serializedVersion: 7
@@ -42977,8 +42777,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 1852388626}
-  MoveWithPhysics: 1
 --- !u!54 &1852388626
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -44055,7 +43853,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b74e337ef86d944adf66d1906f11e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeleportTo: {fileID: 454696772}
 --- !u!54 &1887326115
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -45451,11 +45248,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3414c4d01b68ef43aa3339915fd4001, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementPeriod: 2
-  Characters:
-  - {fileID: 846437972}
-  - {fileID: 218902870}
-  - {fileID: 2140252332}
 --- !u!1 &1973414387
 GameObject:
   m_ObjectHideFlags: 0
@@ -47523,15 +47315,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 2067384865}
-  TranslationAxis: {x: 0, y: 0, z: 1}
-  TranslationPeriod: 4.9
-  TranslationSpeed: 1
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 0
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!114 &2067384865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47544,8 +47327,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 2067384866}
-  MoveWithPhysics: 1
 --- !u!54 &2067384866
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -48074,8 +47855,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 2080766212}
-  MoveWithPhysics: 1
 --- !u!54 &2080766212
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -48136,15 +47915,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 2080766211}
-  TranslationAxis: {x: 0, y: 1, z: 0}
-  TranslationPeriod: 4
-  TranslationSpeed: 2
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 100
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!1 &2099376744
 GameObject:
   m_ObjectHideFlags: 0
@@ -48477,8 +48247,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075ccbe9837b0744985e09ba3f015b9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 2114474595}
-  MoveWithPhysics: 1
 --- !u!54 &2114474595
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -48539,15 +48307,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7edc6957dab9ac4797c1c0912ce3839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 2114474594}
-  TranslationAxis: {x: 0, y: 0, z: 1}
-  TranslationPeriod: 4.9
-  TranslationSpeed: 1
-  RotationAxis: {x: 0, y: 1, z: 0}
-  RotSpeed: 100
-  OscillationAxis: {x: 0, y: 0, z: 0}
-  OscillationPeriod: 10
-  OscillationSpeed: 10
 --- !u!1 &2114747771
 GameObject:
   m_ObjectHideFlags: 0
@@ -49613,26 +49372,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76020eee813ed7844bcea94c5d5ce76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Motor: {fileID: 2140252335}
-  MaxStableMoveSpeed: 10
-  StableMovementSharpness: 15
-  OrientationSharpness: 10
-  OrientationMethod: 0
-  MaxAirMoveSpeed: 15
-  AirAccelerationSpeed: 30
-  Drag: 0.1
-  AllowJumpingWhenSliding: 0
-  JumpUpSpeed: 10
-  JumpScalableForwardSpeed: 10
-  JumpPreGroundingGraceTime: 0
-  JumpPostGroundingGraceTime: 0
-  IgnoredColliders: []
-  BonusOrientationMethod: 0
-  BonusOrientationSharpness: 10
-  Gravity: {x: 0, y: -30, z: 0}
-  MeshRoot: {fileID: 2140252326}
-  CameraFollowPoint: {fileID: 2140252326}
-  CrouchedCapsuleHeight: 1
 --- !u!136 &2140252333
 CapsuleCollider:
   m_ObjectHideFlags: 8
@@ -49668,36 +49407,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d1bc5515e3ab954e80599c538834774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Capsule: {fileID: 2140252333}
-  CapsuleRadius: 0.5
-  CapsuleHeight: 2
-  CapsuleYOffset: 1
-  CapsulePhysicsMaterial: {fileID: 0}
-  GroundDetectionExtraDistance: 0
-  MaxStableSlopeAngle: 60
-  StableGroundLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  DiscreteCollisionEvents: 0
-  StepHandling: 1
-  MaxStepHeight: 0.5
-  AllowSteppingWithoutStableGrounding: 0
-  MinRequiredStepDepth: 0.1
-  LedgeAndDenivelationHandling: 1
-  MaxStableDistanceFromLedge: 0.5
-  MaxVelocityForLedgeSnap: 0
-  MaxStableDenivelationAngle: 180
-  InteractiveRigidbodyHandling: 1
-  RigidbodyInteractionType: 0
-  SimulatedCharacterMass: 0.2
-  PreserveAttachedRigidbodyMomentum: 1
-  HasPlanarConstraint: 0
-  PlanarConstraintAxis: {x: 0, y: 0, z: 1}
-  MaxMovementIterations: 5
-  MaxDecollisionIterations: 1
-  CheckMovementInitialOverlaps: 1
-  KillVelocityWhenExceedMaxMovementIterations: 1
-  KillRemainingMovementWhenExceedMaxMovementIterations: 1
 --- !u!1 &2140252344
 GameObject:
   m_ObjectHideFlags: 0
@@ -50157,9 +49866,67 @@ PrefabInstance:
       addedObject: {fileID: 1930765196}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e96dc83c089f6f45b8c66937f146f0c, type: 3}
+--- !u!1001 &6960882847784138258
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 22.210217
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -8.786317
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 23.948788
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649506508523891277, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7350549273598936613, guid: 6784685b40f73414e846935dd324e120, type: 3}
+      propertyPath: m_Name
+      value: NestedParent_Unpack
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6784685b40f73414e846935dd324e120, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 6048284282620788166}
   - {fileID: 1870690903}
+  - {fileID: 6960882847784138258}

@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,9 +6,9 @@ namespace FPV
 {
     internal class MainMenuController : Controller<MetagameApplication>
     {
-        MainMenuView View => App.View.MainMenu;
+        private MainMenuView View => App.View.MainMenu;
 
-        void Awake()
+        private void Awake()
         {
             AddListener<MatchLoadingEvent>(OnMatchLoading);
             AddListener<StartSinglePlayerModeEvent>(OnStartSinglePlayerMode);
@@ -15,7 +16,7 @@ namespace FPV
             AddListener<JoinRelayEvent>(JoinRelay);
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             RemoveListeners();
         }
@@ -26,34 +27,36 @@ namespace FPV
             RemoveListener<StartSinglePlayerModeEvent>(OnStartSinglePlayerMode);
         }
 
-        void OnMatchLoading(MatchLoadingEvent evt)
+        private void OnMatchLoading(MatchLoadingEvent evt)
         {
             View.Hide();
             //App.View.LoadingScreen.Show();
         }
 
-        async void OnStartSinglePlayerMode(StartSinglePlayerModeEvent evt)
+        private async void OnStartSinglePlayerMode(StartSinglePlayerModeEvent evt)
         {
             View.EnableButtonsAndInputField(false);
             await SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
+            NetworkManager.Singleton.StartHost();
             View.Hide();
-            
         }
-        
-        
+
+
         //TODO maybe Refact en vrai jpense pas mais a check
-        async void CreateRelay(CreateRelayEvent evt)
+        private async void CreateRelay(CreateRelayEvent evt)
         {
+            await SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
             await RelayManager.CreateRelayAsync();
             // TODO: Add Loading Screen
             View.Hide();
         }
-        
-        async void JoinRelay(JoinRelayEvent evt)
+
+        private async void JoinRelay(JoinRelayEvent evt)
         {
+            View.EnableButtonsAndInputField(false);
+            //TODO: Handle Error 
             await RelayManager.JoinRelayAsync(evt.RelayId);
             View.Hide();
         }
-        
     }
 }
