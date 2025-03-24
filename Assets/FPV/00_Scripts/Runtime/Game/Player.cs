@@ -6,7 +6,13 @@ namespace FPV.Runtime
 {
     internal class Player : NetworkBehaviour
     {
-        [ClientRpc]
+        [Header("Player GameObjects")] [SerializeField]
+        private NetworkObject playerPrefab;
+
+        [SerializeField] private GameObject playerCameraPrefab;
+
+
+        [Rpc(SendTo.Everyone)]
         internal void OnClientPrepareGameClientRpc()
         {
             if (!IsLocalPlayer) return;
@@ -20,8 +26,18 @@ namespace FPV.Runtime
         internal void OnClientReadyToStart()
         {
             Debug.Log("[Local client] Notifying server I'm ready");
+            SpawnPlayerServerRpc(OwnerClientId);
             OnServerNotifiedOfClientReadinessServerRpc();
         }
+
+        [Rpc(SendTo.Server)]
+        private void SpawnPlayerServerRpc(ulong clientId)
+        {
+            var PlayerObj = NetworkManager.SpawnManager.InstantiateAndSpawn(playerPrefab, clientId, true, true);
+            if (PlayerObj.TrySetParent(GetComponent<NetworkObject>()) == false)
+                Console.LogError("Network", "Failed to set parent");
+        }
+
 
         [ServerRpc]
         internal void OnServerNotifiedOfClientReadinessServerRpc()

@@ -1,3 +1,4 @@
+using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -36,17 +37,15 @@ namespace FPV
         private async void OnStartSinglePlayerMode(StartSinglePlayerModeEvent evt)
         {
             View.EnableButtonsAndInputField(false);
-            await SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
+            await SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
             NetworkManager.Singleton.StartHost();
             View.Hide();
         }
 
-
-        //TODO maybe Refact en vrai jpense pas mais a check
+        
         private async void CreateRelay(CreateRelayEvent evt)
         {
-            await SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
-            await RelayManager.CreateRelayAsync();
+            await CustomNetworkManager.Singleton.InitializeNetworkLogic(true);
             // TODO: Add Loading Screen
             View.Hide();
         }
@@ -54,8 +53,8 @@ namespace FPV
         private async void JoinRelay(JoinRelayEvent evt)
         {
             View.EnableButtonsAndInputField(false);
-            //TODO: Handle Error 
-            await RelayManager.JoinRelayAsync(evt.RelayId);
+            //TODO: Handle Error and add Loading Screen
+            await CustomNetworkManager.Singleton.InitializeNetworkLogic(false, evt.RelayId);
             View.Hide();
         }
     }

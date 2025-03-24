@@ -1,6 +1,7 @@
-using FPV.Runtime.Shared;
+using FMOD;
 using UnityEngine;
 using UnityEngine.UIElements;
+using FPV.Shared;
 
 namespace FPV
 {
@@ -20,7 +21,7 @@ namespace FPV
             m_Root = uiDocument.rootVisualElement;
 
             titleLabel = m_Root.Query<Label>("titleLabel");
-            titleLabel.text = CONSTANTS.GAME_NAME;
+            titleLabel.text = FPV_CONSTANTS.GAME_NAME;
 
             codeTextField = m_Root.Query<TextField>("codeTextField");
             codeTextField.RegisterCallback<KeyDownEvent>(OnCodeInputFieldSubmitted);

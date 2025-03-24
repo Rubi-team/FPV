@@ -24,21 +24,8 @@ namespace FPV
         {
             if (Instance && Instance != this) return;
             Instance = this;
-            //CustomNetworkManager.OnConfigurationLoaded += OnConfigurationLoaded;
         }
-
-        /*void OnConfigurationLoaded()
-        {
-            CustomNetworkManager.OnConfigurationLoaded -= OnConfigurationLoaded;
-            OnConfigurationLoaded(CustomNetworkManager.Configuration);
-        }
-
-        async void OnConfigurationLoaded(ConfigurationManager configuration)
-        {
-            Debug.Log($"Configuration loaded: {configuration}");
-            await Initialize(configuration.GetMultiplayerRole() == Unity.Multiplayer.MultiplayerRoleFlags.Server ? k_ServerID
-                                                                                                                 : string.Empty);
-        }*/
+        
 
         public async Task Initialize(string externalPlayerID)
         {
@@ -62,6 +49,7 @@ namespace FPV
 
         private void InitializeClientOnlyServices()
         {
+            
         }
     }
 }

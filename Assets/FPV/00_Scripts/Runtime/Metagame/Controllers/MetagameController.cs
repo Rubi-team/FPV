@@ -1,4 +1,5 @@
 ﻿using FPV.Runtime.Shared;
+using FPV.Shared;
 using UnityEngine;
 
 namespace FPV
@@ -29,7 +30,13 @@ namespace FPV
         private void OnPlayerSignedIn(PlayerSignedIn evt)
         {
             if (evt.Success)
+            {
                 Debug.Log($"Player signed in with id {evt.PlayerId}");
+                if (FPV_CONSTANTS.AUTO_CONNECT)
+                {
+                    CustomNetworkManager.Singleton.AutoConnect();
+                }
+            }
             else
                 Debug.Log("Player did not sign in");
         }
@@ -45,7 +52,8 @@ namespace FPV
                 App.View.transform.GetChild(i).gameObject.SetActive(false);
             App.OnReturnToMetagameAfterMatch -= OnReturnToMetagameAfterMatch;
             App.OnReturnToMetagameAfterMatch += OnReturnToMetagameAfterMatch;
-            //CustomNetworkManager.Singleton.ReturnToMetagame = App.CallOnReturnToMetagameAfterMatch; TODO ADD THIS FUNCTION
+            
+            CustomNetworkManager.Singleton.ReturnToMetagame = App.CallOnReturnToMetagameAfterMatch;
         }
 
         private void OnReturnToMetagameAfterMatch()
@@ -57,9 +65,6 @@ namespace FPV
         {
             for (var i = 0; i < App.View.transform.childCount; i++)
                 App.View.transform.GetChild(i).gameObject.SetActive(true);
-            /*App.View.Matchmaker.Hide();
-            App.View.LoadingScreen.Hide();
-            App.View.MainMenu.DisableControlsUnsupportedInAutoconnectMode();*/
         }
 
         private void ApplicationQuit(ApplicationQuitEvent evt)

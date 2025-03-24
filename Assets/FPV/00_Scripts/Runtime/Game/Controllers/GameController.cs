@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Linq;
+using FPV.Runtime;
+using FPV.runtime.Shared;
+using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,7 +13,7 @@ namespace FPV
     /// </summary>
     public class GameController : Controller<GameApplication>
     {
-        /*GameModel Model => App.Model;
+        GameModel Model => App.Model;
         Coroutine m_CountdownRoutine;
 
         void Awake()
@@ -76,7 +79,7 @@ namespace FPV
             while (Model.CountdownValue > 0
             && !Model.MatchEnded)
             {
-                yield return CoroutinesHelper.OneSecond;
+                yield return BetterCoroutines.OneSecond;
                 Model.CountdownValue--;
             }
 
@@ -116,12 +119,6 @@ namespace FPV
             {
                 CustomNetworkManager.Singleton.OnServerQuitAfter(5);
             }
-        }*/
-
-
-        internal override void RemoveListeners()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

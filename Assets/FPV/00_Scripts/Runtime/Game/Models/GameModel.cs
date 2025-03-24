@@ -1,3 +1,6 @@
+using FPV.Editor;
+using FPV.Runtime.Shared;
+using FPV.Shared;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,37 +11,37 @@ namespace FPV
     /// </summary>
     public class GameModel : Model<GameApplication>
     {
-        /*internal bool AllowReconnection => CustomNetworkManager.Configuration.GetBool(ConfigurationManager.k_AllowReconnection);
+        internal bool AllowReconnection => FPV_CONSTANTS.ALLOW_RECONNECTION;
 
-        [SerializeField]
-        MatchDataSynchronizer matchDataSnchronizerPrefab;
+        [SerializeField] private MatchDataSynchronizer matchDataSnchronizerPrefab;
         internal MatchDataSynchronizer matchDataSynchronizer;
         internal const uint k_CountdownStartValue = 60;
+
         internal uint CountdownValue
         {
-            get { return matchDataSynchronizer.MatchCountdown.Value; }
-            set { matchDataSynchronizer.MatchCountdown.Value = value; }
+            get => matchDataSynchronizer.MatchCountdown.Value;
+            set => matchDataSynchronizer.MatchCountdown.Value = value;
         }
 
         internal bool MatchEnded
         {
-            get { return matchDataSynchronizer.MatchEnded.Value; }
-            set { matchDataSynchronizer.MatchEnded.Value = value; }
+            get => matchDataSynchronizer.MatchEnded.Value;
+            set => matchDataSynchronizer.MatchEnded.Value = value;
         }
 
         internal bool MatchStarted
         {
-            get { return matchDataSynchronizer.MatchStarted.Value; }
-            set { matchDataSynchronizer.MatchStarted.Value = value; }
+            get => matchDataSynchronizer.MatchStarted.Value;
+            set => matchDataSynchronizer.MatchStarted.Value = value;
         }
 
-        void Awake()
+        private void Awake()
         {
-            if (CustomNetworkManager.Singleton.IsServer)
+            if (CustomNetworkManager.Singleton.IsHost)
             {
                 matchDataSynchronizer = Instantiate(matchDataSnchronizerPrefab);
                 matchDataSynchronizer.GetComponent<NetworkObject>().Spawn();
             }
-        }*/
+        }
     }
 }
