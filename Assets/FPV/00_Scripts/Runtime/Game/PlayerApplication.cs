@@ -20,6 +20,17 @@ namespace FPV
             Debug.Log("PlayerApplication initialized for the local player.");
         }
 
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+
+            if (!IsOwner)
+            {
+                Controller.enabled = false;
+                View.Hide();
+            }
+        }
+
         [Rpc(SendTo.Everyone)]
         internal void OnClientPrepareGameClientRpc()
         {

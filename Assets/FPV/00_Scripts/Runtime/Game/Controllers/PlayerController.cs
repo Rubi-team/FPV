@@ -94,11 +94,6 @@ namespace FPV
             }
         }
 
-        private void Awake()
-        {
-            // get a reference to our main camera
-            if (_mainCamera == null) _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        }
 
         private void Start()
         {
@@ -113,14 +108,22 @@ namespace FPV
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+
+            if (!App.IsOwner)
+            {
+                _controller.enabled = false;
+                _playerInput.enabled = false;
+                inputController.enabled = false;
+            }
         }
 
         private void OnEnable()
         {
-            if (!IsOwner)
+            if (!App.IsOwner)
             {
-                enabled = false;
-                return;
+                if (_controller) _controller.enabled = false;
+                if (_playerInput) _playerInput.enabled = false;
+                if (inputController) inputController.enabled = false;
             }
         }
 

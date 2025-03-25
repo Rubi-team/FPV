@@ -1,4 +1,6 @@
+using System;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace FPV
 {
@@ -14,6 +16,12 @@ namespace FPV
         {
             base.Awake();
             Instance = this;
+        }
+
+        protected void OnApplicationFocus(bool hasFocus)
+        {
+            //lock cursor when the game is focused
+            Cursor.lockState = hasFocus ? CursorLockMode.Locked : CursorLockMode.None;
         }
     }
 }
