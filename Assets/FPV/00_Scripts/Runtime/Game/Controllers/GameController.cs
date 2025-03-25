@@ -47,8 +47,8 @@ namespace FPV
                 NetworkClient firstClientStillConnected = NetworkManager.Singleton.ConnectedClients.Where(cc => cc.Key != evt.ClientId)
                                                                                                    .Select(v => v.Value)
                                                                                                    .FirstOrDefault();
-                Player winner = firstClientStillConnected == null ? null
-                                                                  : firstClientStillConnected.PlayerObject.GetComponent<Player>();
+                PlayerApplication winner = firstClientStillConnected == null ? null
+                                                                  : firstClientStillConnected.PlayerObject.GetComponent<PlayerApplication>();
                 Broadcast(new EndMatchEvent(winner));
             }
         }

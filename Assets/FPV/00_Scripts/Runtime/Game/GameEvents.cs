@@ -16,9 +16,9 @@ namespace FPV
 
     internal class EndMatchEvent : AppEvent
     {
-        public Player Winner { get; private set; }
+        public PlayerApplication Winner { get; private set; }
 
-        public EndMatchEvent(Player winner)
+        public EndMatchEvent(PlayerApplication winner)
         {
             Winner = winner;
         }

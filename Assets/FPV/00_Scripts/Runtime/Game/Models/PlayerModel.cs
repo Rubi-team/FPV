@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 namespace FPV
 {
-    public class PlayerModel : Model<PlayerApplication>
+    public class PlayerModel : NetworkModel<PlayerApplication>
     {
     }
 }

@@ -39,7 +39,7 @@ namespace FPV.Runtime.Shared
         [SerializeField] private GameApplication m_GameAppPrefab;
         private GameApplication m_GameApp;
 
-        internal HashSet<Player> ReadyPlayers { get; private set; }
+        internal HashSet<PlayerApplication> ReadyPlayers { get; private set; }
         private NetworkManager m_NetworkManager;
 
         private void Awake()
@@ -51,8 +51,6 @@ namespace FPV.Runtime.Shared
             m_NetworkManager.OnClientConnectedCallback += OnClientConnected;
             m_NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
             m_NetworkManager.OnServerStarted += OnServerStarted;
-            
-            
         }
 
 
@@ -64,7 +62,7 @@ namespace FPV.Runtime.Shared
         public async Task<Task> InitializeNetworkLogic(bool createRelay, string relayCode = null)
         {
             if (IsClient || IsHost) m_NetworkManager.Shutdown(true);
-            
+
 
             ExpectedPlayers = FPV_CONSTANTS.MAX_PLAYERS;
 
@@ -83,7 +81,7 @@ namespace FPV.Runtime.Shared
                 await SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
                 m_NetworkManager.StartClient();
             }
-            
+
             return Task.CompletedTask;
         }
 
@@ -95,7 +93,7 @@ namespace FPV.Runtime.Shared
 
         private void OnServerStarted()
         {
-            ReadyPlayers = new HashSet<Player>();
+            ReadyPlayers = new HashSet<PlayerApplication>();
             m_PreparedGame = false;
         }
 
@@ -144,9 +142,9 @@ namespace FPV.Runtime.Shared
             if (m_NetworkManager.ConnectedClients.Count == ExpectedPlayers) OnHostPrepareGame();
         }
 
-        internal void OnServerPlayerIsReady(Player player)
+        internal void OnServerPlayerIsReady(PlayerApplication playerApplication)
         {
-            ReadyPlayers.Add(player);
+            ReadyPlayers.Add(playerApplication);
             if (ReadyPlayers.Count == ExpectedPlayers) OnServerGameReadyToStart();
         }
 
@@ -156,7 +154,7 @@ namespace FPV.Runtime.Shared
             m_PreparedGame = true;
             InstantiateGameApplication();
             foreach (var connectionToClient in m_NetworkManager.ConnectedClients.Values)
-                connectionToClient.PlayerObject.GetComponent<Player>().OnClientPrepareGameClientRpc();
+                connectionToClient.PlayerObject.GetComponent<PlayerApplication>().OnClientPrepareGameClientRpc();
         }
 
         internal void InstantiateGameApplication()
@@ -169,6 +167,18 @@ namespace FPV.Runtime.Shared
             m_GameApp.Broadcast(new StartMatchEvent(true, false));
             foreach (var player in ReadyPlayers) player.OnClientStartGameClientRpc();
             ReadyPlayers.Clear();
+        }
+
+        internal void SinglePlayerMode()
+        {
+            ExpectedPlayers = 1;
+            ChangeTransport();
+        }
+
+        internal void ChangeTransport()
+        {
+            var uTP = gameObject.AddComponent<UnityTransport>();
+            m_NetworkManager.NetworkConfig.NetworkTransport = uTP;
         }
 
         /// <summary>

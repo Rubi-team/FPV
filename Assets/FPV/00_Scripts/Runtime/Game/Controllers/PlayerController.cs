@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -9,7 +10,7 @@ namespace FPV
 #if ENABLE_INPUT_SYSTEM
     [RequireComponent(typeof(PlayerInput))]
 #endif
-    public class PlayerController : Controller<PlayerApplication>
+    public class PlayerController : NetworkController<PlayerApplication>
     {
         [Header("Player")] [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 4.0f;
@@ -26,7 +27,7 @@ namespace FPV
         [Space(10)] [Tooltip("The height the player can jump")]
         public float JumpHeight = 1.2f;
 
-        [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
+        [Tooltip("The character uses its own gravity value. Default is -9.81f")]
         public float Gravity = -15.0f;
 
         [Space(10)]
@@ -112,6 +113,15 @@ namespace FPV
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+        }
+
+        private void OnEnable()
+        {
+            if (!IsOwner)
+            {
+                enabled = false;
+                return;
+            }
         }
 
         private void Update()

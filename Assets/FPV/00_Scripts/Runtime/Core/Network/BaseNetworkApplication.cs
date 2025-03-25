@@ -6,63 +6,64 @@
     /// <typeparam name="M"></typeparam>
     /// <typeparam name="V"></typeparam>
     /// <typeparam name="C"></typeparam>
-    public class BaseApplication<M, V, C> : BaseApplication
-        where M : Element
-        where V : Element
-        where C : Element
+    public class BaseNetworkApplication<M, V, C> : BaseNetworkApplication
+        where M : NetworkElement
+        where V : NetworkElement
+        where C : NetworkElement
     {
-        internal new BaseApplication<M, V, C> Instance => (BaseApplication<M, V, C>)(object)base.Instance;
+        internal new BaseNetworkApplication<M, V, C> Instance => (BaseNetworkApplication<M, V, C>)(object)base.Instance;
 
         /// <summary>
         /// Model reference using the new type.
         /// </summary>
-        public new M Model => (M)(object)base.Model;
+        public M Model => (M)(object)NetworkModel;
 
         /// <summary>
         /// View reference using the new type.
         /// </summary>
-        public new V View => (V)(object)base.View;
+        public V View => (V)(object)NetworkView;
 
         /// <summary>
         /// Controller reference using the new type.
         /// </summary>
-        public new C Controller => (C)(object)base.Controller;
+        public C Controller => (C)(object)NetworkController;
     }
 
     /// <summary>
     /// Root class for the scene's scripts.
     /// </summary>
-    public class BaseApplication : Element
+    public class BaseNetworkApplication : NetworkElement
     {
-        internal BaseApplication Instance { get; private set; }
+        internal BaseNetworkApplication Instance { get; private set; }
 
         internal EventManager EventManager;
 
         /// <summary>
         /// Fetches the root Model instance.
         /// </summary>
-        internal Model Model => m_model = Find<Model>(m_model);
+        internal NetworkModel NetworkModel => mNetworkModel = Find<NetworkModel>(mNetworkModel);
 
-        private Model m_model;
+        private NetworkModel mNetworkModel;
 
         /// <summary>
         /// Fetches the root View instance.
         /// </summary>
-        internal View View => m_view = Find<View>(m_view);
+        internal NetworkView NetworkView => mNetworkView = Find<NetworkView>(mNetworkView);
 
-        private View m_view;
+        private NetworkView mNetworkView;
 
         /// <summary>
         /// Fetches the root Controller instance.
         /// </summary>
-        internal Controller Controller => m_controller = Find<Controller>(m_controller);
+        internal NetworkController NetworkController =>
+            mNetworkController = Find(mNetworkController);
 
-        private Controller m_controller;
+        private NetworkController mNetworkController;
 
         /// <summary>
         /// Initializes the BaseApplication
         /// </summary>
-        public BaseApplication()
+        public BaseNetworkApplication()
         {
             EventManager ??= new EventManager();
         }

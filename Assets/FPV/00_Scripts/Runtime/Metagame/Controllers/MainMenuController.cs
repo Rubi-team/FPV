@@ -36,13 +36,14 @@ namespace FPV
 
         private async void OnStartSinglePlayerMode(StartSinglePlayerModeEvent evt)
         {
+            CustomNetworkManager.Singleton.SinglePlayerMode();
             View.EnableButtonsAndInputField(false);
             await SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
             NetworkManager.Singleton.StartHost();
             View.Hide();
         }
 
-        
+
         private async void CreateRelay(CreateRelayEvent evt)
         {
             await CustomNetworkManager.Singleton.InitializeNetworkLogic(true);

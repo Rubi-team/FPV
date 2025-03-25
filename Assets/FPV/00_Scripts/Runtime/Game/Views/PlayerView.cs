@@ -2,7 +2,7 @@
 
 namespace FPV
 {
-    public class PlayerView : View<PlayerApplication>
+    public class PlayerView : NetworkView<PlayerApplication>
     {
     }
 }
