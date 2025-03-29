@@ -8,7 +8,9 @@
         "Unity.VisualScripting.Core.Editor",
         "Unity.VisualScripting.Flow.Editor",
         "Unity.ScriptableBuildPipeline.Editor",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "UnityEditor.UI",
+        "UnityEngine.UI"
     ],
     "includePlatforms": [
         "Editor"
@@ -18,7 +20,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "UNITY_2021_3_OR_NEWER"
+    ],
     "versionDefines": [
         {
             "name": "com.unity.timeline",
