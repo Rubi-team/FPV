@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -6,13 +7,11 @@ using UnityEngine.InputSystem;
 
 namespace FPV
 {
-    [RequireComponent(typeof(CharacterController))]
 #if ENABLE_INPUT_SYSTEM
     [RequireComponent(typeof(PlayerInput))]
 #endif
     public class PlayerController : NetworkController<PlayerApplication>
     {
-        
         private PlayerModel Model => App.Model;
 
         // cinemachine
@@ -33,7 +32,7 @@ namespace FPV
         private PlayerInput _playerInput;
 #endif
         private CharacterController _controller;
-        private InputsController inputController;
+        private InputController _input;
         private GameObject _mainCamera;
 
         private const float _threshold = 0.01f;
@@ -45,42 +44,30 @@ namespace FPV
 #if ENABLE_INPUT_SYSTEM
                 return _playerInput.currentControlScheme == "KeyboardMouse";
 #else
-                return false;
+				return false;
 #endif
             }
         }
 
+        private void Awake()
+        {
+            // get a reference to our main camera
+            if (_mainCamera == null) _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        }
 
         private void Start()
         {
-            _controller = GetComponent<CharacterController>();
-            inputController = GetComponent<InputsController>();
+            _controller = App.GetComponent<CharacterController>();
+            _input = GetComponent<InputController>();
 #if ENABLE_INPUT_SYSTEM
             _playerInput = GetComponent<PlayerInput>();
 #else
-            Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
+			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
 
             // reset our timeouts on start
             _jumpTimeoutDelta = Model.JumpTimeout;
             _fallTimeoutDelta = Model.FallTimeout;
-
-            if (!App.IsOwner)
-            {
-                _controller.enabled = false;
-                _playerInput.enabled = false;
-                inputController.enabled = false;
-            }
-        }
-
-        private void OnEnable()
-        {
-            if (!App.IsOwner)
-            {
-                if (_controller) _controller.enabled = false;
-                if (_playerInput) _playerInput.enabled = false;
-                if (inputController) inputController.enabled = false;
-            }
         }
 
         private void Update()
@@ -98,8 +85,8 @@ namespace FPV
         private void GroundedCheck()
         {
             // set sphere position, with offset
-            var spherePosition = new Vector3(transform.position.x, transform.position.y - Model.GroundedOffset,
-                transform.position.z);
+            var spherePosition = new Vector3(App.transform.position.x, App.transform.position.y - Model.GroundedOffset,
+                App.transform.position.z);
             Model.Grounded = Physics.CheckSphere(spherePosition, Model.GroundedRadius, Model.GroundLayers,
                 QueryTriggerInteraction.Ignore);
         }
@@ -107,41 +94,42 @@ namespace FPV
         private void CameraRotation()
         {
             // if there is an input
-            if (inputController.look.sqrMagnitude >= _threshold)
+            if (_input.look.sqrMagnitude >= _threshold)
             {
                 //Don't multiply mouse input by Time.deltaTime
                 var deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-                _cinemachineTargetPitch += inputController.look.y * Model.RotationSpeed * deltaTimeMultiplier;
-                _rotationVelocity = inputController.look.x * Model.RotationSpeed * deltaTimeMultiplier;
+                _cinemachineTargetPitch += _input.look.y * Model.RotationSpeed * deltaTimeMultiplier;
+                _rotationVelocity = _input.look.x * Model.RotationSpeed * deltaTimeMultiplier;
 
                 // clamp our pitch rotation
                 _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, Model.BottomClamp, Model.TopClamp);
 
                 // Update Cinemachine camera target pitch
-                Model.CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+                Model.CinemachineCameraTarget.transform.localRotation =
+                    Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
 
                 // rotate the player left and right
-                transform.Rotate(Vector3.up * _rotationVelocity);
+                App.transform.Rotate(Vector3.up * _rotationVelocity);
             }
         }
 
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            var targetSpeed = inputController.sprint ? Model.SprintSpeed : Model.MoveSpeed;
+            var targetSpeed = _input.sprint ? Model.SprintSpeed : Model.MoveSpeed;
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is no input, set the target speed to 0
-            if (inputController.move == Vector2.zero) targetSpeed = 0.0f;
+            if (_input.move == Vector2.zero) targetSpeed = 0.0f;
 
             // a reference to the players current horizontal velocity
             var currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
             var speedOffset = 0.1f;
-            var inputMagnitude = inputController.analogMovement ? inputController.move.magnitude : 1f;
+            var inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
 
             // accelerate or decelerate to target speed
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||
@@ -161,13 +149,13 @@ namespace FPV
             }
 
             // normalise input direction
-            var inputDirection = new Vector3(inputController.move.x, 0.0f, inputController.move.y).normalized;
+            var inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
-            if (inputController.move != Vector2.zero)
+            if (_input.move != Vector2.zero)
                 // move
-                inputDirection = transform.right * inputController.move.x + transform.forward * inputController.move.y;
+                inputDirection = App.transform.right * _input.move.x + App.transform.forward * _input.move.y;
 
             // move the player
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) +
@@ -185,7 +173,7 @@ namespace FPV
                 if (_verticalVelocity < 0.0f) _verticalVelocity = -2f;
 
                 // Jump
-                if (inputController.jump && _jumpTimeoutDelta <= 0.0f)
+                if (_input.jump && _jumpTimeoutDelta <= 0.0f)
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(Model.JumpHeight * -2f * Model.Gravity);
 
@@ -201,7 +189,7 @@ namespace FPV
                 if (_fallTimeoutDelta >= 0.0f) _fallTimeoutDelta -= Time.deltaTime;
 
                 // if we are not grounded, do not jump
-                inputController.jump = false;
+                _input.jump = false;
             }
 
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
@@ -225,7 +213,8 @@ namespace FPV
 
             // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
             Gizmos.DrawSphere(
-                new Vector3(transform.position.x, transform.position.y - Model.GroundedOffset, transform.position.z),
+                new Vector3(App.transform.position.x, App.transform.position.y - Model.GroundedOffset,
+                    App.transform.position.z),
                 Model.GroundedRadius);
         }
 

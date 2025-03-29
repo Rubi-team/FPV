@@ -13,10 +13,12 @@ namespace FPV
     /// </summary>
     internal static class UnityServiceAuthenticator
     {
-        const int k_InitializationTimeout = 10000;
-        static bool s_IsSigningIn;
-        internal static string PlayerId => AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId
-                                                                                     : string.Empty;
+        private const int k_InitializationTimeout = 10000;
+        private static bool s_IsSigningIn;
+
+        internal static string PlayerId => AuthenticationService.Instance.IsSignedIn
+            ? AuthenticationService.Instance.PlayerId
+            : string.Empty;
 
         /// <summary>
         /// Unity anonymous Auth grants unique ID's by editor/build and machine. This means that if you open several builds or editors on the same machine, they will all have the same ID.
@@ -28,27 +30,19 @@ namespace FPV
         {
             async Task WaitForInitialized()
             {
-                while (UnityServices.State != ServicesInitializationState.Initialized)
-                {
-                    await Task.Delay(100);
-                }
+                while (UnityServices.State != ServicesInitializationState.Initialized) await Task.Delay(100);
             }
 
-            if (UnityServices.State == ServicesInitializationState.Initialized)
-            {
-                return true;
-            }
+            if (UnityServices.State == ServicesInitializationState.Initialized) return true;
 
             //Another Service is mid-initialization:
             if (UnityServices.State == ServicesInitializationState.Initializing)
             {
                 var task = WaitForInitialized();
-                if (await Task.WhenAny(task, Task.Delay(k_InitializationTimeout)) != task)
-                {
-                    return false; // We timed out
-                }
+                if (await Task.WhenAny(task, Task.Delay(k_InitializationTimeout)) != task) return false; // We timed out
                 return UnityServices.State == ServicesInitializationState.Initialized;
             }
+
             var initializationOptions = new InitializationOptions();
             initializationOptions.SetEnvironmentName(environment);
 
@@ -69,23 +63,14 @@ namespace FPV
         {
             async Task WaitForSignedIn()
             {
-                while (!AuthenticationService.Instance.IsSignedIn)
-                {
-                    await Task.Delay(100);
-                }
+                while (!AuthenticationService.Instance.IsSignedIn) await Task.Delay(100);
             }
 
-            if (!await TryInitServicesAsync(environment, profileName))
-            {
-                return false;
-            }
+            if (!await TryInitServicesAsync(environment, profileName)) return false;
             if (s_IsSigningIn)
             {
                 var task = WaitForSignedIn();
-                if (await Task.WhenAny(task, Task.Delay(k_InitializationTimeout)) != task)
-                {
-                    return false; // We timed out
-                }
+                if (await Task.WhenAny(task, Task.Delay(k_InitializationTimeout)) != task) return false; // We timed out
                 return AuthenticationService.Instance.IsSignedIn;
             }
 
@@ -102,6 +87,7 @@ namespace FPV
             {
                 s_IsSigningIn = false;
             }
+
             return AuthenticationService.Instance.IsSignedIn;
         }
     }

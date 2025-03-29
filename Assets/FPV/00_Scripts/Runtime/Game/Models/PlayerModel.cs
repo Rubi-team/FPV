@@ -20,7 +20,7 @@ namespace FPV
         [Space(10)] [Tooltip("The height the player can jump")]
         public float JumpHeight = 1.2f;
 
-        [Tooltip("The character uses its own gravity value. Default is -9.81f")]
+        [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
         public float Gravity = -15.0f;
 
         [Space(10)]
@@ -51,6 +51,5 @@ namespace FPV
 
         [Tooltip("How far in degrees can you move the camera down")]
         public float BottomClamp = -90.0f;
-        
     }
 }
