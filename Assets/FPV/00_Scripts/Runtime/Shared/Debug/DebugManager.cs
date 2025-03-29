@@ -27,7 +27,7 @@ namespace FPV
 
         private void Update()
         {
-            //relayCodeText.text = "Relay Code: " + RelayManager.JoinCode;
+            relayCodeText.text = "Relay Code: " + RelayManager.JoinCode;
 
 #if DEBUG || UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.H)) WarningPanel.SetActive(!WarningPanel.activeSelf);
