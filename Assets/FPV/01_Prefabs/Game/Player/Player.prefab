@@ -82,6 +82,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 600688435199251018}
     m_Modifications:
+    - target: {fileID: 1111869381639702539, guid: a975931383abf2c44bbce47800cc5549, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 714bd0571ac0ec34aa85a99e34d4c937, type: 2}
     - target: {fileID: 6271195706586209856, guid: a975931383abf2c44bbce47800cc5549, type: 3}
       propertyPath: m_Name
       value: PlayerController
@@ -131,6 +135,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a975931383abf2c44bbce47800cc5549, type: 3}
+--- !u!1 &392021525415256984 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 445850616067840874, guid: a975931383abf2c44bbce47800cc5549, type: 3}
+  m_PrefabInstance: {fileID: 242991270861093106}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5813604319923265491 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6048709328561628961, guid: a975931383abf2c44bbce47800cc5549, type: 3}
@@ -149,6 +158,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 600688435199251018}
     m_Modifications:
+    - target: {fileID: 634777545953298146, guid: 72d8bc9babadf7d41b149453c7d142f9, type: 3}
+      propertyPath: SprintSpeed
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 634777545953298146, guid: 72d8bc9babadf7d41b149453c7d142f9, type: 3}
+      propertyPath: GroundLayers.m_Bits
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 634777545953298146, guid: 72d8bc9babadf7d41b149453c7d142f9, type: 3}
+      propertyPath: CinemachineCameraTarget
+      value: 
+      objectReference: {fileID: 392021525415256984}
     - target: {fileID: 2313912566790176562, guid: 72d8bc9babadf7d41b149453c7d142f9, type: 3}
       propertyPath: m_Name
       value: PlayerModel

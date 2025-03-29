@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 
 namespace FPV
 {
+    [InitializeOnLoad]
     public static class DebugConsoleButton
     {
         private static readonly string CategoriesKey = "Debug_Categories";
@@ -148,16 +149,6 @@ namespace FPV
 
                 Debug.Log($"[Debug Settings] Removed category: {category}");
             }
-        }
-
-        private static string PromptCategoryName()
-        {
-            return EditorUtility.DisplayDialogComplex("New Debug Category", "Enter a new category name:", "OK",
-                "Cancel", "") == 0
-                ? EditorUtility.DisplayDialog("New Category", "Type the category name in the Console", "OK")
-                    ? System.Console.ReadLine() // Fake input, Unity doesn't support text input directly here
-                    : ""
-                : "";
         }
     }
 }
