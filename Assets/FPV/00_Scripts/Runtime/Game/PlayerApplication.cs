@@ -10,10 +10,11 @@ namespace FPV
         {
             base.Awake();
 
-            // Optionally, check if this is the local player before performing actions
             if (!IsOwner)
             {
                 Debug.Log("Not the owner of this player application.");
+                Controller.gameObject.SetActive(false);
+                View.Hide();
                 return;
             }
 
@@ -24,10 +25,12 @@ namespace FPV
         {
             base.OnNetworkSpawn();
 
-            if (!IsOwner)
+            Debug.Log("je suis spawned et je suis le owner ? " + IsOwner + " et je suis le client ? " +
+                      NetworkManager.Singleton.LocalClientId);
+            if (IsOwner)
             {
-                Controller.enabled = false;
-                View.Hide();
+                Controller.gameObject.SetActive(true);
+                View.Show();
             }
         }
 
@@ -74,8 +77,7 @@ namespace FPV
             //GameApplication.Instance.Broadcast(new EndMatchEvent(this));
         }
 
-        [Header("Push Settings")]
-        public LayerMask pushLayers;
+        [Header("Push Settings")] public LayerMask pushLayers;
         public bool canPush;
         [Range(0.5f, 5f)] public float strength = 1.1f;
 

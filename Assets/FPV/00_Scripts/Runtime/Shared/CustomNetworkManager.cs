@@ -77,7 +77,6 @@ namespace FPV.Runtime.Shared
                 // Join the relay
                 //TODO handle Error
                 await RelayManager.JoinRelayAsync(relayCode);
-                await SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
                 m_NetworkManager.StartClient();
             }
 
