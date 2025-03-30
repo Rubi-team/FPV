@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Netcode;
 using UnityEditor;
@@ -58,9 +59,6 @@ namespace FPV
             if (_mainCamera == null) _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
 
             _controller = App.GetComponent<CharacterController>();
-            _input = GetComponent<InputController>();
-
-            _playerInput = GetComponent<PlayerInput>();
         }
 
         private void Start()
@@ -78,6 +76,7 @@ namespace FPV
 
         private void Update()
         {
+            if (!App.IsOwner) return;
             JumpAndGravity();
             GroundedCheck();
             Move();
@@ -86,6 +85,7 @@ namespace FPV
 
         private void LateUpdate()
         {
+            if (!App.IsOwner) return;
             CameraRotation();
         }
 
@@ -93,12 +93,10 @@ namespace FPV
         {
             if (!_input.interact) return;
 
-            //Do a boxcast to find interactable objects 
-            // sphere position = cameraRoot position + forward 1 
-            var spherePosition = Model.CinemachineCameraTarget.transform.position +
-                                 Model.CinemachineCameraTarget.transform.forward * Model.InteractDistance;
+            _input.interact = false;
 
-            var hits = Physics.CheckSphere(spherePosition, Model.InteractRadius);
+            var interactable = GetInteractableObject();
+            if (interactable != null) interactable.Interact(IInteractable.InteractAction.Primary, transform);
         }
 
         [Rpc(SendTo.Server)]
@@ -271,6 +269,49 @@ namespace FPV
             var spherePosition = Model.CinemachineCameraTarget.transform.position +
                                  Model.CinemachineCameraTarget.transform.forward * Model.InteractDistance;
             Gizmos.DrawSphere(spherePosition, Model.InteractRadius);
+        }
+
+        public IInteractable GetInteractableObject()
+        {
+            List<IInteractable> interactableList = new();
+            var interactableHitPositionList = new List<Vector3>();
+            var raycastHitArray = Physics.SphereCastAll(_mainCamera.transform.position, Model.InteractRadius,
+                _mainCamera.transform.forward, Model.InteractDistance);
+            foreach (var raycastHit in raycastHitArray)
+                if (raycastHit.transform.TryGetComponent(out IInteractable interactable))
+                {
+                    interactableList.Add(interactable);
+                    interactableHitPositionList.Add(raycastHit.point);
+                }
+
+            // Sort by closest
+            IInteractable closestInteractable = null;
+            Vector3 closestInteracableHitPosition = Vector2.zero;
+            for (var i = 0; i < interactableList.Count; i++)
+            {
+                var interactable = interactableList[i];
+
+                if (interactable.GetTransform() == App.transform) continue; // Ignore self
+
+                Vector2 interactableHitPosition = interactableHitPositionList[i];
+                if (closestInteractable == null)
+                {
+                    closestInteractable = interactable;
+                    closestInteracableHitPosition = interactableHitPosition;
+                }
+                else
+                {
+                    if (Vector2.Distance(_mainCamera.transform.position, interactableHitPosition) <
+                        Vector2.Distance(_mainCamera.transform.position, closestInteracableHitPosition))
+                    {
+                        // Closer
+                        closestInteractable = interactable;
+                        closestInteracableHitPosition = interactableHitPosition;
+                    }
+                }
+            }
+
+            return closestInteractable;
         }
 
 

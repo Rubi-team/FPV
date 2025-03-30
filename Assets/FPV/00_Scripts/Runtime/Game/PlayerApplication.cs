@@ -1,10 +1,12 @@
-﻿using FPV.Runtime.Shared;
+﻿using System;
+using System.Collections.Generic;
+using FPV.Runtime.Shared;
 using UnityEngine;
 using Unity.Netcode;
 
 namespace FPV
 {
-    public class PlayerApplication : BaseNetworkApplication<PlayerModel, PlayerView, PlayerController>
+    public class PlayerApplication : BaseNetworkApplication<PlayerModel, PlayerView, PlayerController>, IInteractable
     {
         protected override void Awake()
         {
@@ -16,13 +18,37 @@ namespace FPV
         {
             base.OnNetworkSpawn();
 
+            OwnerCheck();
+        }
+
+        private void OnEnable()
+        {
+            OwnerCheck();
+        }
+
+        private void OwnerCheck()
+        {
             if (!IsOwner)
             {
-                Destroy(Controller._input);
-                Destroy(Controller._playerInput);
                 View.Hide();
+
+                if (Controller._playerInput != null)
+                {
+                    Controller._playerInput.enabled = false;
+                    Controller._playerInput.DeactivateInput();
+                }
+
+                return;
+            }
+
+            View.Show();
+            if (Controller._playerInput != null)
+            {
+                Controller._playerInput.enabled = true;
+                Controller._playerInput.ActivateInput();
             }
         }
+
 
         [Rpc(SendTo.Everyone)]
         internal void OnClientPrepareGameClientRpc()
@@ -96,6 +122,30 @@ namespace FPV
 
             // Apply the push and take strength into account
             body.AddForce(pushDir * strength, ForceMode.Impulse);
+        }
+
+        public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
+        {
+            //TODO 
+            Debug.Log("On m'as interagi");
+        }
+
+        public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()
+        {
+            return new Dictionary<IInteractable.InteractAction, string>
+            {
+                { IInteractable.InteractAction.Primary, "Pickup Player" }
+            };
+        }
+
+        public Transform GetTransform()
+        {
+            return transform;
+        }
+
+        public bool CanDoInteractAction(IInteractable.InteractAction interactAction)
+        {
+            return interactAction == IInteractable.InteractAction.Primary;
         }
     }
 }

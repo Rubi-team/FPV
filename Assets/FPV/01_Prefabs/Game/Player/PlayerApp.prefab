@@ -110,8 +110,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  CharacterController: {fileID: 2068903502479335305}
-  NetworkObject: {fileID: 4817656000361027285}
   MoveSpeed: 4
   SprintSpeed: 6
   RotationSpeed: 1
@@ -126,6 +124,8 @@ MonoBehaviour:
   GroundLayers:
     serializedVersion: 2
     m_Bits: 1
+  InteractRadius: 1
+  InteractDistance: 2
   CinemachineCameraTarget: {fileID: 2195972430397027768}
   TopClamp: 90
   BottomClamp: -90
@@ -188,6 +188,7 @@ GameObject:
   - component: {fileID: 2068903502479335305}
   - component: {fileID: 4817656000361027285}
   - component: {fileID: 6249618280086756030}
+  - component: {fileID: 4160584107053630529}
   m_Layer: 8
   m_Name: PlayerApp
   m_TagString: Player
@@ -268,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 176401720
+  GlobalObjectIdHash: 2340554648
   InScenePlacedSourceGlobalObjectIdHash: 2340554648
   DeferredDespawnTick: 0
   Ownership: 3
@@ -318,6 +319,29 @@ MonoBehaviour:
   Interpolate: 0
   SlerpPosition: 0
   StaleDataHandling: 1
+--- !u!136 &4160584107053630529
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7183419695302756096}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &7611704867418538516
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,6 +389,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  _playerInput: {fileID: 4834215712952400630}
+  _input: {fileID: 2703170080477848212}
 --- !u!114 &4834215712952400630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,6 +437,7 @@ MonoBehaviour:
   look: {x: 0, y: 0}
   jump: 0
   sprint: 0
+  interact: 0
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1
@@ -425,7 +452,6 @@ GameObject:
   - component: {fileID: 4567473451862141049}
   - component: {fileID: 4905205621571648845}
   - component: {fileID: 588608700259749858}
-  - component: {fileID: 6393812723477512196}
   m_Layer: 8
   m_Name: Capsule
   m_TagString: Untagged
@@ -501,29 +527,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &6393812723477512196
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9169908664185417622}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &148827122712462242
 PrefabInstance:
   m_ObjectHideFlags: 0
