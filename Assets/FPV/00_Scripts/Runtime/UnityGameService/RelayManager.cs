@@ -10,37 +10,34 @@ namespace FPV
 {
     public static class RelayManager
     {
-        
         public static string JoinCode { get; private set; }
-        
+
         public static async Task<int> CreateRelayAsync()
         {
             try
             {
                 // Create a Relay allocation
-                Allocation allocation = await RelayService.Instance.CreateAllocationAsync(2);
+                var allocation = await RelayService.Instance.CreateAllocationAsync(2);
 
                 // Get the join code
-                string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                var joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
                 JoinCode = joinCode;
 
-                string host = allocation.RelayServer.IpV4; 
-                ushort port = (ushort)allocation.RelayServer.Port; 
-                byte[] joinAllocationId = allocation.AllocationIdBytes; 
-                byte[] connectionData = allocation.ConnectionData;
-                byte[] hostConnectionData = allocation.ConnectionData;
-                byte[] key = allocation.Key;
-                bool isSecure = false;
+                var host = allocation.RelayServer.IpV4;
+                var port = (ushort)allocation.RelayServer.Port;
+                var joinAllocationId = allocation.AllocationIdBytes;
+                var connectionData = allocation.ConnectionData;
+                var hostConnectionData = allocation.ConnectionData;
+                var key = allocation.Key;
+                var isSecure = false;
 
                 foreach (var endpoint in allocation.ServerEndpoints)
-                {
                     if (endpoint.ConnectionType == "dtls")
                     {
                         host = endpoint.Host;
                         port = (ushort)endpoint.Port;
                         isSecure = endpoint.Secure;
                     }
-                }
 
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(host,
                     port,
@@ -49,8 +46,6 @@ namespace FPV
                     hostConnectionData,
                     key,
                     isSecure));
-
-                NetworkManager.Singleton.StartHost();
 
                 /*// Retry logic for Vivox
                 int maxRetries = 5;
@@ -102,30 +97,28 @@ namespace FPV
             try
             {
                 // Join an existing Relay allocation
-                JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+                var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
-                string host = joinAllocation.RelayServer.IpV4;
-                ushort port = (ushort)joinAllocation.RelayServer.Port;
-                byte[] joinAllocationId = joinAllocation.AllocationIdBytes;
-                byte[] connectionData = joinAllocation.ConnectionData;
-                byte[] hostConnectionData = joinAllocation.HostConnectionData;
-                byte[] key = joinAllocation.Key;
-                bool isSecure = false;
+                var host = joinAllocation.RelayServer.IpV4;
+                var port = (ushort)joinAllocation.RelayServer.Port;
+                var joinAllocationId = joinAllocation.AllocationIdBytes;
+                var connectionData = joinAllocation.ConnectionData;
+                var hostConnectionData = joinAllocation.HostConnectionData;
+                var key = joinAllocation.Key;
+                var isSecure = false;
 
                 foreach (var endpoint in joinAllocation.ServerEndpoints)
-                {
                     if (endpoint.ConnectionType == "dtls")
                     {
                         host = endpoint.Host;
                         port = (ushort)endpoint.Port;
                         isSecure = endpoint.Secure;
                     }
-                }
 
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(host,
                     port, joinAllocationId, connectionData, hostConnectionData, key, isSecure));
-                NetworkManager.Singleton.StartClient();
-                
+
+
                 /*// Retry logic for Vivox TODO ADD
                 int maxRetries = 5;
                 int attempt = 0;
@@ -174,8 +167,6 @@ namespace FPV
                         return 1;
                 }
             }
-
         }
-        
     }
 }

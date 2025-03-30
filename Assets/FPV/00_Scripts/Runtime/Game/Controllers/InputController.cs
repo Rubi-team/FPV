@@ -9,6 +9,7 @@ namespace FPV
         public Vector2 look;
         public bool jump;
         public bool sprint;
+        public bool interact;
 
         [Header("Movement Settings")] public bool analogMovement;
 
@@ -35,6 +36,12 @@ namespace FPV
         {
             SprintInput(value.isPressed);
         }
+
+        public void OnInteract(InputValue value)
+        {
+            InteractInput(value.isPressed);
+        }
+
 #endif
 
 
@@ -56,6 +63,11 @@ namespace FPV
         public void SprintInput(bool newSprintState)
         {
             sprint = newSprintState;
+        }
+
+        public void InteractInput(bool newInteractState)
+        {
+            interact = newInteractState;
         }
 
         private void OnApplicationFocus(bool hasFocus)

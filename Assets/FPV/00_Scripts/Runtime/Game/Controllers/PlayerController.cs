@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Unity.Netcode;
+using UnityEditor;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -12,7 +15,7 @@ namespace FPV
 #endif
     public class PlayerController : NetworkController<PlayerApplication>
     {
-        private PlayerModel Model => App.Model;
+        internal PlayerModel Model => App.Model;
 
         // cinemachine
         private float _cinemachineTargetPitch;
@@ -29,10 +32,10 @@ namespace FPV
 
 
 #if ENABLE_INPUT_SYSTEM
-        private PlayerInput _playerInput;
+        public PlayerInput _playerInput;
 #endif
         private CharacterController _controller;
-        private InputController _input;
+        public InputController _input;
         private GameObject _mainCamera;
 
         private const float _threshold = 0.01f;
@@ -53,21 +56,24 @@ namespace FPV
         {
             // get a reference to our main camera
             if (_mainCamera == null) _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+
+            _controller = App.GetComponent<CharacterController>();
+            _input = GetComponent<InputController>();
+
+            _playerInput = GetComponent<PlayerInput>();
         }
 
         private void Start()
         {
-            _controller = App.GetComponent<CharacterController>();
-            _input = GetComponent<InputController>();
-#if ENABLE_INPUT_SYSTEM
-            _playerInput = GetComponent<PlayerInput>();
-#else
-			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
-#endif
-
             // reset our timeouts on start
             _jumpTimeoutDelta = Model.JumpTimeout;
             _fallTimeoutDelta = Model.FallTimeout;
+        }
+
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
         }
 
         private void Update()
@@ -75,11 +81,53 @@ namespace FPV
             JumpAndGravity();
             GroundedCheck();
             Move();
+            Interact();
         }
 
         private void LateUpdate()
         {
             CameraRotation();
+        }
+
+        private void Interact()
+        {
+            if (!_input.interact) return;
+
+            //Do a boxcast to find interactable objects 
+            // sphere position = cameraRoot position + forward 1 
+            var spherePosition = Model.CinemachineCameraTarget.transform.position +
+                                 Model.CinemachineCameraTarget.transform.forward * Model.InteractDistance;
+
+            var hits = Physics.CheckSphere(spherePosition, Model.InteractRadius);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void RequestPickupRpc(ulong targetPlayerId)
+        {
+            var targetPlayer = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(targetPlayerId);
+            if (targetPlayer == null)
+            {
+                Debug.LogError($"Player with ID {targetPlayerId} not found.");
+                return;
+            }
+
+            var targetPlayerController = targetPlayer.GetComponent<PlayerController>();
+            if (targetPlayerController == null)
+            {
+                Debug.LogError($"PlayerController component not found on player with ID {targetPlayerId}.");
+                return;
+            }
+
+            // Call the method on the target player
+            targetPlayer.TrySetParent(App.NetworkObject);
+            targetPlayerController.GetPickedUpRpc(App.NetworkObject.OwnerClientId);
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        private void GetPickedUpRpc(ulong pickerId)
+        {
+            if (pickerId != App.NetworkObject.OwnerClientId) return;
+            Debug.Log($"Player {pickerId} picked up {App.NetworkObject.OwnerClientId}");
         }
 
         private void GroundedCheck()
@@ -216,6 +264,13 @@ namespace FPV
                 new Vector3(App.transform.position.x, App.transform.position.y - Model.GroundedOffset,
                     App.transform.position.z),
                 Model.GroundedRadius);
+        }
+
+        private void OnDrawGizmos()
+        {
+            var spherePosition = Model.CinemachineCameraTarget.transform.position +
+                                 Model.CinemachineCameraTarget.transform.forward * Model.InteractDistance;
+            Gizmos.DrawSphere(spherePosition, Model.InteractRadius);
         }
 
 

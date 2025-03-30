@@ -9,15 +9,6 @@ namespace FPV
         protected override void Awake()
         {
             base.Awake();
-
-            if (!IsOwner)
-            {
-                Debug.Log("Not the owner of this player application.");
-                Controller.gameObject.SetActive(false);
-                View.Hide();
-                return;
-            }
-
             Debug.Log("PlayerApplication initialized for the local player.");
         }
 
@@ -25,12 +16,11 @@ namespace FPV
         {
             base.OnNetworkSpawn();
 
-            Debug.Log("je suis spawned et je suis le owner ? " + IsOwner + " et je suis le client ? " +
-                      NetworkManager.Singleton.LocalClientId);
-            if (IsOwner)
+            if (!IsOwner)
             {
-                Controller.gameObject.SetActive(true);
-                View.Show();
+                Destroy(Controller._input);
+                Destroy(Controller._playerInput);
+                View.Hide();
             }
         }
 

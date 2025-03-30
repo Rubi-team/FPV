@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace FPV
@@ -41,6 +42,10 @@ namespace FPV
 
         [Tooltip("What layers the character uses as ground")]
         public LayerMask GroundLayers;
+
+        [Header("Interactions")] public float InteractDistance = 3.0f;
+        public LayerMask InteractLayers;
+        public float InteractRadius = 0.5f;
 
         [Header("Cinemachine")]
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]

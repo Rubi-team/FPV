@@ -8,7 +8,6 @@ using Unity.Services.Vivox;
 using Unity.Services.Vivox.AudioTaps;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Console = FPV.Console;
 
 namespace FPV
 {
