@@ -56,5 +56,11 @@ namespace FPV
 
         [Tooltip("How far in degrees can you move the camera down")]
         public float BottomClamp = -90.0f;
+
+        [Header("Runtime Values")] public bool b_IsPickedUp = false;
+        public ulong PickedUpByID;
+        public bool b_IsCarrying = false;
+        public ulong isHoldingID = 0;
+        public bool b_CanInteract = true;
     }
 }

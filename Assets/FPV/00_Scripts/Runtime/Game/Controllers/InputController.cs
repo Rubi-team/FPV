@@ -37,10 +37,27 @@ namespace FPV
             SprintInput(value.isPressed);
         }
 
-        public void OnInteract(InputValue value)
+        private InputAction interactAction;
+
+        private void Start()
         {
-            InteractInput(value.isPressed);
+            // Récupère l'action d'interaction depuis PlayerInput
+            var playerInput = GetComponent<PlayerInput>();
+            if (playerInput != null)
+            {
+                interactAction = playerInput.actions["Interact"];
+            }
         }
+
+        private void Update()
+        {
+            if (interactAction != null && interactAction.WasPressedThisFrame())
+            {
+                InteractInput(true);
+            }
+        }
+
+
 
 #endif
 

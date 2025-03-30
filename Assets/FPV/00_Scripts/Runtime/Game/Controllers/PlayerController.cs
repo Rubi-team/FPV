@@ -33,11 +33,11 @@ namespace FPV
 
 
 #if ENABLE_INPUT_SYSTEM
-        public PlayerInput _playerInput;
+        internal PlayerInput _playerInput;
 #endif
-        private CharacterController _controller;
-        public InputController _input;
-        private GameObject _mainCamera;
+        internal CharacterController _controller;
+        internal InputController _input;
+        internal GameObject _mainCamera;
 
         private const float _threshold = 0.01f;
 
@@ -59,6 +59,10 @@ namespace FPV
             if (_mainCamera == null) _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
 
             _controller = App.GetComponent<CharacterController>();
+
+            // get references to our input
+            _playerInput = GetComponent<PlayerInput>();
+            _input = GetComponent<InputController>();
         }
 
         private void Start()
@@ -66,6 +70,7 @@ namespace FPV
             // reset our timeouts on start
             _jumpTimeoutDelta = Model.JumpTimeout;
             _fallTimeoutDelta = Model.FallTimeout;
+            Model.b_CanInteract = true;
         }
 
 
@@ -77,15 +82,20 @@ namespace FPV
         private void Update()
         {
             if (!App.IsOwner) return;
+
+            if (Model.b_CanInteract) Interact();
+
+            if (Model.b_IsPickedUp) return;
+
             JumpAndGravity();
             GroundedCheck();
             Move();
-            Interact();
         }
 
         private void LateUpdate()
         {
             if (!App.IsOwner) return;
+
             CameraRotation();
         }
 
@@ -97,35 +107,6 @@ namespace FPV
 
             var interactable = GetInteractableObject();
             if (interactable != null) interactable.Interact(IInteractable.InteractAction.Primary, transform);
-        }
-
-        [Rpc(SendTo.Server)]
-        private void RequestPickupRpc(ulong targetPlayerId)
-        {
-            var targetPlayer = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(targetPlayerId);
-            if (targetPlayer == null)
-            {
-                Debug.LogError($"Player with ID {targetPlayerId} not found.");
-                return;
-            }
-
-            var targetPlayerController = targetPlayer.GetComponent<PlayerController>();
-            if (targetPlayerController == null)
-            {
-                Debug.LogError($"PlayerController component not found on player with ID {targetPlayerId}.");
-                return;
-            }
-
-            // Call the method on the target player
-            targetPlayer.TrySetParent(App.NetworkObject);
-            targetPlayerController.GetPickedUpRpc(App.NetworkObject.OwnerClientId);
-        }
-
-        [Rpc(SendTo.ClientsAndHost)]
-        private void GetPickedUpRpc(ulong pickerId)
-        {
-            if (pickerId != App.NetworkObject.OwnerClientId) return;
-            Debug.Log($"Player {pickerId} picked up {App.NetworkObject.OwnerClientId}");
         }
 
         private void GroundedCheck()
