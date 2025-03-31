@@ -25,9 +25,9 @@ namespace FPV
             Instance = this;
         }
 
-        private void Start()
+        private async void Start()
         {
-            Initialize("");
+            await Initialize("");
         }
 
 
