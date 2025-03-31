@@ -32,13 +32,12 @@ namespace FPV
             if (evt.Success)
             {
                 Debug.Log($"Player signed in with id {evt.PlayerId}");
-                if (FPV_CONSTANTS.AUTO_CONNECT)
-                {
-                    CustomNetworkManager.Singleton.AutoConnect();
-                }
+                if (CustomNetworkManager.Singleton.AutoConnectOnStartup) CustomNetworkManager.Singleton.AutoConnect();
             }
             else
+            {
                 Debug.Log("Player did not sign in");
+            }
         }
 
         private void OnMatchEntered(MatchEnteredEvent evt)
@@ -52,7 +51,7 @@ namespace FPV
                 App.View.transform.GetChild(i).gameObject.SetActive(false);
             App.OnReturnToMetagameAfterMatch -= OnReturnToMetagameAfterMatch;
             App.OnReturnToMetagameAfterMatch += OnReturnToMetagameAfterMatch;
-            
+
             CustomNetworkManager.Singleton.ReturnToMetagame = App.CallOnReturnToMetagameAfterMatch;
         }
 

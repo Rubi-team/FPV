@@ -11,7 +11,6 @@ namespace FPV
     ///</summary>
     internal class UnityServicesInitializer : MonoBehaviour
     {
-        public const string k_ServerID = "SERVER";
         public static UnityServicesInitializer Instance { get; private set; }
 
 #if UNITY_EDITOR || DEBUG
@@ -25,31 +24,28 @@ namespace FPV
             if (Instance && Instance != this) return;
             Instance = this;
         }
-        
+
+        private async void Start()
+        {
+            await Initialize("");
+        }
+
 
         public async Task Initialize(string externalPlayerID)
         {
             var serviceProfileName =
                 "default"; //note: by using "default" UGS automatically assign a different Profile name to every MPPM virtual player.
-#if UNITY_EDITOR && HAS_PARRELSYNC
-            if (ParrelSync.ClonesManager.IsClone())
-            {
-                serviceProfileName = "CloneProfile";
-            }
-#endif
             if (!string.IsNullOrEmpty(externalPlayerID)) UnityServices.ExternalUserId = externalPlayerID;
 
-            Debug.Log($"Initializing services with externalPlayerID: {externalPlayerID}");
             var signedIn = await UnityServiceAuthenticator.TrySignInAsync(k_Environment, serviceProfileName);
             MetagameApplication.Instance.Broadcast(new PlayerSignedIn(signedIn, UnityServiceAuthenticator.PlayerId));
             if (!signedIn) return;
             //TODO: handle sign in error
-            if (externalPlayerID != k_ServerID) InitializeClientOnlyServices();
+            InitializeClientOnlyServices();
         }
 
         private void InitializeClientOnlyServices()
         {
-            
         }
     }
 }

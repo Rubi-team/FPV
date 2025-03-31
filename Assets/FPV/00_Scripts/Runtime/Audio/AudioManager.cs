@@ -6,30 +6,30 @@ using UnityEngine;
 
 namespace Audio
 {
-    public static class AudioManager 
+    public static class AudioManager
     {
-        private static readonly Dictionary<int, EventInstance> _eventInstances = new();
+        /*private static readonly Dictionary<int, EventInstance> _eventInstances = new();
         private static int _nextID;
 
         /// <summary>
         ///     Creates a new audio instance from the given AudioModel.
         /// </summary>
-        public static void PlayOneShot(EventReference sound, Vector3 worldPos)
+        /*public static void PlayOneShot(EventReference sound, Vector3 worldPos)
         {
             PlayOneShotRpc(sound.Path, worldPos);
-        }
+        }#1#
 
         [Rpc(SendTo.Everyone)] private static void PlayOneShotRpc(string soundPath, Vector3 worldPos)
         {
             RuntimeManager.PlayOneShot(soundPath, worldPos);
         }
-        
-        
-        public static void PlayOneShotAttached(EventReference sound, GameObject objectAttached)
+
+
+        /*public static void PlayOneShotAttached(EventReference sound, GameObject objectAttached)
         {
             PlayOneShotAttachedRpc(sound.Path, objectAttached.name);
-        }
-        
+        }#1#
+
         [Rpc(SendTo.Everyone)] private static void PlayOneShotAttachedRpc(string soundPath, string objectName)
         {
             RuntimeManager.PlayOneShotAttached(soundPath, GameObject.Find(objectName));
@@ -64,6 +64,6 @@ namespace Audio
         {
             if (_eventInstances.TryGetValue(id, out var instance))
                 RuntimeManager.AttachInstanceToGameObject(instance, transform.gameObject);
-        }
+        }*/
     }
 }

@@ -19,10 +19,10 @@ namespace FPV
 
         private static void AddButtonToConsole()
         {
-            Type consoleWindowType = typeof(EditorWindow).Assembly.GetType("UnityEditor.ConsoleWindow");
+            var consoleWindowType = typeof(EditorWindow).Assembly.GetType("UnityEditor.ConsoleWindow");
             if (consoleWindowType == null) return;
 
-            EditorWindow consoleWindow = EditorWindow.GetWindow(consoleWindowType);
+            var consoleWindow = EditorWindow.GetWindow(consoleWindowType);
             if (consoleWindow == null) return;
 
             var root = consoleWindow.rootVisualElement;
@@ -34,10 +34,7 @@ namespace FPV
             if (toolbar.Q<Button>("DebugFilterButton") != null) return;
 
             Button debugButton = null;
-            debugButton = new Button(() =>
-            {
-                ShowDebugDropdown(debugButton);
-            })
+            debugButton = new Button(() => { ShowDebugDropdown(debugButton); })
             {
                 text = "⚙️ Debug",
                 name = "DebugFilterButton"
@@ -55,17 +52,17 @@ namespace FPV
 
         private static void ShowDebugDropdown(Button button)
         {
-            GenericMenu menu = new GenericMenu();
+            var menu = new GenericMenu();
 
-            List<string> categories = GetCategories();
+            var categories = GetCategories();
             string[] logLevels = { "Log", "Warning", "Error" };
 
             foreach (var category in categories)
             {
-                bool allEnabled = true;
+                var allEnabled = true;
                 foreach (var level in logLevels)
                 {
-                    string key = $"Debug_{category}_{level}";
+                    var key = $"Debug_{category}_{level}";
                     if (!EditorPrefs.GetBool(key, true))
                     {
                         allEnabled = false;
@@ -75,39 +72,35 @@ namespace FPV
 
                 menu.AddItem(new GUIContent($"{category} / Toggle All"), allEnabled, () =>
                 {
-                    bool newState = !allEnabled;
+                    var newState = !allEnabled;
                     foreach (var level in logLevels)
                     {
-                        string key = $"Debug_{category}_{level}";
+                        var key = $"Debug_{category}_{level}";
                         EditorPrefs.SetBool(key, newState);
                     }
+
                     Debug.Log($"[Debug Settings] {category}: {(newState ? "Enabled All" : "Disabled All")}");
                 });
 
                 foreach (var level in logLevels)
                 {
-                    string key = $"Debug_{category}_{level}";
-                    bool isEnabled = EditorPrefs.GetBool(key, true);
+                    var key = $"Debug_{category}_{level}";
+                    var isEnabled = EditorPrefs.GetBool(key, true);
                     menu.AddItem(new GUIContent($"{category} / {level}"), isEnabled, () =>
                     {
-                        bool newState = !EditorPrefs.GetBool(key, true);
+                        var newState = !EditorPrefs.GetBool(key, true);
                         EditorPrefs.SetBool(key, newState);
                         Debug.Log($"[Debug Settings] {category} - {level}: {(newState ? "Enabled" : "Disabled")}");
                     });
                 }
 
-                menu.AddItem(new GUIContent($"{category} / ❌ Remove Category"), false, () =>
-                {
-                    RemoveCategory(category);
-                });
+                menu.AddItem(new GUIContent($"{category} / ❌ Remove Category"), false,
+                    () => { RemoveCategory(category); });
 
                 menu.AddSeparator("");
             }
 
-            menu.AddItem(new GUIContent("➕ Add Category..."), false, () =>
-            {
-                DebugCategoryWindow.ShowWindow();
-            });
+            menu.AddItem(new GUIContent("➕ Add Category..."), false, () => { DebugCategoryWindow.ShowWindow(); });
 
 
             menu.DropDown(new Rect(Event.current.mousePosition, Vector2.zero));
@@ -115,7 +108,7 @@ namespace FPV
 
         private static List<string> GetCategories()
         {
-            string saved = EditorPrefs.GetString(CategoriesKey, "UI,Player,UnityService");
+            var saved = EditorPrefs.GetString(CategoriesKey, "UI,Player,UnityService");
             return new List<string>(saved.Split(','));
         }
 
@@ -126,7 +119,7 @@ namespace FPV
 
         public static void AddCategory(string category)
         {
-            List<string> categories = GetCategories();
+            var categories = GetCategories();
             if (!categories.Contains(category))
             {
                 categories.Add(category);
@@ -141,7 +134,7 @@ namespace FPV
 
         private static void RemoveCategory(string category)
         {
-            List<string> categories = GetCategories();
+            var categories = GetCategories();
             if (categories.Contains(category))
             {
                 categories.Remove(category);
@@ -150,21 +143,12 @@ namespace FPV
                 string[] logLevels = { "Log", "Warning", "Error" };
                 foreach (var level in logLevels)
                 {
-                    string key = $"Debug_{category}_{level}";
+                    var key = $"Debug_{category}_{level}";
                     EditorPrefs.DeleteKey(key);
                 }
 
                 Debug.Log($"[Debug Settings] Removed category: {category}");
             }
-        }
-
-        private static string PromptCategoryName()
-        {
-            return EditorUtility.DisplayDialogComplex("New Debug Category", "Enter a new category name:", "OK", "Cancel", "") == 0
-                ? EditorUtility.DisplayDialog("New Category", "Type the category name in the Console", "OK")
-                    ? System.Console.ReadLine() // Fake input, Unity doesn't support text input directly here
-                    : ""
-                : "";
         }
     }
 }
