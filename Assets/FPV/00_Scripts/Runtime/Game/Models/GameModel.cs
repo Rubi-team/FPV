@@ -16,6 +16,9 @@ namespace FPV
         internal MatchDataSynchronizer matchDataSynchronizer;
         internal const uint k_CountdownStartValue = 60;
 
+        [Header("Server")] public ulong PlayerObject1Id;
+        public ulong PlayerObject2Id;
+
         internal uint CountdownValue
         {
             get => matchDataSynchronizer.MatchCountdown.Value;

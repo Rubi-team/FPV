@@ -97,7 +97,7 @@ namespace FPV
         [Header("Push Settings")] public LayerMask pushLayers;
         public bool canPush;
         [Range(0.5f, 5f)] public float strength = 1.1f;
-        
+
         #region Push Collider
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -126,7 +126,7 @@ namespace FPV
             // Apply the push and take strength into account
             body.AddForce(pushDir * strength, ForceMode.Impulse);
         }
-        
+
         #endregion
 
         public void GetPickedUp(Transform allyTransform)
@@ -142,9 +142,12 @@ namespace FPV
 
             // Disable the player controller
             Controller._controller.enabled = false; // C'est le character controller sur ce GameObject
-            GetComponent<AnticipatedNetworkTransform>().enabled = false; // Faut le désactiver aussi sinon bordel ça part en couille en soit TODO: Si un jour j'ai le temps voir si ya moyen de faire mieux
+            GetComponent<AnticipatedNetworkTransform>().enabled =
+                false; // Faut le désactiver aussi sinon bordel ça part en couille en soit TODO: Si un jour j'ai le temps voir si ya moyen de faire mieux
 
             transform.localPosition = new Vector3(0, 1, 0);
+
+            Model.b_IsPickedUp = true;
 
             OnServerPickedUpPlayerServerRpc(pickerID);
         }
