@@ -13,17 +13,17 @@ namespace FPV
     /// </summary>
     public class GameController : Controller<GameApplication>
     {
-        GameModel Model => App.Model;
-        Coroutine m_CountdownRoutine;
+        private GameModel Model => App.Model;
+        private Coroutine m_CountdownRoutine;
 
-        void Awake()
+        private void Awake()
         {
             AddListener<StartMatchEvent>(OnServerStartMatch);
             AddListener<EndMatchEvent>(OnServerMatchEnded);
             AddListener<PlayerDisconnected>(OnServerPlayerDisconnected);
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             RemoveListeners();
         }
@@ -35,25 +35,25 @@ namespace FPV
             RemoveListener<PlayerDisconnected>(OnServerPlayerDisconnected);
         }
 
-        void OnServerPlayerDisconnected(PlayerDisconnected evt)
+
+        private void OnServerPlayerDisconnected(PlayerDisconnected evt)
         {
             Debug.Log($"[Server] Client with it {evt.ClientId} disconnected!");
-            if (Model.AllowReconnection)
-            {
-                return;
-            }
+            if (Model.AllowReconnection) return;
             if (Model.MatchStarted && !Model.MatchEnded)
             {
-                NetworkClient firstClientStillConnected = NetworkManager.Singleton.ConnectedClients.Where(cc => cc.Key != evt.ClientId)
-                                                                                                   .Select(v => v.Value)
-                                                                                                   .FirstOrDefault();
-                PlayerApplication winner = firstClientStillConnected == null ? null
-                                                                  : firstClientStillConnected.PlayerObject.GetComponent<PlayerApplication>();
+                var firstClientStillConnected = NetworkManager.Singleton.ConnectedClients
+                    .Where(cc => cc.Key != evt.ClientId)
+                    .Select(v => v.Value)
+                    .FirstOrDefault();
+                var winner = firstClientStillConnected == null
+                    ? null
+                    : firstClientStillConnected.PlayerObject.GetComponent<PlayerApplication>();
                 Broadcast(new EndMatchEvent(winner));
             }
         }
 
-        void OnServerStartMatch(StartMatchEvent evt)
+        private void OnServerStartMatch(StartMatchEvent evt)
         {
             if (evt.IsServer)
             {
@@ -62,45 +62,38 @@ namespace FPV
                 Model.MatchEnded = false;
                 OnServerStartCountdown();
             }
-            if (evt.IsClient)
-            {
-                Debug.Log("[Client] Starting match!");
-            }
+
+            if (evt.IsClient) Debug.Log("[Client] Starting match!");
         }
 
-        void OnServerStartCountdown()
+        private void OnServerStartCountdown()
         {
             Model.CountdownValue = GameModel.k_CountdownStartValue;
             m_CountdownRoutine = StartCoroutine(OnServerDoCountdown());
         }
 
-        IEnumerator OnServerDoCountdown()
+        private IEnumerator OnServerDoCountdown()
         {
             while (Model.CountdownValue > 0
-            && !Model.MatchEnded)
+                   && !Model.MatchEnded)
             {
                 yield return BetterCoroutines.OneSecond;
                 Model.CountdownValue--;
             }
 
             if (Model.MatchEnded) //somebody won
-            {
                 yield break;
-            }
             OnServerCountdownExpired();
         }
 
-        void OnServerCountdownExpired()
+        private void OnServerCountdownExpired()
         {
             Broadcast(new EndMatchEvent(null));
         }
 
-        void OnServerMatchEnded(EndMatchEvent evt)
+        private void OnServerMatchEnded(EndMatchEvent evt)
         {
-            if (Model.MatchEnded)
-            {
-                return;
-            }
+            if (Model.MatchEnded) return;
             Model.MatchEnded = true;
             Model.MatchStarted = false;
             if (m_CountdownRoutine != null)
@@ -109,16 +102,10 @@ namespace FPV
                 m_CountdownRoutine = null;
             }
 
-            ulong winnerClientId = ulong.MaxValue;
-            if (evt.Winner != null)
-            {
-                winnerClientId = evt.Winner.OwnerClientId;
-            }
+            var winnerClientId = ulong.MaxValue;
+            if (evt.Winner != null) winnerClientId = evt.Winner.OwnerClientId;
             Model.matchDataSynchronizer.OnClientMatchResultComputedClientRpc(winnerClientId);
-            if (App.IsDedicatedServer)
-            {
-                CustomNetworkManager.Singleton.OnServerQuitAfter(5);
-            }
+            if (App.IsDedicatedServer) CustomNetworkManager.Singleton.OnServerQuitAfter(5);
         }
     }
 }

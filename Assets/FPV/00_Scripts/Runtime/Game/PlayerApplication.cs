@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using FPV.Runtime.Shared;
 using UnityEngine;
@@ -19,11 +20,6 @@ namespace FPV
         {
             base.OnNetworkSpawn();
 
-            OwnerCheck();
-        }
-
-        private void OnEnable()
-        {
             OwnerCheck();
         }
 
@@ -91,7 +87,7 @@ namespace FPV
 
         internal void OnServerPlayerAskedToWin()
         {
-            //GameApplication.Instance.Broadcast(new EndMatchEvent(this));
+            GameApplication.Instance.Broadcast(new EndMatchEvent(this));
         }
 
         [Header("Push Settings")] public LayerMask pushLayers;
@@ -137,7 +133,7 @@ namespace FPV
         [Rpc(SendTo.NotMe)]
         private void GetPickedUpClientRpc(ulong pickerID)
         {
-            if (Model.b_IsPickedUp) return;
+            if (Model.b_IsPickedUp.Value) return;
 
 
             // Disable the player controller
@@ -147,7 +143,7 @@ namespace FPV
 
             transform.localPosition = new Vector3(0, 1, 0);
 
-            Model.b_IsPickedUp = true;
+            Model.SetIsPickedUpRpc(true);
 
             OnServerPickedUpPlayerServerRpc(pickerID);
         }
@@ -165,7 +161,8 @@ namespace FPV
 
         public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
         {
-            if (Model.b_IsCarrying) return;
+            if (Model.b_IsCarryingPlayer.Value) return;
+            if (Model.b_IsPickedUp.Value) return;
 
             GetPickedUp(interactorTransform);
         }
@@ -187,5 +184,57 @@ namespace FPV
         {
             return interactAction == IInteractable.InteractAction.Primary;
         }
+
+        #region Throw
+
+        public void Throw()
+        {
+            var throwDir = transform.forward;
+            var throwForce = 10f;
+            ThrowServerRpc(throwDir.normalized, throwForce);
+        }
+
+        [ServerRpc]
+        private void ThrowServerRpc(Vector3 dir, float force)
+        {
+            NetworkObject.TryRemoveParent();
+            NetworkObject.ChangeOwnership(OwnerClientId); // Rend l’ownership à l’ancien joueur
+
+            ThrowClientRpc(dir, force);
+        }
+
+        [ClientRpc]
+        private void ThrowClientRpc(Vector3 dir, float force)
+        {
+            StartCoroutine(ThrowTrajectory(dir, force));
+        }
+
+        private IEnumerator ThrowTrajectory(Vector3 dir, float force)
+        {
+            var gravity = 9.81f;
+            var time = 0f;
+            var start = transform.position;
+            var velocity = dir * force;
+            velocity.y = force * 0.5f; // donne un peu de hauteur
+
+            Controller._controller.enabled = false;
+
+            while (!Model.Grounded) // Tu peux remplacer par une vraie vérif
+            {
+                time += Time.deltaTime;
+
+                var displacement = velocity * time + 0.5f * Vector3.down * gravity * time * time;
+                transform.position = start + displacement;
+
+                yield return null;
+            }
+
+            // Arrivé au sol
+            Controller._controller.enabled = true;
+            GetComponent<AnticipatedNetworkTransform>().enabled = true;
+            Model.b_IsPickedUp.Value = false;
+        }
+
+        #endregion
     }
 }

@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem.Composites;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -69,7 +70,6 @@ namespace FPV
             // reset our timeouts on start
             _jumpTimeoutDelta = Model.JumpTimeout;
             _fallTimeoutDelta = Model.FallTimeout;
-            Model.b_CanInteract = true;
         }
 
 
@@ -82,9 +82,9 @@ namespace FPV
         {
             if (!App.IsOwner) return;
 
-            if (Model.b_CanInteract) Interact();
+            if (Model.b_CanInteract.Value) Interact();
 
-            if (Model.b_IsPickedUp) return;
+            if (Model.b_IsPickedUp.Value) return;
 
             JumpAndGravity();
             GroundedCheck();
@@ -104,8 +104,22 @@ namespace FPV
 
             _input.interact = false;
 
+            if (Model.b_IsCarryingPlayer.Value)
+            {
+                App.Throw();
+                return;
+            }
+
             var interactable = GetInteractableObject();
-            if (interactable != null) interactable.Interact(IInteractable.InteractAction.Primary, transform);
+            if (interactable != null)
+            {
+                interactable.Interact(IInteractable.InteractAction.Primary, transform);
+
+                if (interactable.GetTransform().GetComponent<PlayerApplication>() is { } player)
+                    // On interagit avec un joueur
+                    if (player != null)
+                        Model.SetIsCarryingPlayerRpc(true);
+            }
         }
 
         private void GroundedCheck()

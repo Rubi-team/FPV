@@ -21,7 +21,7 @@ namespace FPV
                 MatchStarted.OnValueChanged += OnClientMatchStartedChanged;
             }
 
-            if (IsHost)
+            if (IsHost) //TODO remove when new spawning system
             {
                 GameApplication.Instance.Model.PlayerObject1Id =
                     NetworkManager.Singleton.SpawnManager.PlayerObjects[0].NetworkObjectId;

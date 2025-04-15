@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace FPV
@@ -18,15 +19,12 @@ namespace FPV
         MatchRecapView m_MatchRecapView;
         */
 
-        void Awake()
+        private void Awake()
         {
-            if (App.IsDedicatedServer)
-            {
-                OnDedicatedServerDestroyViews();
-            }
+            if (App.IsDedicatedServer) OnDedicatedServerDestroyViews();
         }
 
-        void OnDedicatedServerDestroyViews()
+        private void OnDedicatedServerDestroyViews()
         {
             Destroy(gameObject);
         }

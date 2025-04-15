@@ -1,3 +1,4 @@
+using System;
 using FPV.Runtime.Shared;
 using FPV.Shared;
 using Unity.Netcode;
@@ -14,11 +15,16 @@ namespace FPV
 
         [SerializeField] private MatchDataSynchronizer matchDataSnchronizerPrefab;
         internal MatchDataSynchronizer matchDataSynchronizer;
-        internal const uint k_CountdownStartValue = 60;
+        public const uint k_CountdownStartValue = 60;
 
-        [Header("Server")] public ulong PlayerObject1Id;
-        public ulong PlayerObject2Id;
+        [Header("Server")] 
+        internal ulong PlayerObject1Id;
+        internal ulong PlayerObject2Id;
+        
+        internal PlayerApplication Player1;
+        internal PlayerApplication Player2;
 
+        
         internal uint CountdownValue
         {
             get => matchDataSynchronizer.MatchCountdown.Value;
