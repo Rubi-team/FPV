@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -12,7 +15,7 @@ namespace FPV
 #endif
     public class PlayerController : NetworkController<PlayerApplication>
     {
-        private PlayerModel Model => App.Model;
+        internal PlayerModel Model => App.Model;
 
         // cinemachine
         private float _cinemachineTargetPitch;
@@ -29,11 +32,11 @@ namespace FPV
 
 
 #if ENABLE_INPUT_SYSTEM
-        private PlayerInput _playerInput;
+        internal PlayerInput _playerInput;
 #endif
-        private CharacterController _controller;
-        private InputController _input;
-        private GameObject _mainCamera;
+        internal CharacterController _controller;
+        internal InputController _input;
+        internal GameObject _mainCamera;
 
         private const float _threshold = 0.01f;
 
@@ -53,25 +56,36 @@ namespace FPV
         {
             // get a reference to our main camera
             if (_mainCamera == null) _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+
+            _controller = App.GetComponent<CharacterController>();
+
+            // get references to our input
+            _playerInput = GetComponent<PlayerInput>();
+            _input = GetComponent<InputController>();
         }
 
         private void Start()
         {
-            _controller = App.GetComponent<CharacterController>();
-            _input = GetComponent<InputController>();
-#if ENABLE_INPUT_SYSTEM
-            _playerInput = GetComponent<PlayerInput>();
-#else
-			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
-#endif
-
             // reset our timeouts on start
             _jumpTimeoutDelta = Model.JumpTimeout;
             _fallTimeoutDelta = Model.FallTimeout;
+            Model.b_CanInteract = true;
+        }
+
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
         }
 
         private void Update()
         {
+            if (!App.IsOwner) return;
+
+            if (Model.b_CanInteract) Interact();
+
+            if (Model.b_IsPickedUp) return;
+
             JumpAndGravity();
             GroundedCheck();
             Move();
@@ -79,7 +93,19 @@ namespace FPV
 
         private void LateUpdate()
         {
+            if (!App.IsOwner) return;
+
             CameraRotation();
+        }
+
+        private void Interact()
+        {
+            if (!_input.interact) return;
+
+            _input.interact = false;
+
+            var interactable = GetInteractableObject();
+            if (interactable != null) interactable.Interact(IInteractable.InteractAction.Primary, transform);
         }
 
         private void GroundedCheck()
@@ -216,6 +242,56 @@ namespace FPV
                 new Vector3(App.transform.position.x, App.transform.position.y - Model.GroundedOffset,
                     App.transform.position.z),
                 Model.GroundedRadius);
+        }
+
+        private void OnDrawGizmos()
+        {
+            var spherePosition = Model.CinemachineCameraTarget.transform.position +
+                                 Model.CinemachineCameraTarget.transform.forward * Model.InteractDistance;
+            Gizmos.DrawSphere(spherePosition, Model.InteractRadius);
+        }
+
+        public IInteractable GetInteractableObject()
+        {
+            List<IInteractable> interactableList = new();
+            var interactableHitPositionList = new List<Vector3>();
+            var raycastHitArray = Physics.SphereCastAll(_mainCamera.transform.position, Model.InteractRadius,
+                _mainCamera.transform.forward, Model.InteractDistance);
+            foreach (var raycastHit in raycastHitArray)
+                if (raycastHit.transform.TryGetComponent(out IInteractable interactable))
+                {
+                    interactableList.Add(interactable);
+                    interactableHitPositionList.Add(raycastHit.point);
+                }
+
+            // Sort by closest
+            IInteractable closestInteractable = null;
+            Vector3 closestInteracableHitPosition = Vector2.zero;
+            for (var i = 0; i < interactableList.Count; i++)
+            {
+                var interactable = interactableList[i];
+
+                if (interactable.GetTransform() == App.transform) continue; // Ignore self
+
+                Vector2 interactableHitPosition = interactableHitPositionList[i];
+                if (closestInteractable == null)
+                {
+                    closestInteractable = interactable;
+                    closestInteracableHitPosition = interactableHitPosition;
+                }
+                else
+                {
+                    if (Vector2.Distance(_mainCamera.transform.position, interactableHitPosition) <
+                        Vector2.Distance(_mainCamera.transform.position, closestInteracableHitPosition))
+                    {
+                        // Closer
+                        closestInteractable = interactable;
+                        closestInteracableHitPosition = interactableHitPosition;
+                    }
+                }
+            }
+
+            return closestInteractable;
         }
 
 

@@ -143,7 +143,7 @@ namespace FPV
 
         private void CreateInstance()
         {
-            AudioInstance = AudioManager.CreateAudioInstance(audioModel);
+            /*AudioInstance = AudioManager.CreateAudioInstance(audioModel);
 
             if (!AudioManager.TryGetEventInstance(AudioInstance.ID, out var eventInstance))
                 //Debug.LogError("AudioInstance pour VivoxParticipant non créé : " + AudioInstance.ID);
@@ -153,7 +153,9 @@ namespace FPV
             audioCallback = AudioEventCallback;
             this.eventInstance.setCallback(audioCallback);
             this.eventInstance.start();
-            AudioManager.AttachInstanceToGameObject(AudioInstance.ID, transform);
+            AudioManager.AttachInstanceToGameObject(AudioInstance.ID, transform);*/
+
+            //TODO fix
         }
 
         private void UpdateBufferLatency(uint samplesWritten)

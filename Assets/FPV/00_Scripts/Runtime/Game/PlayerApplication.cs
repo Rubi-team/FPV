@@ -1,23 +1,17 @@
-﻿using FPV.Runtime.Shared;
+﻿using System;
+using System.Collections.Generic;
+using FPV.Runtime.Shared;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 
 namespace FPV
 {
-    public class PlayerApplication : BaseNetworkApplication<PlayerModel, PlayerView, PlayerController>
+    public class PlayerApplication : BaseNetworkApplication<PlayerModel, PlayerView, PlayerController>, IInteractable
     {
         protected override void Awake()
         {
             base.Awake();
-
-            if (!IsOwner)
-            {
-                Debug.Log("Not the owner of this player application.");
-                Controller.gameObject.SetActive(false);
-                View.Hide();
-                return;
-            }
-
             Debug.Log("PlayerApplication initialized for the local player.");
         }
 
@@ -25,14 +19,37 @@ namespace FPV
         {
             base.OnNetworkSpawn();
 
-            Debug.Log("je suis spawned et je suis le owner ? " + IsOwner + " et je suis le client ? " +
-                      NetworkManager.Singleton.LocalClientId);
-            if (IsOwner)
+            OwnerCheck();
+        }
+
+        private void OnEnable()
+        {
+            OwnerCheck();
+        }
+
+        private void OwnerCheck()
+        {
+            if (!IsOwner)
             {
-                Controller.gameObject.SetActive(true);
-                View.Show();
+                View.Hide();
+
+                if (Controller._playerInput != null)
+                {
+                    Controller._playerInput.enabled = false;
+                    Controller._playerInput.DeactivateInput();
+                }
+
+                return;
+            }
+
+            View.Show();
+            if (Controller._playerInput != null)
+            {
+                Controller._playerInput.enabled = true;
+                Controller._playerInput.ActivateInput();
             }
         }
+
 
         [Rpc(SendTo.Everyone)]
         internal void OnClientPrepareGameClientRpc()
@@ -80,6 +97,8 @@ namespace FPV
         [Header("Push Settings")] public LayerMask pushLayers;
         public bool canPush;
         [Range(0.5f, 5f)] public float strength = 1.1f;
+        
+        #region Push Collider
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
@@ -106,6 +125,64 @@ namespace FPV
 
             // Apply the push and take strength into account
             body.AddForce(pushDir * strength, ForceMode.Impulse);
+        }
+        
+        #endregion
+
+        public void GetPickedUp(Transform allyTransform)
+        {
+            GetPickedUpClientRpc(allyTransform.GetComponent<PlayerController>().App.NetworkObject.NetworkObjectId);
+        }
+
+        [Rpc(SendTo.NotMe)]
+        private void GetPickedUpClientRpc(ulong pickerID)
+        {
+            if (Model.b_IsPickedUp) return;
+
+
+            // Disable the player controller
+            Controller._controller.enabled = false; // C'est le character controller sur ce GameObject
+            GetComponent<AnticipatedNetworkTransform>().enabled = false; // Faut le désactiver aussi sinon bordel ça part en couille en soit TODO: Si un jour j'ai le temps voir si ya moyen de faire mieux
+
+            transform.localPosition = new Vector3(0, 1, 0);
+
+            OnServerPickedUpPlayerServerRpc(pickerID);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void OnServerPickedUpPlayerServerRpc(ulong pickerID)
+        {
+            // Set this transform as a child of the netObjID transform
+            var netObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerID];
+            NetworkObject.ChangeOwnership(NetworkManager.ServerClientId);
+            NetworkObject.TrySetParent(netObj);
+
+            transform.localPosition = new Vector3(0, 1, 0);
+        }
+
+        public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
+        {
+            if (Model.b_IsCarrying) return;
+
+            GetPickedUp(interactorTransform);
+        }
+
+        public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()
+        {
+            return new Dictionary<IInteractable.InteractAction, string>
+            {
+                { IInteractable.InteractAction.Primary, "Pickup Player" }
+            };
+        }
+
+        public Transform GetTransform()
+        {
+            return transform;
+        }
+
+        public bool CanDoInteractAction(IInteractable.InteractAction interactAction)
+        {
+            return interactAction == IInteractable.InteractAction.Primary;
         }
     }
 }

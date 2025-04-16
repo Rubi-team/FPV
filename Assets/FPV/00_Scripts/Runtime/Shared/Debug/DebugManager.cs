@@ -3,6 +3,7 @@ using FPV;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 
 namespace FPV
 {
@@ -10,7 +11,7 @@ namespace FPV
     {
         public GameObject WebGLCanvas;
         public GameObject WarningPanel;
-        
+
         [SerializeField] private TMP_Text versionText;
         [SerializeField] private TMP_Text relayCodeText;
 
@@ -20,9 +21,9 @@ namespace FPV
             WebGLCanvas.SetActive(true);
 #endif
             versionText.text = Application.version;
-            
-            
-            Console.Log("UI", versionText.text);
+
+
+            Debug.Log("UI");
         }
 
         private void Update()
