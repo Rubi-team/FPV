@@ -125,46 +125,19 @@ namespace FPV
 
         #endregion
 
-        public void GetPickedUp(Transform allyTransform)
+        [Rpc(SendTo.Owner)]
+        public void GetPickedUpRpc(ulong pickerId)
         {
-            GetPickedUpClientRpc(allyTransform.GetComponent<PlayerController>().App.NetworkObject.NetworkObjectId);
+            
         }
-
-        [Rpc(SendTo.NotMe)]
-        private void GetPickedUpClientRpc(ulong pickerID)
-        {
-            if (Model.b_IsPickedUp.Value) return;
-
-
-            // Disable the player controller
-            Controller._controller.enabled = false; // C'est le character controller sur ce GameObject
-            GetComponent<AnticipatedNetworkTransform>().enabled =
-                false; // Faut le désactiver aussi sinon bordel ça part en couille en soit TODO: Si un jour j'ai le temps voir si ya moyen de faire mieux
-
-            transform.localPosition = new Vector3(0, 1, 0);
-
-            Model.SetIsPickedUpRpc(true);
-
-            OnServerPickedUpPlayerServerRpc(pickerID);
-        }
-
-        [Rpc(SendTo.Server)]
-        private void OnServerPickedUpPlayerServerRpc(ulong pickerID)
-        {
-            // Set this transform as a child of the netObjID transform
-            var netObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerID];
-            NetworkObject.ChangeOwnership(NetworkManager.ServerClientId);
-            NetworkObject.TrySetParent(netObj);
-
-            transform.localPosition = new Vector3(0, 1, 0);
-        }
+        
 
         public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
         {
             if (Model.b_IsCarryingPlayer.Value) return;
             if (Model.b_IsPickedUp.Value) return;
 
-            GetPickedUp(interactorTransform);
+            GetPickedUpRpc(interactorTransform.GetComponent<NetworkObject>().OwnerClientId);
         }
 
         public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()
@@ -186,22 +159,7 @@ namespace FPV
         }
 
         #region Throw
-
-        public void Throw()
-        {
-            var throwDir = transform.forward;
-            var throwForce = 10f;
-            ThrowServerRpc(throwDir.normalized, throwForce);
-        }
-
-        [ServerRpc]
-        private void ThrowServerRpc(Vector3 dir, float force)
-        {
-            NetworkObject.TryRemoveParent();
-            NetworkObject.ChangeOwnership(OwnerClientId); // Rend l’ownership à l’ancien joueur
-
-            ThrowClientRpc(dir, force);
-        }
+        
 
         [ClientRpc]
         private void ThrowClientRpc(Vector3 dir, float force)

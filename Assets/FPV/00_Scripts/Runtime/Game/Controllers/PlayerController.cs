@@ -106,7 +106,7 @@ namespace FPV
 
             if (Model.b_IsCarryingPlayer.Value)
             {
-                App.Throw();
+                //TODO THROW
                 return;
             }
 

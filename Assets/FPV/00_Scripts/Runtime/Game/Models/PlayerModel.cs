@@ -63,9 +63,16 @@ namespace FPV
 
         [Header("Runtime Values")]
         
+        public Transform PickerTransform;
+        public NetworkObject _NetworkObject;
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+            _NetworkObject = GetComponentInParent<NetworkObject>();
+        }
 
         // Network variables
-        public NetworkVariable<ulong> u_OwnerId = new NetworkVariable<ulong>(99, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> b_IsPickedUp = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> b_IsCarryingPlayer = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> b_CanInteract = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
