@@ -25,7 +25,7 @@ namespace FPV
             {
                 GameApplication.Instance.Model.PlayerObject1Id =
                     NetworkManager.Singleton.SpawnManager.PlayerObjects[0].NetworkObjectId;
-                GameApplication.Instance.Model.PlayerObject2Id =
+                GameApplication.Instance.Model.PlayerObject1Id =
                     NetworkManager.Singleton.SpawnManager.PlayerObjects[1].NetworkObjectId;
             }
         }

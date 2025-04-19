@@ -5,7 +5,7 @@ namespace FPV.Editor
 {
     public class DebugCategoryWindow : EditorWindow
     {
-        private string newCategory = "";
+        /*private string newCategory = "";
 
         public static void ShowWindow()
         {
@@ -33,6 +33,6 @@ namespace FPV.Editor
                     EditorUtility.DisplayDialog("Error", "Category name cannot be empty!", "OK");
                 }
             }
-        }
+        }*/
     }
 }

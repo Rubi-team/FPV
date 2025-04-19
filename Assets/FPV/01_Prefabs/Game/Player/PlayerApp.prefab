@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7634497481752723992}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlayerCameraRoot
   m_TagString: CinemachineTarget
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6862620813077733378}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Graph
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7806168859175675107}
   - component: {fileID: 3404271672488522006}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: PlayerModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -118,7 +118,7 @@ MonoBehaviour:
   Gravity: -15
   JumpTimeout: 0.1
   FallTimeout: 0.15
-  Grounded: 1
+  Grounded: 0
   GroundedOffset: -0.14
   GroundedRadius: 0.5
   GroundLayers:
@@ -126,9 +126,20 @@ MonoBehaviour:
     m_Bits: 1
   InteractRadius: 1
   InteractDistance: 2
+  ThrowForce: 10
+  RotateWithPicker: 0
   CinemachineCameraTarget: {fileID: 2195972430397027768}
   TopClamp: 90
   BottomClamp: -90
+  PickerTransform: {fileID: 0}
+  _NetworkObject: {fileID: 0}
+  CarriedPlayer: {fileID: 0}
+  b_IsPickedUp:
+    m_InternalValue: 0
+  b_IsCarryingPlayer:
+    m_InternalValue: 0
+  b_CanInteract:
+    m_InternalValue: 1
 --- !u!1 &5266180203335306528
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,7 +150,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8030635414807502628}
   - component: {fileID: 8387890091188589049}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: PlayerView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +200,7 @@ GameObject:
   - component: {fileID: 4817656000361027285}
   - component: {fileID: 6249618280086756030}
   - component: {fileID: 4160584107053630529}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: PlayerApp
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -354,7 +365,7 @@ GameObject:
   - component: {fileID: 5718739488960686105}
   - component: {fileID: 4834215712952400630}
   - component: {fileID: 2703170080477848212}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: PlayerController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,8 +400,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  _playerInput: {fileID: 4834215712952400630}
-  _input: {fileID: 2703170080477848212}
 --- !u!114 &4834215712952400630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -452,7 +461,7 @@ GameObject:
   - component: {fileID: 4567473451862141049}
   - component: {fileID: 4905205621571648845}
   - component: {fileID: 588608700259749858}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -538,6 +547,10 @@ PrefabInstance:
     - target: {fileID: 2070925441746177671, guid: 0bbe8fd8878e550498aa7a40b2aebd2d, type: 3}
       propertyPath: m_Name
       value: PlayerFollowCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070925441746177671, guid: 0bbe8fd8878e550498aa7a40b2aebd2d, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2070925441746177912, guid: 0bbe8fd8878e550498aa7a40b2aebd2d, type: 3}
       propertyPath: m_LocalPosition.x

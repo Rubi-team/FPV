@@ -5,6 +5,7 @@ using FPV.Runtime.Shared;
 using UnityEngine;
 using Unity.Netcode;
 using Unity.Netcode.Components;
+using UnityEngine.InputSystem.Composites;
 
 namespace FPV
 {
@@ -126,18 +127,20 @@ namespace FPV
         #endregion
 
         [Rpc(SendTo.Owner)]
-        public void GetPickedUpRpc(ulong pickerId)
+        private void GetPickedUpRpc(ulong PickerObjectId)
         {
-            
+            Model.PickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[PickerObjectId].transform;
+            Model.SetIsPickedUpRpc(true);
         }
-        
+
 
         public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
         {
             if (Model.b_IsCarryingPlayer.Value) return;
             if (Model.b_IsPickedUp.Value) return;
 
-            GetPickedUpRpc(interactorTransform.GetComponent<NetworkObject>().OwnerClientId);
+            //TODO a changer 
+            GetPickedUpRpc(interactorTransform.GetComponentInParent<NetworkObject>().NetworkObjectId);
         }
 
         public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()
@@ -157,42 +160,5 @@ namespace FPV
         {
             return interactAction == IInteractable.InteractAction.Primary;
         }
-
-        #region Throw
-        
-
-        [ClientRpc]
-        private void ThrowClientRpc(Vector3 dir, float force)
-        {
-            StartCoroutine(ThrowTrajectory(dir, force));
-        }
-
-        private IEnumerator ThrowTrajectory(Vector3 dir, float force)
-        {
-            var gravity = 9.81f;
-            var time = 0f;
-            var start = transform.position;
-            var velocity = dir * force;
-            velocity.y = force * 0.5f; // donne un peu de hauteur
-
-            Controller._controller.enabled = false;
-
-            while (!Model.Grounded) // Tu peux remplacer par une vraie vérif
-            {
-                time += Time.deltaTime;
-
-                var displacement = velocity * time + 0.5f * Vector3.down * gravity * time * time;
-                transform.position = start + displacement;
-
-                yield return null;
-            }
-
-            // Arrivé au sol
-            Controller._controller.enabled = true;
-            GetComponent<AnticipatedNetworkTransform>().enabled = true;
-            Model.b_IsPickedUp.Value = false;
-        }
-
-        #endregion
     }
 }

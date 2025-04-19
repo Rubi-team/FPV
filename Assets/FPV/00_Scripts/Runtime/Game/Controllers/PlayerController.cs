@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Netcode;
@@ -82,12 +83,17 @@ namespace FPV
         {
             if (!App.IsOwner) return;
 
+            GroundedCheck();
+
             if (Model.b_CanInteract.Value) Interact();
 
-            if (Model.b_IsPickedUp.Value) return;
+            if (Model.b_IsPickedUp.Value)
+            {
+                FollowPicker();
+                return;
+            }
 
             JumpAndGravity();
-            GroundedCheck();
             Move();
         }
 
@@ -106,19 +112,25 @@ namespace FPV
 
             if (Model.b_IsCarryingPlayer.Value)
             {
-                //TODO THROW
+                Model.CarriedPlayer.Controller.OnPlayerThrowMeRpc(App.transform.forward, Model.ThrowForce);
+                Model.SetIsCarryingPlayerRpc(false);
                 return;
             }
+
 
             var interactable = GetInteractableObject();
             if (interactable != null)
             {
+                Debug.Log($"Interact with {interactable.GetTransform().name}", this);
                 interactable.Interact(IInteractable.InteractAction.Primary, transform);
 
                 if (interactable.GetTransform().GetComponent<PlayerApplication>() is { } player)
                     // On interagit avec un joueur
                     if (player != null)
+                    {
                         Model.SetIsCarryingPlayerRpc(true);
+                        Model.CarriedPlayer = player;
+                    }
             }
         }
 
@@ -308,10 +320,71 @@ namespace FPV
             return closestInteractable;
         }
 
+        private void FollowPicker()
+        {
+            // Be at Model.PickerTransform position but 1 y unit above
+            if (Model.PickerTransform == null)
+            {
+                Debug.LogError("Picker transform is null but I am picked up", this);
+                return;
+            }
+
+            var targetPosition = Model.PickerTransform.position;
+            targetPosition.y += 1f;
+            App.transform.position = targetPosition;
+
+            if (Model.RotateWithPicker) App.transform.rotation = Model.PickerTransform.rotation;
+        }
+
+        #region Throw
+
+        [Rpc(SendTo.Owner)]
+        internal void OnPlayerThrowMeRpc(Vector3 dir, float force)
+        {
+            if (!Model.b_IsPickedUp.Value)
+            {
+                Debug.LogError("OnPlayerThrowMeRpc called but I am not picked up", this);
+                return;
+            }
+
+            if (Model.b_IsCarryingPlayer.Value)
+            {
+                Debug.LogError("ya 3 joueurs ??? montrez ça a thomas", this);
+                return;
+            }
+
+            StartCoroutine(ThrowTrajectory(dir, force));
+        }
+
+        private IEnumerator ThrowTrajectory(Vector3 dir, float force)
+        {
+            var gravity = 9.81f;
+            var time = 0f;
+            var start = App.transform.position;
+            var velocity = dir * force;
+            velocity.y = force * 0.5f; // donne un peu de hauteur
+
+
+            while (!Model.Grounded) // Tu peux remplacer par une vraie vérif
+            {
+                time += Time.deltaTime;
+
+                var displacement = velocity * time + 0.5f * Vector3.down * gravity * time * time;
+                App.transform.position = start + displacement;
+
+                yield return null;
+            }
+
+            // Arrivé au sol
+            Model.SetIsPickedUpRpc(false);
+        }
+
+        #endregion
+
 
         internal override void RemoveListeners()
         {
-            // Implémenter la gestion des événements si nécessaire
+            // to add
         }
     }
 }
