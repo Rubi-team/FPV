@@ -1,11 +1,14 @@
 ﻿using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace FPV
 {
     public class PlayerModel : NetworkModel<PlayerApplication>
     {
+        # region PlayerController
+
         [Header("Player")] [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 4.0f;
 
@@ -45,7 +48,10 @@ namespace FPV
 
         [Header("Interactions")] public float InteractRadius = 1f;
         public float InteractDistance = 2f;
+        public float ThrowForce = 10f;
 
+        [Tooltip("Does the player rotate with the picker?")]
+        public bool RotateWithPicker = false;
 
         [Header("Cinemachine")]
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
@@ -57,10 +63,38 @@ namespace FPV
         [Tooltip("How far in degrees can you move the camera down")]
         public float BottomClamp = -90.0f;
 
-        [Header("Runtime Values")] public bool b_IsPickedUp = false;
-        public ulong PickedUpByID;
-        public bool b_IsCarrying = false;
-        public ulong isHoldingID = 0;
-        public bool b_CanInteract = true;
+        #endregion
+
+        [Header("Runtime Values")] public Transform PickerTransform;
+        public NetworkObject _NetworkObject;
+        public PlayerApplication CarriedPlayer;
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+            _NetworkObject = GetComponentInParent<NetworkObject>();
+        }
+
+        // Network variables
+        public NetworkVariable<bool> b_IsPickedUp = new(false, NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
+        public NetworkVariable<bool> b_IsCarryingPlayer = new(false, NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
+        public NetworkVariable<bool> b_CanInteract = new(true, NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
+        [Rpc(SendTo.Owner)]
+        internal void SetIsPickedUpRpc(bool isPickedUp)
+        {
+            b_IsPickedUp.Value = isPickedUp;
+        }
+
+        [Rpc(SendTo.Owner)]
+        internal void SetIsCarryingPlayerRpc(bool isCarrying)
+        {
+            b_IsCarryingPlayer.Value = isCarrying;
+        }
     }
 }

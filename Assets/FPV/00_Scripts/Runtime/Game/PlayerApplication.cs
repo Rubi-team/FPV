@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using FPV.Runtime.Shared;
 using UnityEngine;
 using Unity.Netcode;
 using Unity.Netcode.Components;
+using UnityEngine.InputSystem.Composites;
 
 namespace FPV
 {
@@ -19,11 +21,6 @@ namespace FPV
         {
             base.OnNetworkSpawn();
 
-            OwnerCheck();
-        }
-
-        private void OnEnable()
-        {
             OwnerCheck();
         }
 
@@ -91,13 +88,13 @@ namespace FPV
 
         internal void OnServerPlayerAskedToWin()
         {
-            //GameApplication.Instance.Broadcast(new EndMatchEvent(this));
+            GameApplication.Instance.Broadcast(new EndMatchEvent(this));
         }
 
         [Header("Push Settings")] public LayerMask pushLayers;
         public bool canPush;
         [Range(0.5f, 5f)] public float strength = 1.1f;
-        
+
         #region Push Collider
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -126,45 +123,24 @@ namespace FPV
             // Apply the push and take strength into account
             body.AddForce(pushDir * strength, ForceMode.Impulse);
         }
-        
+
         #endregion
 
-        public void GetPickedUp(Transform allyTransform)
+        [Rpc(SendTo.Owner)]
+        private void GetPickedUpRpc(ulong PickerObjectId)
         {
-            GetPickedUpClientRpc(allyTransform.GetComponent<PlayerController>().App.NetworkObject.NetworkObjectId);
+            Model.PickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[PickerObjectId].transform;
+            Model.SetIsPickedUpRpc(true);
         }
 
-        [Rpc(SendTo.NotMe)]
-        private void GetPickedUpClientRpc(ulong pickerID)
-        {
-            if (Model.b_IsPickedUp) return;
-
-
-            // Disable the player controller
-            Controller._controller.enabled = false; // C'est le character controller sur ce GameObject
-            GetComponent<AnticipatedNetworkTransform>().enabled = false; // Faut le désactiver aussi sinon bordel ça part en couille en soit TODO: Si un jour j'ai le temps voir si ya moyen de faire mieux
-
-            transform.localPosition = new Vector3(0, 1, 0);
-
-            OnServerPickedUpPlayerServerRpc(pickerID);
-        }
-
-        [Rpc(SendTo.Server)]
-        private void OnServerPickedUpPlayerServerRpc(ulong pickerID)
-        {
-            // Set this transform as a child of the netObjID transform
-            var netObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerID];
-            NetworkObject.ChangeOwnership(NetworkManager.ServerClientId);
-            NetworkObject.TrySetParent(netObj);
-
-            transform.localPosition = new Vector3(0, 1, 0);
-        }
 
         public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
         {
-            if (Model.b_IsCarrying) return;
+            if (Model.b_IsCarryingPlayer.Value) return;
+            if (Model.b_IsPickedUp.Value) return;
 
-            GetPickedUp(interactorTransform);
+            //TODO a changer 
+            GetPickedUpRpc(interactorTransform.GetComponentInParent<NetworkObject>().NetworkObjectId);
         }
 
         public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()

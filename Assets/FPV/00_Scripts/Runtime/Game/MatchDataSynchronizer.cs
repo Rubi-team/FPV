@@ -8,9 +8,9 @@ namespace FPV
     /// </summary>
     internal class MatchDataSynchronizer : NetworkBehaviour
     {
-        internal NetworkVariable<uint> MatchCountdown = new NetworkVariable<uint>();
-        internal NetworkVariable<bool> MatchEnded = new NetworkVariable<bool>();
-        internal NetworkVariable<bool> MatchStarted = new NetworkVariable<bool>();
+        internal NetworkVariable<uint> MatchCountdown = new();
+        internal NetworkVariable<bool> MatchEnded = new();
+        internal NetworkVariable<bool> MatchStarted = new();
 
         public override void OnNetworkSpawn()
         {
@@ -20,16 +20,24 @@ namespace FPV
                 MatchEnded.OnValueChanged += OnClientMatchEndedChanged;
                 MatchStarted.OnValueChanged += OnClientMatchStartedChanged;
             }
-        }
-        
 
-        void OnClientMatchEndedChanged(bool previousValue, bool newValue)
+            if (IsHost) //TODO remove when new spawning system
+            {
+                GameApplication.Instance.Model.PlayerObject1Id =
+                    NetworkManager.Singleton.SpawnManager.PlayerObjects[0].NetworkObjectId;
+                GameApplication.Instance.Model.PlayerObject1Id =
+                    NetworkManager.Singleton.SpawnManager.PlayerObjects[1].NetworkObjectId;
+            }
+        }
+
+
+        private void OnClientMatchEndedChanged(bool previousValue, bool newValue)
         {
             //you can block inputs here, play animations and so on
             Debug.Log($"New match ended value: {newValue}");
         }
 
-        void OnClientMatchStartedChanged(bool previousValue, bool newValue)
+        private void OnClientMatchStartedChanged(bool previousValue, bool newValue)
         {
             //you can enable inputs here, play animations and so on
             Debug.Log($"New match started value: {newValue}");

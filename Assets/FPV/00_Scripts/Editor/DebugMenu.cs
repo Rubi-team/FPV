@@ -10,7 +10,7 @@ namespace FPV
     [InitializeOnLoad]
     public static class DebugConsoleButton
     {
-        private static readonly string CategoriesKey = "Debug_Categories";
+        /*private static readonly string CategoriesKey = "Debug_Categories";
 
         static DebugConsoleButton()
         {
@@ -149,6 +149,6 @@ namespace FPV
 
                 Debug.Log($"[Debug Settings] Removed category: {category}");
             }
-        }
+        }*/
     }
 }

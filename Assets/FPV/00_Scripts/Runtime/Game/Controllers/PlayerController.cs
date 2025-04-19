@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem.Composites;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -69,7 +71,6 @@ namespace FPV
             // reset our timeouts on start
             _jumpTimeoutDelta = Model.JumpTimeout;
             _fallTimeoutDelta = Model.FallTimeout;
-            Model.b_CanInteract = true;
         }
 
 
@@ -82,12 +83,17 @@ namespace FPV
         {
             if (!App.IsOwner) return;
 
-            if (Model.b_CanInteract) Interact();
+            GroundedCheck();
 
-            if (Model.b_IsPickedUp) return;
+            if (Model.b_CanInteract.Value) Interact();
+
+            if (Model.b_IsPickedUp.Value)
+            {
+                FollowPicker();
+                return;
+            }
 
             JumpAndGravity();
-            GroundedCheck();
             Move();
         }
 
@@ -104,8 +110,28 @@ namespace FPV
 
             _input.interact = false;
 
+            if (Model.b_IsCarryingPlayer.Value)
+            {
+                Model.CarriedPlayer.Controller.OnPlayerThrowMeRpc(App.transform.forward, Model.ThrowForce);
+                Model.SetIsCarryingPlayerRpc(false);
+                return;
+            }
+
+
             var interactable = GetInteractableObject();
-            if (interactable != null) interactable.Interact(IInteractable.InteractAction.Primary, transform);
+            if (interactable != null)
+            {
+                Debug.Log($"Interact with {interactable.GetTransform().name}", this);
+                interactable.Interact(IInteractable.InteractAction.Primary, transform);
+
+                if (interactable.GetTransform().GetComponent<PlayerApplication>() is { } player)
+                    // On interagit avec un joueur
+                    if (player != null)
+                    {
+                        Model.SetIsCarryingPlayerRpc(true);
+                        Model.CarriedPlayer = player;
+                    }
+            }
         }
 
         private void GroundedCheck()
@@ -294,10 +320,71 @@ namespace FPV
             return closestInteractable;
         }
 
+        private void FollowPicker()
+        {
+            // Be at Model.PickerTransform position but 1 y unit above
+            if (Model.PickerTransform == null)
+            {
+                Debug.LogError("Picker transform is null but I am picked up", this);
+                return;
+            }
+
+            var targetPosition = Model.PickerTransform.position;
+            targetPosition.y += 1f;
+            App.transform.position = targetPosition;
+
+            if (Model.RotateWithPicker) App.transform.rotation = Model.PickerTransform.rotation;
+        }
+
+        #region Throw
+
+        [Rpc(SendTo.Owner)]
+        internal void OnPlayerThrowMeRpc(Vector3 dir, float force)
+        {
+            if (!Model.b_IsPickedUp.Value)
+            {
+                Debug.LogError("OnPlayerThrowMeRpc called but I am not picked up", this);
+                return;
+            }
+
+            if (Model.b_IsCarryingPlayer.Value)
+            {
+                Debug.LogError("ya 3 joueurs ??? montrez ça a thomas", this);
+                return;
+            }
+
+            StartCoroutine(ThrowTrajectory(dir, force));
+        }
+
+        private IEnumerator ThrowTrajectory(Vector3 dir, float force)
+        {
+            var gravity = 9.81f;
+            var time = 0f;
+            var start = App.transform.position;
+            var velocity = dir * force;
+            velocity.y = force * 0.5f; // donne un peu de hauteur
+
+
+            while (!Model.Grounded) // Tu peux remplacer par une vraie vérif
+            {
+                time += Time.deltaTime;
+
+                var displacement = velocity * time + 0.5f * Vector3.down * gravity * time * time;
+                App.transform.position = start + displacement;
+
+                yield return null;
+            }
+
+            // Arrivé au sol
+            Model.SetIsPickedUpRpc(false);
+        }
+
+        #endregion
+
 
         internal override void RemoveListeners()
         {
-            // Implémenter la gestion des événements si nécessaire
+            // to add
         }
     }
 }
