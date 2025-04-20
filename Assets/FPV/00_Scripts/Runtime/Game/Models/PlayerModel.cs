@@ -55,6 +55,8 @@ namespace FPV
 
         [Header("Cinemachine")]
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
+        public GameObject CinemachineCameraFollow;
+
         public GameObject CinemachineCameraTarget;
 
         [Tooltip("How far in degrees can you move the camera up")]
@@ -62,6 +64,12 @@ namespace FPV
 
         [Tooltip("How far in degrees can you move the camera down")]
         public float BottomClamp = -90.0f;
+
+        #endregion
+
+        #region VOIP
+
+        [Header("VOIP")] [SerializeField] internal GameObject _voipObject;
 
         #endregion
 

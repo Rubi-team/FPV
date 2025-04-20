@@ -8,8 +8,10 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Services.Matchmaker.Models;
 using Unity.Services.Relay;
 using UnityEditor;
+using UnityEditor.Networking.PlayerConnection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using NetworkSceneManager = Unity.Netcode.NetworkSceneManager;
 #if UNITY_SERVER || ENABLE_UCS_SERVER
 using Unity.Services.Authentication.Server;
 #endif
@@ -57,30 +59,28 @@ namespace FPV.Runtime.Shared
         /// </summary>
         /// <param name="startedByUser">Is Creating the relay?</param>
         /// <param name="singlePlayerMode">Start in SinglePlayer?</param>
-        public async Task<Task> InitializeNetworkLogic(bool createRelay, string relayCode = null)
+        public async Task InitializeNetworkLogic(bool createRelay, string relayCode = null)
         {
-            if (IsClient || IsHost) m_NetworkManager.Shutdown(true);
-
+            if (IsClient || IsHost)
+                m_NetworkManager.Shutdown(true);
 
             ExpectedPlayers = FPV_CONSTANTS.MAX_PLAYERS;
 
-            if (createRelay) //then you can only run in client mode
+            if (createRelay)
             {
-                // Create the relay
                 await RelayManager.CreateRelayAsync();
-                await SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
-                m_NetworkManager.StartHost();
+
+                SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
+
+                StartHost();
             }
             else
             {
-                // Join the relay
-                //TODO handle Error
                 await RelayManager.JoinRelayAsync(relayCode);
-                m_NetworkManager.StartClient();
+                StartClient();
             }
-
-            return Task.CompletedTask;
         }
+
 
         internal async void AutoConnect()
         {
@@ -94,6 +94,27 @@ namespace FPV.Runtime.Shared
             m_PreparedGame = false;
         }
 
+        internal void StartHost()
+        {
+            if (m_NetworkManager.IsHost || m_NetworkManager.IsClient)
+            {
+                Debug.LogWarning("Already started as host or client");
+                return;
+            }
+
+            m_NetworkManager.StartHost();
+        }
+
+        internal void StartClient()
+        {
+            if (m_NetworkManager.IsHost || m_NetworkManager.IsClient)
+            {
+                Debug.LogWarning("Already started as host or client");
+                return;
+            }
+
+            m_NetworkManager.StartClient();
+        }
 
         internal void OnServerQuitAfter(float seconds)
         {

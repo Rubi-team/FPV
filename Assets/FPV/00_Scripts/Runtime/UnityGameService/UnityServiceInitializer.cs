@@ -23,6 +23,7 @@ namespace FPV
         {
             if (Instance && Instance != this) return;
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
 
         private async void Start()

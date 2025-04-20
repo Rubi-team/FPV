@@ -16,13 +16,9 @@ namespace FPV
     {
         [Header("Events References")] [SerializeField]
         private EventReference VivoxEvent0;
-        [SerializeField] private EventReference VivoxEvent1;
 
-
-        public bool echoChannel = false;
         public TaskCompletionSource<bool> ChannelJoinedTaskCompletionSource { get; private set; }
 
-        private int otherPlayersCount = 0;
 
         public static VivoxManager Instance { get; private set; }
 
@@ -31,29 +27,13 @@ namespace FPV
             Instance = this;
         }
 
-        public async void Start()
+        public async void VivoxInit()
         {
-            //console?.Log("Logging into Vivox...");
+            Debug.Log("Logging into Vivox...");
             await LoginToVivoxAsync();
 
-            VivoxService.Instance.ParticipantAddedToChannel += AddParticipantEffect;
-            VivoxService.Instance.ChannelJoined += JoinChannel;
-
-            //console?.Log("Joining channel...");
-            await JoinChannelAsync("test");
-        }
-
-        private void AddParticipantEffect(VivoxParticipant participant) // TODO CLEANUP
-        {
-            
-        }
-
-        private void JoinChannel(string channelName)
-        {
-            // loop through all participants and add the effect
-            foreach (var participant in VivoxService.Instance.ActiveChannels[channelName])
-                if (!participant.IsSelf)
-                    AddParticipantEffect(participant);
+            Debug.Log("Joining channel...");
+            await JoinChannelAsync(RelayManager.JoinCode);
         }
 
 
@@ -69,12 +49,11 @@ namespace FPV
                 Debug.LogError($"Failed to initialize Vivox: {e}");
                 throw;
             }
-            
+
             try
             {
-                
                 //TODO add DisplayName si utile
-                var options = new LoginOptions { EnableTTS = false};
+                var options = new LoginOptions { EnableTTS = false };
                 await VivoxService.Instance.LoginAsync(options);
             }
             catch (Exception e)
@@ -92,6 +71,7 @@ namespace FPV
                 await VivoxService.Instance.LeaveAllChannelsAsync();
                 await VivoxService.Instance.JoinGroupChannelAsync(channelName, ChatCapability.AudioOnly);
                 Debug.Log($"Joined channel: {channelName}");
+
                 ChannelJoinedTaskCompletionSource.SetResult(true);
             }
             catch (Exception e)
