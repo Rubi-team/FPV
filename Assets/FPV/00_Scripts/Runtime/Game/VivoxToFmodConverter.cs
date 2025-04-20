@@ -10,203 +10,248 @@ using UnityEngine;
 
 namespace FPV
 {
-    public class VivoxToFmodConverter : MonoBehaviour
-    {
-        private const int LatencyMS = 50;
-        private const int DriftMS = 1;
-        private const float DriftCorrectionPercentage = 0.5f;
+public class VivoxToFmodConverter : MonoBehaviour
+	{
+		private const int LatencyMS = 50;
+		private const int DriftMS = 1;
+		private const float DriftCorrectionPercentage = 0.5f;
 
-        private readonly List<float> audioBuffer = new();
-        private int actualLatency;
-        private uint adjustedLatency;
-        private EVENT_CALLBACK audioCallback;
+		private AudioModel _audioModel;
 
-        private AudioModel audioModel;
-        private uint bufferReadPosition;
-        private uint bufferSamplesWritten;
-        private Channel channel;
-        private DSP compressorDSP;
-        private uint driftThreshold;
-        private EventInstance eventInstance;
+		private int _systemSampleRate;
+		private EventInstance _eventInstance;
+		private EVENT_CALLBACK _audioCallback;
 
-        private bool isSpeaking;
-        private uint minimumSamplesWritten = uint.MaxValue;
-        private Sound sound;
+		private CREATESOUNDEXINFO _soundInfo;
+		private Sound _sound;
+		private Channel _channel;
 
-        private CREATESOUNDEXINFO soundInfo;
+		private readonly List<float> _audioBuffer = new();
+		private uint _bufferSamplesWritten;
+		private uint _bufferReadPosition;
+		private uint _driftThreshold;
+		private uint _targetLatency;
+		private uint _adjustedLatency;
+		private int _actualLatency;
+		private uint _totalSamplesWritten;
+		private uint _totalSamplesRead;
+		private uint _minimumSamplesWritten = uint.MaxValue;
 
-        private int systemSampleRate;
-        private uint targetLatency;
-        private uint totalSamplesRead;
-        private uint totalSamplesWritten;
+		private bool _isSpeaking;
 
-        private AudioInstance AudioInstance { set; get; }
+		public AudioInstance AudioInstance { private set; get; }
 
-        private void OnDestroy()
-        {
-            sound.release();
-            compressorDSP.release();
-        }
+		public void Setup(AudioModel audioModel)
+		{
+			_audioModel = audioModel;
+			_systemSampleRate = AudioSettings.outputSampleRate;
 
-        private void OnAudioFilterRead(float[] data, int channels)
-        {
-            if (!channel.hasHandle()) return;
+			if (!AudioBankLoader.HasBankLoaded(_audioModel.Bank))
+			{
+				AudioBankLoader.LoadBank(_audioModel.Bank, true, CreateInstance);
+			}
+			else
+			{
+				CreateInstance();
+			}
 
-            audioBuffer.AddRange(data);
-            UpdateBufferLatency((uint)data.Length);
+			_driftThreshold = (uint)(_systemSampleRate * DriftMS) / 1000;
+			_targetLatency = (uint)(_systemSampleRate * LatencyMS) / 1000;
+			_adjustedLatency = _targetLatency;
+			_actualLatency = (int)_targetLatency;
+		}
 
-            // On vérifie si le compresseur est attaché, sinon on l'ajoute
-            var isDspAdded = false;
-            channel.getDSP(0, out var firstDSP);
-            if (firstDSP.hasHandle())
-            {
-                DSP_TYPE dspType;
-                firstDSP.getType(out dspType);
-                isDspAdded = dspType == DSP_TYPE.COMPRESSOR;
-            }
+		[MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
+		private static RESULT AudioEventCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
+		{
+			var instance = new EventInstance(instancePtr);
+			instance.getUserData(out IntPtr soundPtr);
 
-            if (!isDspAdded) channel.addDSP(0, compressorDSP);
-            // Ajout Compresseur Audio
-            isSpeaking = Array.Exists(data, value => value != 0);
-            ProcessAudio(channels);
+			if (soundPtr == IntPtr.Zero) return RESULT.OK;
 
-            // On efface les données d'entrée pour éviter les effets de feedback
-            for (var i = 0; i < data.Length; i++)
-                data[i] = 0;
-        }
+			var soundHandle = GCHandle.FromIntPtr(soundPtr);
+			var sound = (Sound)soundHandle.Target;
 
-        public void Setup(AudioModel audioModelSetup)
-        {
-            audioModel = audioModelSetup;
-            systemSampleRate = AudioSettings.outputSampleRate;
+			switch (type)
+			{
+				case EVENT_CALLBACK_TYPE.CREATE_PROGRAMMER_SOUND:
+				{
+					var parameter = (PROGRAMMER_SOUND_PROPERTIES)Marshal.PtrToStructure(parameterPtr,
+						typeof(PROGRAMMER_SOUND_PROPERTIES));
+					parameter.sound = sound.handle;
+					parameter.subsoundIndex = -1;
+					Marshal.StructureToPtr(parameter, parameterPtr, false);
+					break;
+				}
+				case EVENT_CALLBACK_TYPE.DESTROY_PROGRAMMER_SOUND:
+				{
+					var parameter = (PROGRAMMER_SOUND_PROPERTIES)Marshal.PtrToStructure(parameterPtr,
+						typeof(PROGRAMMER_SOUND_PROPERTIES));
+					sound.release();
+					sound = new(parameter.sound);
+					sound.release();
+					break;
+				}
+				case EVENT_CALLBACK_TYPE.DESTROYED:
+				{
+					soundHandle.Free();
+					break;
+				}
+			}
 
-            if (!AudioBankLoader.HasBankLoaded(audioModel.Bank))
-                AudioBankLoader.LoadBank(audioModel.Bank, true, CreateInstance);
-            else
-                CreateInstance();
+			return RESULT.OK;
+		}
 
-            driftThreshold = (uint)(systemSampleRate * DriftMS) / 1000;
-            targetLatency = (uint)(systemSampleRate * LatencyMS) / 1000;
-            adjustedLatency = targetLatency;
-            actualLatency = (int)targetLatency;
+		private void CreateInstance()
+		{
+			AudioInstance = AudioManager.CreateAudioInstance(_audioModel);
 
-            SetupCompressor();
-        }
+			if (!AudioManager.TryGetEventInstance(AudioInstance.ID, out EventInstance eventInstance))
+			{
+				//LogUtility.LogError("AudioInstance for VivoxParticipant has not being created:" + AudioInstance.ID,LogTag.Audio);
+				return;
+			}
 
-        private void SetupCompressor()
-        {
-            RuntimeManager.CoreSystem.createDSPByType(DSP_TYPE.COMPRESSOR, out compressorDSP);
+			_eventInstance = eventInstance;
+			_audioCallback = AudioEventCallback;
+			_eventInstance.setCallback(_audioCallback);
 
-            // Configuration du compresseur
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.THRESHOLD, -10.0f); // Seuil d'activation
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.RATIO, 4.0f); // Ratio de compression
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.ATTACK, 10.0f); // Temps d'attaque en ms
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.RELEASE, 200.0f); // Temps de relâchement en ms
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.GAINMAKEUP, 5.0f); // Gain de compensation
+			_eventInstance.start();
+			AudioManager.AttachInstanceToGameObject(AudioInstance.ID, transform);
+		}
 
-            //Debug.Log("Compresseur audio configuré");
-        }
+		private void UpdateBufferLatency(uint samplesWritten)
+		{
+			_totalSamplesWritten += samplesWritten;
 
-        [MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
-        private static RESULT AudioEventCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
-        {
-            var instance = new EventInstance(instancePtr);
-            instance.getUserData(out var soundPtr);
+			if (samplesWritten != 0 && samplesWritten < _minimumSamplesWritten)
+			{
+				_minimumSamplesWritten = samplesWritten;
+				_adjustedLatency = Math.Max(samplesWritten, _targetLatency);
+			}
 
-            if (soundPtr == IntPtr.Zero) return RESULT.OK;
+			int latency = (int)_totalSamplesWritten - (int)_totalSamplesRead;
+			_actualLatency = (int)(0.93f * _actualLatency + 0.03f * latency);
 
-            var soundHandle = GCHandle.FromIntPtr(soundPtr);
-            var sound = (Sound)soundHandle.Target;
+			if (!_channel.hasHandle()) return;
 
-            switch (type)
-            {
-                case EVENT_CALLBACK_TYPE.CREATE_PROGRAMMER_SOUND:
-                    var parameter =
-                        (PROGRAMMER_SOUND_PROPERTIES)Marshal.PtrToStructure(parameterPtr,
-                            typeof(PROGRAMMER_SOUND_PROPERTIES));
-                    parameter.sound = sound.handle;
-                    parameter.subsoundIndex = -1;
-                    Marshal.StructureToPtr(parameter, parameterPtr, false);
-                    break;
+			int playbackRate = _systemSampleRate;
+			if (_actualLatency < (int)(_adjustedLatency - _driftThreshold))
+			{
+				playbackRate = _systemSampleRate - (int)(_systemSampleRate * (DriftCorrectionPercentage / 100.0f));
+			}
+			else if (_actualLatency > (int)(_adjustedLatency + _driftThreshold))
+			{
+				playbackRate = _systemSampleRate + (int)(_systemSampleRate * (DriftCorrectionPercentage / 100.0f));
+			}
 
-                case EVENT_CALLBACK_TYPE.DESTROY_PROGRAMMER_SOUND:
-                    sound.release();
-                    break;
+			_channel.setFrequency(playbackRate);
+		}
 
-                case EVENT_CALLBACK_TYPE.DESTROYED:
-                    soundHandle.Free();
-                    break;
-            }
+		private void OnAudioFilterRead(float[] data, int channels)
+		{
+			if (_channel.hasHandle())
+			{
+				_audioBuffer.AddRange(data);
+				UpdateBufferLatency((uint)data.Length);
+			}
 
-            return RESULT.OK;
-        }
+			_isSpeaking = false;
+			foreach (float value in data)
+			{
+				if (value == 0) continue;
 
-        private void CreateInstance()
-        {
-            /*AudioInstance = AudioManager.CreateAudioInstance(audioModel);
+				_isSpeaking = true;
+				break;
+			}
 
-            if (!AudioManager.TryGetEventInstance(AudioInstance.ID, out var eventInstance))
-                //Debug.LogError("AudioInstance pour VivoxParticipant non créé : " + AudioInstance.ID);
-                return;
+			ProcessAudio(channels);
 
-            this.eventInstance = eventInstance;
-            audioCallback = AudioEventCallback;
-            this.eventInstance.setCallback(audioCallback);
-            this.eventInstance.start();
-            AudioManager.AttachInstanceToGameObject(AudioInstance.ID, transform);*/
+			for (int i = 0; i < data.Length; i++)
+			{
+				data[i] = 0;
+			}
+		}
 
-            //TODO fix
-        }
+		private void ProcessAudio(int channels)
+		{
+			if (!_channel.hasHandle())
+			{
+				if (!_isSpeaking) return;
 
-        private void UpdateBufferLatency(uint samplesWritten)
-        {
-            totalSamplesWritten += samplesWritten;
+				RESULT result = _eventInstance.getChannelGroup(out ChannelGroup channelGroup);
+				if (result != RESULT.OK)
+				{
+					//LogUtility.LogError(result.ToString(), LogTag.Audio);
+				}
 
-            if (samplesWritten != 0 && samplesWritten < minimumSamplesWritten)
-            {
-                minimumSamplesWritten = samplesWritten;
-                adjustedLatency = Math.Max(samplesWritten, targetLatency);
-            }
+				_soundInfo.cbsize = Marshal.SizeOf(typeof(CREATESOUNDEXINFO));
+				_soundInfo.numchannels = channels;
+				_soundInfo.defaultfrequency = _systemSampleRate;
+				_soundInfo.length = _targetLatency * (uint)channels * sizeof(float);
+				_soundInfo.format = SOUND_FORMAT.PCMFLOAT;
 
-            var latency = (int)totalSamplesWritten - (int)totalSamplesRead;
-            actualLatency = (int)(0.93f * actualLatency + 0.03f * latency);
+				RuntimeManager.CoreSystem.createSound("voip", MODE.LOOP_NORMAL | MODE.OPENUSER, ref _soundInfo,
+					out _sound);
+				RuntimeManager.CoreSystem.playSound(_sound, channelGroup, false, out _channel);
 
-            if (!channel.hasHandle()) return;
+				return;
+			}
 
-            var playbackRate = systemSampleRate;
-            if (actualLatency < (int)(adjustedLatency - driftThreshold))
-                playbackRate -= (int)(systemSampleRate * (DriftCorrectionPercentage / 100.0f));
-            else if (actualLatency > (int)(adjustedLatency + driftThreshold))
-                playbackRate += (int)(systemSampleRate * (DriftCorrectionPercentage / 100.0f));
+			if (_audioBuffer.Count == 0) return;
 
-            channel.setFrequency(playbackRate);
-        }
+			_channel.getPosition(out uint readPosition, TIMEUNIT.PCMBYTES);
 
+			uint bytesRead = readPosition - _bufferReadPosition;
+			if (readPosition <= _bufferReadPosition)
+			{
+				bytesRead += _soundInfo.length;
+			}
 
-        private void ProcessAudio(int channels)
-        {
-            if (!channel.hasHandle() || audioBuffer.Count == 0) return;
+			if (bytesRead <= 0 || _audioBuffer.Count < bytesRead) return;
 
-            channel.getPosition(out var readPosition, TIMEUNIT.PCMBYTES);
-            var bytesRead = readPosition <= bufferReadPosition
-                ? readPosition + soundInfo.length - bufferReadPosition
-                : readPosition - bufferReadPosition;
+			RESULT res = _sound.@lock(_bufferReadPosition, bytesRead, out IntPtr ptr1, out IntPtr ptr2, out uint len1,
+				out uint len2);
+			if (res != RESULT.OK)
+			{
+				//LogUtility.LogError(res.ToString(), LogTag.Audio);
+			}
 
-            if (bytesRead <= 0 || audioBuffer.Count < bytesRead) return;
+			// Though soundInfo.format is float, data retrieved from Sound::lock is in bytes,
+			// so we only copy (len1+len2)/sizeof(float) full float values across
+			int sampleLen1 = (int)(len1 / sizeof(float));
+			int sampleLen2 = (int)(len2 / sizeof(float));
+			int samplesRead = sampleLen1 + sampleLen2;
+			float[] tmpBuffer = new float[samplesRead];
 
-            sound.@lock(bufferReadPosition, bytesRead, out var ptr1, out var ptr2, out var len1, out var len2);
-            var tmpBuffer = new float[(len1 + len2) / sizeof(float)];
+			_audioBuffer.CopyTo(0, tmpBuffer, 0, tmpBuffer.Length);
+			_audioBuffer.RemoveRange(0, tmpBuffer.Length);
 
-            audioBuffer.CopyTo(0, tmpBuffer, 0, tmpBuffer.Length);
-            audioBuffer.RemoveRange(0, tmpBuffer.Length);
+			if (len1 > 0)
+			{
+				Marshal.Copy(tmpBuffer, 0, ptr1, sampleLen1);
+			}
+			if (len2 > 0)
+			{
+				Marshal.Copy(tmpBuffer, sampleLen1, ptr2, sampleLen2);
+			}
 
-            if (len1 > 0) Marshal.Copy(tmpBuffer, 0, ptr1, (int)len1 / sizeof(float));
-            if (len2 > 0) Marshal.Copy(tmpBuffer, (int)len1 / sizeof(float), ptr2, (int)len2 / sizeof(float));
+			res = _sound.unlock(ptr1, ptr2, len1, len2);
+			if (res != RESULT.OK)
+			{
+				//LogUtility.LogError(res.ToString(), LogTag.Audio);
+			}
 
-            sound.unlock(ptr1, ptr2, len1, len2);
+			_bufferReadPosition = readPosition;
+			_totalSamplesRead += (uint)samplesRead;
 
-            bufferReadPosition = readPosition;
-            totalSamplesRead += (uint)tmpBuffer.Length;
-        }
-    }
+			var soundHandle = GCHandle.Alloc(_sound, GCHandleType.Pinned);
+			_eventInstance.setUserData(GCHandle.ToIntPtr(soundHandle));
+		}
+
+		private void OnDestroy()
+		{
+			_sound.release();
+		}
+	}
 }
