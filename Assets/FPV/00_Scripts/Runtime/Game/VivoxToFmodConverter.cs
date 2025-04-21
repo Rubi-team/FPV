@@ -50,34 +50,23 @@ namespace FPV
 
         private IEnumerator Start()
         {
-            // Debug if VOIP event in Master bank exists
-            var result = RuntimeManager.GetEventDescription("event:/VOIP");
-
-
+            // get event details of VivoxEvent0
+            Debug.Log(RuntimeManager.GetEventDescription(VivoxEvent0));
             // Wait 5s to ensure the Vivox service is initialized 
             yield return new WaitForSeconds(5f);
 
-            var audioModel = new AudioModel
-            {
-                Bank = "Master",
-                EventName = "event:/VOIP"
-            };
-
-            Setup(audioModel);
+            Setup(VivoxEvent0);
         }
 
         /// <summary>
         /// Function to setup the VivoxToFmodConverter.
         /// </summary>
         /// <param name="audioModel"></param>
-        internal void Setup(AudioModel audioModel)
+        internal void Setup(EventReference eventReference)
         {
-            _audioModel = audioModel;
             _systemSampleRate = AudioSettings.outputSampleRate;
 
-
             CreateInstance();
-
 
             _driftThreshold = (uint)(_systemSampleRate * DriftMS) / 1000;
             _targetLatency = (uint)(_systemSampleRate * LatencyMS) / 1000;
@@ -128,7 +117,7 @@ namespace FPV
 
         private void CreateInstance()
         {
-            AudioInstance = AudioManager.CreateAudioInstance(_audioModel);
+            AudioInstance = AudioManager.CreateAudioInstance(VivoxEvent0);
 
             if (!AudioManager.TryGetEventInstance(AudioInstance.ID, out var eventInstance))
                 //LogUtility.LogError("AudioInstance for VivoxParticipant has not being created:" + AudioInstance.ID,LogTag.Audio);

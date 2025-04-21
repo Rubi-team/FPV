@@ -66,8 +66,7 @@ namespace FMODUnity
             // Use original asset location because streaming asset folder will contain platform specific banks
             Settings globalSettings = Settings.Instance;
 
-            // string bankFolder = globalSettings.SourceBankPath; // line 69
-            string bankFolder = RuntimeUtils.ToVirtualPlayerFriendlyPath(globalSettings.SourceBankPath); // line 69
+            string bankFolder = globalSettings.SourceBankPath;
             if (globalSettings.HasPlatforms)
             {
                 bankFolder = RuntimeUtils.GetCommonPlatformPath(Path.Combine(bankFolder, BuildDirectory));

@@ -624,38 +624,5 @@ namespace FMODUnity
             }
         }
 #endif
-        
-        public static string ToVirtualPlayerFriendlyPath(string bankPath)
-        {
-#if UNITY_EDITOR
-            if (IsVirtualPlayer() == false)
-            {
-                // Editor: regular player, leave the path as is.
-                return bankPath;
-            }
-
-            return System.IO.Path.Combine("../../../", bankPath);
-
-            // https://discussions.unity.com/t/multiplayer-play-mode-get-player-id/1578742/3
-            bool IsVirtualPlayer()
-            {
-                const string vpIdArg = "-vpId";
-
-                var args = Environment.GetCommandLineArgs();
-                foreach (var arg in args)
-                {
-                    if (arg.StartsWith(vpIdArg))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-#else
-    // Runtime: do not adjust the path in any way.
-    return bankPath;
-#endif
-        }
     }
 }
