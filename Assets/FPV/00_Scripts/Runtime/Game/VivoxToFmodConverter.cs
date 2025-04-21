@@ -306,7 +306,7 @@ public class VivoxToFmodConverter : MonoBehaviour
 
                 res = _sound.unlock(ptr1, ptr2, len1, len2);
                 if (res != RESULT.OK)
-                {
+                {   
                     Debug.LogError("Error unlocking sound: " + res);
                     return;
                 }
