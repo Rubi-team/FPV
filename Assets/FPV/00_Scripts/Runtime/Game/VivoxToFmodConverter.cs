@@ -6,7 +6,9 @@ using Audio;
 using FMOD;
 using FMOD.Studio;
 using FMODUnity;
+using SteamAudio;
 using UnityEngine;
+using AudioSettings = UnityEngine.AudioSettings;
 using Debug = UnityEngine.Debug;
 
 public class VivoxToFmodConverter : MonoBehaviour
@@ -42,6 +44,8 @@ public class VivoxToFmodConverter : MonoBehaviour
 
     private void Start()
     {
+        //GetComponent<SteamAudioSource>().pathingProbeBatch = Find
+
         var audioModel = new AudioModel
         {
             Bank = "Master",
@@ -50,6 +54,7 @@ public class VivoxToFmodConverter : MonoBehaviour
 
         Setup(audioModel);
     }
+
 
     public void Setup(AudioModel audioModel)
     {
