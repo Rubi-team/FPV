@@ -71,8 +71,6 @@ namespace FPV.Runtime.Shared
                 await RelayManager.CreateRelayAsync();
 
                 await SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
-                SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
-
                 await SceneManager.LoadSceneAsync("LevelArt", LoadSceneMode.Additive);
 
                 StartHost();
