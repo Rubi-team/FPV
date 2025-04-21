@@ -100,7 +100,7 @@ namespace FPV
                 var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
                 // Get the join code
-                JoinCode = joinCode;
+                JoinCode = joinCode.ToUpper();
 
                 var host = joinAllocation.RelayServer.IpV4;
                 var port = (ushort)joinAllocation.RelayServer.Port;

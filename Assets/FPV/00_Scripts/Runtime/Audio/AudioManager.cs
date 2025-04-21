@@ -40,12 +40,12 @@ namespace Audio
         /// <summary>
         ///     Creates a new audio instance from the given AudioModel.
         /// </summary>
-        public static AudioInstance CreateAudioInstance(EventReference eventReference)
+        public static AudioInstance CreateAudioInstance(AudioModel eventReference)
         {
             var instance = new AudioInstance { ID = _nextID++ };
 
-            // Create an FMOD event instance using the event path from AudioModel.
-            var eventInstance = RuntimeManager.CreateInstance(eventReference);
+            // Create an FMOD event instance using the event Reference from AudioModel.
+            var eventInstance = RuntimeManager.CreateInstance(eventReference.EventName);
             _eventInstances.Add(instance.ID, eventInstance);
 
             return instance;

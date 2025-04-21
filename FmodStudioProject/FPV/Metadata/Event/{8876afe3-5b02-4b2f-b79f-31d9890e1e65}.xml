@@ -5,7 +5,7 @@
 			<value>VOIP</value>
 		</property>
 		<property name="outputFormat">
-			<value>0</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{b99831ed-885a-46ac-b65b-213430445720}</destination>
@@ -79,7 +79,7 @@
 	</object>
 	<object class="ProgrammerSound" id="{c71095b6-df09-44ec-8d7c-06325a007706}">
 		<property name="length">
-			<value>5</value>
+			<value>7200</value>
 		</property>
 	</object>
 	<object class="MixerBusEffectChain" id="{76b8f3f5-8d30-479c-b171-c2516e93329c}">
@@ -93,7 +93,7 @@
 			<value>0</value>
 		</property>
 		<property name="length">
-			<value>5</value>
+			<value>7200</value>
 		</property>
 		<relationship name="timeline">
 			<destination>{554152b7-dc4b-44d0-8d5b-a1d06bf5adf1}</destination>
@@ -104,10 +104,14 @@
 	</object>
 	<object class="MixerBusEffectChain" id="{cc73587e-ce77-43ec-8fd7-4625ef02915f}">
 		<relationship name="effects">
+			<destination>{5cbdf94c-5c74-4c59-81f0-c3caa38ea867}</destination>
 			<destination>{1a088fe3-40d7-483d-8365-993f9a564639}</destination>
+			<destination>{9ef33dae-c226-4c15-b2c3-6ed4aafe59ba}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{d65b3e10-e07c-4a81-a2b7-794b005e7c6b}" />
 	<object class="MixerBusFader" id="{106e30d1-a242-42ab-bbf5-062ac5b18908}" />
+	<object class="SpatialiserEffect" id="{5cbdf94c-5c74-4c59-81f0-c3caa38ea867}" />
 	<object class="MixerBusFader" id="{1a088fe3-40d7-483d-8365-993f9a564639}" />
+	<object class="SFXReverbEffect" id="{9ef33dae-c226-4c15-b2c3-6ed4aafe59ba}" />
 </objects>
