@@ -452,10 +452,10 @@ MonoBehaviour:
   m_Name: FMODStudioSettings
   m_EditorClassIdentifier: 
   switchSettingsMigration: 1
-  HasSourceProject: 1
-  HasPlatforms: 1
+  HasSourceProject: 0
+  HasPlatforms: 0
   sourceProjectPath: FmodStudioProject/FPV/FPV.fspro
-  sourceBankPath: FmodStudioProject/FPV/Build
+  sourceBankPath: Assets/FPV/Settings/Resources/FMODBanks/Desktop
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 1
   ShowBankRefreshWindow: 1
@@ -463,9 +463,9 @@ MonoBehaviour:
   BankLoadType: 0
   AutomaticSampleLoading: 0
   EncryptionKey: 
-  ImportType: 1
+  ImportType: 0
   TargetAssetPath: FPV/Settings/Resources/FMODBanks
-  TargetBankFolder: 
+  TargetBankFolder: Assets/FPV/Settings/Resources/FMODBanks/Desktop
   EventLinkage: 1
   LoggingLevel: 2
   SpeakerModeSettings: []
@@ -476,8 +476,12 @@ MonoBehaviour:
   VirtualChannelSettings: []
   RealChannelSettings: []
   Plugins: []
-  MasterBanks: []
-  Banks: []
+  MasterBanks:
+  - Master
+  Banks:
+  - Music
+  - PlayerSFX
+  - VOIP
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0
