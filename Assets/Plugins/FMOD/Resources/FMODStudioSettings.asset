@@ -452,10 +452,10 @@ MonoBehaviour:
   m_Name: FMODStudioSettings
   m_EditorClassIdentifier: 
   switchSettingsMigration: 1
-  HasSourceProject: 1
-  HasPlatforms: 1
+  HasSourceProject: 0
+  HasPlatforms: 0
   sourceProjectPath: FmodStudioProject/FPV/FPV.fspro
-  sourceBankPath: FmodStudioProject/FPV/Build
+  sourceBankPath: Assets/FPV/Settings/Resources/FMODBanks/Desktop
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 1
   ShowBankRefreshWindow: 1
@@ -463,10 +463,10 @@ MonoBehaviour:
   BankLoadType: 0
   AutomaticSampleLoading: 0
   EncryptionKey: 
-  ImportType: 1
+  ImportType: 0
   TargetAssetPath: FPV/Settings/Resources/FMODBanks
-  TargetBankFolder: 
-  EventLinkage: 0
+  TargetBankFolder: Assets/FPV/Settings/Resources/FMODBanks/Desktop
+  EventLinkage: 1
   LoggingLevel: 2
   SpeakerModeSettings: []
   SampleRateSettings: []
@@ -481,7 +481,7 @@ MonoBehaviour:
   Banks:
   - Music
   - PlayerSFX
-  - Vivox
+  - VOIP
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0
@@ -493,7 +493,7 @@ MonoBehaviour:
   EnableErrorCallback: 0
   SharedLibraryUpdateStage: 0
   SharedLibraryTimeSinceStart: 0
-  CurrentVersion: 131846
+  CurrentVersion: 131847
   HideSetupWizard: 1
   LastEventReferenceScanVersion: 131846
   Platforms:

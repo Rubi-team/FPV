@@ -49,8 +49,7 @@ namespace FMODUnity
 
         private static void UpdateFileWatcherPath()
         {
-            // string sourceBankPath = Settings.Instance.SourceBankPath; // line 52
-            string sourceBankPath = RuntimeUtils.ToVirtualPlayerFriendlyPath(Settings.Instance.SourceBankPath); // line 52
+            string sourceBankPath = Settings.Instance.SourceBankPath;
 
             string pathToWatch;
 

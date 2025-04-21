@@ -8,29 +8,31 @@ namespace Audio
 {
     public static class AudioManager
     {
-        /*private static readonly Dictionary<int, EventInstance> _eventInstances = new();
+        private static readonly Dictionary<int, EventInstance> _eventInstances = new();
         private static int _nextID;
 
         /// <summary>
         ///     Creates a new audio instance from the given AudioModel.
         /// </summary>
-        /*public static void PlayOneShot(EventReference sound, Vector3 worldPos)
+        public static void PlayOneShot(EventReference sound, Vector3 worldPos)
         {
-            PlayOneShotRpc(sound.Path, worldPos);
-        }#1#
+            PlayOneShotRpc(sound.ToString(), worldPos);
+        }
 
-        [Rpc(SendTo.Everyone)] private static void PlayOneShotRpc(string soundPath, Vector3 worldPos)
+        [Rpc(SendTo.Everyone)]
+        private static void PlayOneShotRpc(string soundPath, Vector3 worldPos)
         {
             RuntimeManager.PlayOneShot(soundPath, worldPos);
         }
 
 
-        /*public static void PlayOneShotAttached(EventReference sound, GameObject objectAttached)
+        public static void PlayOneShotAttached(EventReference sound, GameObject objectAttached)
         {
-            PlayOneShotAttachedRpc(sound.Path, objectAttached.name);
-        }#1#
+            PlayOneShotAttachedRpc(sound.ToString(), objectAttached.name);
+        }
 
-        [Rpc(SendTo.Everyone)] private static void PlayOneShotAttachedRpc(string soundPath, string objectName)
+        [Rpc(SendTo.Everyone)]
+        private static void PlayOneShotAttachedRpc(string soundPath, string objectName)
         {
             RuntimeManager.PlayOneShotAttached(soundPath, GameObject.Find(objectName));
         }
@@ -38,12 +40,12 @@ namespace Audio
         /// <summary>
         ///     Creates a new audio instance from the given AudioModel.
         /// </summary>
-        public static AudioInstance CreateAudioInstance(AudioModel model)
+        public static AudioInstance CreateAudioInstance(AudioModel eventReference)
         {
             var instance = new AudioInstance { ID = _nextID++ };
 
-            // Create an FMOD event instance using the event path from AudioModel.
-            var eventInstance = RuntimeManager.CreateInstance(model.EventName);
+            // Create an FMOD event instance using the event Reference from AudioModel.
+            var eventInstance = RuntimeManager.CreateInstance(eventReference.EventName);
             _eventInstances.Add(instance.ID, eventInstance);
 
             return instance;
@@ -64,6 +66,6 @@ namespace Audio
         {
             if (_eventInstances.TryGetValue(id, out var instance))
                 RuntimeManager.AttachInstanceToGameObject(instance, transform.gameObject);
-        }*/
+        }
     }
 }
