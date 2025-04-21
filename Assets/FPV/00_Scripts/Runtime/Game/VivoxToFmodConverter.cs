@@ -7,206 +7,321 @@ using FMOD;
 using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
-namespace FPV
+public class VivoxToFmodConverter : MonoBehaviour
 {
-    public class VivoxToFmodConverter : MonoBehaviour
+    private const int LatencyMS = 50;
+    private const int DriftMS = 1;
+    private const float DriftCorrectionPercentage = 0.5f;
+
+    private AudioModel _audioModel;
+
+    private int _systemSampleRate;
+    private EventInstance _eventInstance;
+    private EVENT_CALLBACK _audioCallback;
+
+    private CREATESOUNDEXINFO _soundInfo;
+    private Sound _sound;
+    private Channel _channel;
+
+    private readonly List<float> _audioBuffer = new();
+    private uint _bufferSamplesWritten;
+    private uint _bufferReadPosition;
+    private uint _driftThreshold;
+    private uint _targetLatency;
+    private uint _adjustedLatency;
+    private int _actualLatency;
+    private uint _totalSamplesWritten;
+    private uint _totalSamplesRead;
+    private uint _minimumSamplesWritten = uint.MaxValue;
+
+    private bool _isSpeaking;
+
+    public AudioInstance AudioInstance { private set; get; }
+
+    private void Start()
     {
-        private const int LatencyMS = 50;
-        private const int DriftMS = 1;
-        private const float DriftCorrectionPercentage = 0.5f;
-
-        private readonly List<float> audioBuffer = new();
-        private int actualLatency;
-        private uint adjustedLatency;
-        private EVENT_CALLBACK audioCallback;
-
-        private AudioModel audioModel;
-        private uint bufferReadPosition;
-        private uint bufferSamplesWritten;
-        private Channel channel;
-        private DSP compressorDSP;
-        private uint driftThreshold;
-        private EventInstance eventInstance;
-
-        private bool isSpeaking;
-        private uint minimumSamplesWritten = uint.MaxValue;
-        private Sound sound;
-
-        private CREATESOUNDEXINFO soundInfo;
-
-        private int systemSampleRate;
-        private uint targetLatency;
-        private uint totalSamplesRead;
-        private uint totalSamplesWritten;
-
-        private AudioInstance AudioInstance { set; get; }
-
-        private void OnDestroy()
+        var audioModel = new AudioModel
         {
-            sound.release();
-            compressorDSP.release();
+            Bank = "Master",
+            EventName = "event:/VOIP"
+        };
+
+        Setup(audioModel);
+    }
+
+    public void Setup(AudioModel audioModel)
+    {
+        _audioModel = audioModel;
+        _systemSampleRate = AudioSettings.outputSampleRate;
+
+
+        CreateInstance();
+
+
+        _driftThreshold = (uint)(_systemSampleRate * DriftMS) / 1000;
+        _targetLatency = (uint)(_systemSampleRate * LatencyMS) / 1000;
+        _adjustedLatency = _targetLatency;
+        _actualLatency = (int)_targetLatency;
+    }
+
+    [MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
+    private static RESULT AudioEventCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
+    {
+        var instance = new EventInstance(instancePtr);
+        instance.getUserData(out var soundPtr);
+
+        if (soundPtr == IntPtr.Zero)
+        {
+            if (type == EVENT_CALLBACK_TYPE.CREATE_PROGRAMMER_SOUND)
+                Debug.LogWarning("Sound pointer is null in CREATE_PROGRAMMER_SOUND callback");
+            return RESULT.OK;
         }
 
-        private void OnAudioFilterRead(float[] data, int channels)
+        try
         {
-            if (!channel.hasHandle()) return;
-
-            audioBuffer.AddRange(data);
-            UpdateBufferLatency((uint)data.Length);
-
-            // On vérifie si le compresseur est attaché, sinon on l'ajoute
-            var isDspAdded = false;
-            channel.getDSP(0, out var firstDSP);
-            if (firstDSP.hasHandle())
+            var soundHandle = GCHandle.FromIntPtr(soundPtr);
+            if (!soundHandle.IsAllocated)
             {
-                DSP_TYPE dspType;
-                firstDSP.getType(out dspType);
-                isDspAdded = dspType == DSP_TYPE.COMPRESSOR;
+                Debug.LogWarning("Sound handle is not allocated");
+                return RESULT.OK;
             }
 
-            if (!isDspAdded) channel.addDSP(0, compressorDSP);
-            // Ajout Compresseur Audio
-            isSpeaking = Array.Exists(data, value => value != 0);
-            ProcessAudio(channels);
-
-            // On efface les données d'entrée pour éviter les effets de feedback
-            for (var i = 0; i < data.Length; i++)
-                data[i] = 0;
-        }
-
-        public void Setup(AudioModel audioModelSetup)
-        {
-            audioModel = audioModelSetup;
-            systemSampleRate = AudioSettings.outputSampleRate;
-
-            if (!AudioBankLoader.HasBankLoaded(audioModel.Bank))
-                AudioBankLoader.LoadBank(audioModel.Bank, true, CreateInstance);
-            else
-                CreateInstance();
-
-            driftThreshold = (uint)(systemSampleRate * DriftMS) / 1000;
-            targetLatency = (uint)(systemSampleRate * LatencyMS) / 1000;
-            adjustedLatency = targetLatency;
-            actualLatency = (int)targetLatency;
-
-            SetupCompressor();
-        }
-
-        private void SetupCompressor()
-        {
-            RuntimeManager.CoreSystem.createDSPByType(DSP_TYPE.COMPRESSOR, out compressorDSP);
-
-            // Configuration du compresseur
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.THRESHOLD, -10.0f); // Seuil d'activation
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.RATIO, 4.0f); // Ratio de compression
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.ATTACK, 10.0f); // Temps d'attaque en ms
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.RELEASE, 200.0f); // Temps de relâchement en ms
-            compressorDSP.setParameterFloat((int)DSP_COMPRESSOR.GAINMAKEUP, 5.0f); // Gain de compensation
-
-            //Debug.Log("Compresseur audio configuré");
-        }
-
-        [MonoPInvokeCallback(typeof(EVENT_CALLBACK))]
-        private static RESULT AudioEventCallback(EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
-        {
-            var instance = new EventInstance(instancePtr);
-            instance.getUserData(out var soundPtr);
-
-            if (soundPtr == IntPtr.Zero) return RESULT.OK;
-
-            var soundHandle = GCHandle.FromIntPtr(soundPtr);
             var sound = (Sound)soundHandle.Target;
 
             switch (type)
             {
                 case EVENT_CALLBACK_TYPE.CREATE_PROGRAMMER_SOUND:
-                    var parameter =
-                        (PROGRAMMER_SOUND_PROPERTIES)Marshal.PtrToStructure(parameterPtr,
-                            typeof(PROGRAMMER_SOUND_PROPERTIES));
+                {
+                    var parameter = (PROGRAMMER_SOUND_PROPERTIES)Marshal.PtrToStructure(parameterPtr,
+                        typeof(PROGRAMMER_SOUND_PROPERTIES));
                     parameter.sound = sound.handle;
                     parameter.subsoundIndex = -1;
                     Marshal.StructureToPtr(parameter, parameterPtr, false);
                     break;
-
+                }
                 case EVENT_CALLBACK_TYPE.DESTROY_PROGRAMMER_SOUND:
-                    sound.release();
-                    break;
+                {
+                    var parameter = (PROGRAMMER_SOUND_PROPERTIES)Marshal.PtrToStructure(parameterPtr,
+                        typeof(PROGRAMMER_SOUND_PROPERTIES));
 
+                    // Assurez-vous que sound.handle est valide avant de tenter de libérer
+                    if (sound.handle != IntPtr.Zero) sound.release();
+
+                    // Vérifiez si le son dans le paramètre est valide
+                    if (parameter.sound != IntPtr.Zero)
+                    {
+                        sound = new Sound(parameter.sound);
+                        sound.release();
+                    }
+
+                    break;
+                }
                 case EVENT_CALLBACK_TYPE.DESTROYED:
-                    soundHandle.Free();
+                {
+                    if (soundHandle.IsAllocated) soundHandle.Free();
                     break;
+                }
             }
-
-            return RESULT.OK;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Exception in AudioEventCallback: {e.Message}");
         }
 
-        private void CreateInstance()
+        return RESULT.OK;
+    }
+
+    private void CreateInstance()
+    {
+        AudioInstance = AudioManager.CreateAudioInstance(_audioModel);
+
+        if (!AudioManager.TryGetEventInstance(AudioInstance.ID, out var eventInstance))
         {
-            /*AudioInstance = AudioManager.CreateAudioInstance(audioModel);
-
-            if (!AudioManager.TryGetEventInstance(AudioInstance.ID, out var eventInstance))
-                //Debug.LogError("AudioInstance pour VivoxParticipant non créé : " + AudioInstance.ID);
-                return;
-
-            this.eventInstance = eventInstance;
-            audioCallback = AudioEventCallback;
-            this.eventInstance.setCallback(audioCallback);
-            this.eventInstance.start();
-            AudioManager.AttachInstanceToGameObject(AudioInstance.ID, transform);*/
-
-            //TODO fix
+            Debug.LogError("Failed to get event instance from AudioManager.");
+            return;
         }
 
-        private void UpdateBufferLatency(uint samplesWritten)
-        {
-            totalSamplesWritten += samplesWritten;
+        _eventInstance = eventInstance;
+        _audioCallback = AudioEventCallback;
+        _eventInstance.setCallback(_audioCallback);
 
-            if (samplesWritten != 0 && samplesWritten < minimumSamplesWritten)
+        _eventInstance.start();
+        AudioManager.AttachInstanceToGameObject(AudioInstance.ID, transform);
+    }
+
+    private void UpdateBufferLatency(uint samplesWritten)
+    {
+        _totalSamplesWritten += samplesWritten;
+
+        if (samplesWritten != 0 && samplesWritten < _minimumSamplesWritten)
+        {
+            _minimumSamplesWritten = samplesWritten;
+            _adjustedLatency = Math.Max(samplesWritten, _targetLatency);
+        }
+
+        var latency = (int)_totalSamplesWritten - (int)_totalSamplesRead;
+        _actualLatency = (int)(0.93f * _actualLatency + 0.03f * latency);
+
+        if (!_channel.hasHandle()) return;
+
+        var playbackRate = _systemSampleRate;
+        if (_actualLatency < (int)(_adjustedLatency - _driftThreshold))
+            playbackRate = _systemSampleRate - (int)(_systemSampleRate * (DriftCorrectionPercentage / 100.0f));
+        else if (_actualLatency > (int)(_adjustedLatency + _driftThreshold))
+            playbackRate = _systemSampleRate + (int)(_systemSampleRate * (DriftCorrectionPercentage / 100.0f));
+
+        _channel.setFrequency(playbackRate);
+    }
+
+    private void OnAudioFilterRead(float[] data, int channels)
+    {
+        if (_channel.hasHandle())
+        {
+            _audioBuffer.AddRange(data);
+            UpdateBufferLatency((uint)data.Length);
+        }
+
+        _isSpeaking = false;
+        foreach (var value in data)
+        {
+            if (value == 0) continue;
+
+            _isSpeaking = true;
+            break;
+        }
+
+        ProcessAudio(channels);
+
+        for (var i = 0; i < data.Length; i++) data[i] = 0;
+    }
+
+    private void ProcessAudio(int channels)
+    {
+        // Vérifier si le canal est valide
+        var channelValid = _channel.hasHandle();
+
+        if (!channelValid)
+        {
+            if (!_isSpeaking) return;
+
+            var result = _eventInstance.getChannelGroup(out var channelGroup);
+            if (result != RESULT.OK)
             {
-                minimumSamplesWritten = samplesWritten;
-                adjustedLatency = Math.Max(samplesWritten, targetLatency);
+                Debug.LogError("Error getting channel group: " + result);
+                return;
             }
 
-            var latency = (int)totalSamplesWritten - (int)totalSamplesRead;
-            actualLatency = (int)(0.93f * actualLatency + 0.03f * latency);
+            _soundInfo.cbsize = Marshal.SizeOf(typeof(CREATESOUNDEXINFO));
+            _soundInfo.numchannels = channels;
+            _soundInfo.defaultfrequency = _systemSampleRate;
+            _soundInfo.length = _targetLatency * (uint)channels * sizeof(float);
+            _soundInfo.format = SOUND_FORMAT.PCMFLOAT;
 
-            if (!channel.hasHandle()) return;
+            var soundResult = RuntimeManager.CoreSystem.createSound("voip", MODE.LOOP_NORMAL | MODE.OPENUSER,
+                ref _soundInfo, out _sound);
+            if (soundResult != RESULT.OK)
+            {
+                Debug.LogError("Error creating sound: " + soundResult);
+                return;
+            }
 
-            var playbackRate = systemSampleRate;
-            if (actualLatency < (int)(adjustedLatency - driftThreshold))
-                playbackRate -= (int)(systemSampleRate * (DriftCorrectionPercentage / 100.0f));
-            else if (actualLatency > (int)(adjustedLatency + driftThreshold))
-                playbackRate += (int)(systemSampleRate * (DriftCorrectionPercentage / 100.0f));
+            var playResult = RuntimeManager.CoreSystem.playSound(_sound, channelGroup, false, out _channel);
+            if (playResult != RESULT.OK)
+            {
+                Debug.LogError("Error playing sound: " + playResult);
+                _sound.release();
+                return;
+            }
 
-            channel.setFrequency(playbackRate);
+            var soundHandle = GCHandle.Alloc(_sound, GCHandleType.Pinned);
+            _eventInstance.setUserData(GCHandle.ToIntPtr(soundHandle));
+            _bufferReadPosition = 0;
+
+            return;
         }
 
+        if (_audioBuffer.Count == 0) return;
 
-        private void ProcessAudio(int channels)
+        // Au lieu de vérifier avec getLastError, on peut utiliser isValid() ou un try-catch
+        var soundValid = true;
+        try
         {
-            if (!channel.hasHandle() || audioBuffer.Count == 0) return;
-
-            channel.getPosition(out var readPosition, TIMEUNIT.PCMBYTES);
-            var bytesRead = readPosition <= bufferReadPosition
-                ? readPosition + soundInfo.length - bufferReadPosition
-                : readPosition - bufferReadPosition;
-
-            if (bytesRead <= 0 || audioBuffer.Count < bytesRead) return;
-
-            sound.@lock(bufferReadPosition, bytesRead, out var ptr1, out var ptr2, out var len1, out var len2);
-            var tmpBuffer = new float[(len1 + len2) / sizeof(float)];
-
-            audioBuffer.CopyTo(0, tmpBuffer, 0, tmpBuffer.Length);
-            audioBuffer.RemoveRange(0, tmpBuffer.Length);
-
-            if (len1 > 0) Marshal.Copy(tmpBuffer, 0, ptr1, (int)len1 / sizeof(float));
-            if (len2 > 0) Marshal.Copy(tmpBuffer, (int)len1 / sizeof(float), ptr2, (int)len2 / sizeof(float));
-
-            sound.unlock(ptr1, ptr2, len1, len2);
-
-            bufferReadPosition = readPosition;
-            totalSamplesRead += (uint)tmpBuffer.Length;
+            // Essayer d'accéder à une propriété du son pour voir s'il est valide
+            _sound.getMode(out _);
         }
+        catch
+        {
+            soundValid = false;
+        }
+
+        if (!soundValid)
+        {
+            Debug.LogWarning("Sound no longer valid, recreating");
+            if (_channel.hasHandle()) _channel.stop();
+            _channel = new Channel();
+            return;
+        }
+
+        var posResult = _channel.getPosition(out var readPosition, TIMEUNIT.PCMBYTES);
+        if (posResult != RESULT.OK)
+        {
+            Debug.LogWarning("Error getting channel position: " + posResult);
+            return;
+        }
+
+        var bytesRead = readPosition - _bufferReadPosition;
+        if (readPosition <= _bufferReadPosition) bytesRead += _soundInfo.length;
+
+        if (bytesRead <= 0 || _audioBuffer.Count < bytesRead) return;
+
+        try
+        {
+            var res = _sound.@lock(_bufferReadPosition, bytesRead, out var ptr1, out var ptr2, out var len1,
+                out var len2);
+            if (res != RESULT.OK)
+            {
+                Debug.LogError("Error locking sound: " + res);
+                return;
+            }
+
+            var sampleLen1 = (int)(len1 / sizeof(float));
+            var sampleLen2 = (int)(len2 / sizeof(float));
+            var samplesRead = sampleLen1 + sampleLen2;
+
+            if (samplesRead > 0)
+            {
+                var tmpBuffer = new float[samplesRead];
+                _audioBuffer.CopyTo(0, tmpBuffer, 0, Math.Min(tmpBuffer.Length, _audioBuffer.Count));
+                _audioBuffer.RemoveRange(0, Math.Min(tmpBuffer.Length, _audioBuffer.Count));
+
+                if (len1 > 0) Marshal.Copy(tmpBuffer, 0, ptr1, sampleLen1);
+                if (len2 > 0) Marshal.Copy(tmpBuffer, sampleLen1, ptr2, sampleLen2);
+
+                res = _sound.unlock(ptr1, ptr2, len1, len2);
+                if (res != RESULT.OK)
+                {
+                    Debug.LogError("Error unlocking sound: " + res);
+                    return;
+                }
+
+                _bufferReadPosition = readPosition;
+                _totalSamplesRead += (uint)samplesRead;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Exception in ProcessAudio: " + e.Message);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_channel.hasHandle()) _channel.stop();
+
+        if (_sound.handle != IntPtr.Zero) _sound.release();
+
+        if (_eventInstance.handle != IntPtr.Zero) _eventInstance.release();
     }
 }

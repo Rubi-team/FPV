@@ -358,14 +358,14 @@ namespace FPV
 
         private IEnumerator ThrowTrajectory(Vector3 dir, float force)
         {
-            var gravity = 9.81f;
+            var gravity = Model.Gravity;
             var time = 0f;
             var start = App.transform.position;
             var velocity = dir * force;
             velocity.y = force * 0.5f; // donne un peu de hauteur
 
 
-            while (!Model.Grounded) // Tu peux remplacer par une vraie vérif
+            while (!Model.Grounded) // TODO a fix ça bug 
             {
                 time += Time.deltaTime;
 

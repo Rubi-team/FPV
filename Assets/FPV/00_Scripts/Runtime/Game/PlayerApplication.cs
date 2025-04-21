@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using FPV.Runtime.Shared;
+using Unity.Cinemachine;
 using UnityEngine;
 using Unity.Netcode;
 using Unity.Netcode.Components;
@@ -28,18 +29,22 @@ namespace FPV
         {
             if (!IsOwner)
             {
-                View.Hide();
-
                 if (Controller._playerInput != null)
                 {
                     Controller._playerInput.enabled = false;
                     Controller._playerInput.DeactivateInput();
                 }
 
+                // We instantiate the VOIP object on the other players, so the FMOD event follow the player
+                Instantiate(Model._voipObject, View.transform);
                 return;
             }
 
-            View.Show();
+            // If the player is the owner, we need to enable the input and set the camera
+
+            var cinemachineCam = Instantiate(Model.CinemachineCameraFollow, View.transform);
+            cinemachineCam.GetComponent<CinemachineCamera>().Follow = Model.CinemachineCameraTarget.transform;
+
             if (Controller._playerInput != null)
             {
                 Controller._playerInput.enabled = true;
@@ -63,6 +68,9 @@ namespace FPV
         {
             Debug.Log("[Local client] Notifying server I'm ready");
             OnServerNotifiedOfClientReadinessServerRpc();
+
+            // Join Vivox channel
+            VivoxManager.Instance.VivoxInit();
         }
 
 
