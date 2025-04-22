@@ -128,6 +128,8 @@ namespace FPV
                     // On interagit avec un joueur
                     if (player != null)
                     {
+                        if (Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value)
+                            return; // Already picked up or carrying someone
                         Model.SetIsCarryingPlayerRpc(true);
                         Model.CarriedPlayer = player;
                     }
@@ -358,7 +360,7 @@ namespace FPV
 
         private IEnumerator ThrowTrajectory(Vector3 dir, float force)
         {
-            var gravity = Model.Gravity;
+            var gravity = -Model.Gravity;
             var time = 0f;
             var start = App.transform.position;
             var velocity = dir * force;
