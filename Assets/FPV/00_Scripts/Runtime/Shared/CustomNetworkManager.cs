@@ -7,8 +7,9 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Matchmaker.Models;
 using Unity.Services.Relay;
+#if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.Networking.PlayerConnection;
+#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using NetworkSceneManager = Unity.Netcode.NetworkSceneManager;
@@ -71,7 +72,7 @@ namespace FPV.Runtime.Shared
                 await RelayManager.CreateRelayAsync();
 
                 await SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
-                //await SceneManager.LoadSceneAsync("LevelArt", LoadSceneMode.Additive);
+                await SceneManager.LoadSceneAsync("LevelArt", LoadSceneMode.Additive);
 
                 StartHost();
             }
