@@ -121,15 +121,18 @@ namespace FPV
             var interactable = GetInteractableObject();
             if (interactable != null)
             {
-                Debug.Log($"Interact with {interactable.GetTransform().name}", this);
-                interactable.Interact(IInteractable.InteractAction.Primary, transform);
-
                 if (interactable.GetTransform().GetComponent<PlayerApplication>() is { } player)
                     // On interagit avec un joueur
                     if (player != null)
                     {
                         if (Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value)
                             return; // Already picked up or carrying someone
+                        if (player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)
+                            return; // Already picked up or carrying someone
+                        
+                        Debug.Log($"Interact with {interactable.GetTransform().name}", this);
+                        interactable.Interact(IInteractable.InteractAction.Primary, transform);
+                        
                         Model.SetIsCarryingPlayerRpc(true);
                         Model.CarriedPlayer = player;
                     }
