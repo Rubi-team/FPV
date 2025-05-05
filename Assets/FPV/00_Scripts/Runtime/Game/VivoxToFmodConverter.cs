@@ -6,7 +6,6 @@ using Audio;
 using FMOD;
 using FMOD.Studio;
 using FMODUnity;
-using SteamAudio;
 using UnityEngine;
 using AudioSettings = UnityEngine.AudioSettings;
 using Debug = UnityEngine.Debug;
@@ -20,7 +19,7 @@ public class VivoxToFmodConverter : MonoBehaviour
     private AudioModel _audioModel;
 
     private int _systemSampleRate;
-    private EventInstance _eventInstance;
+    public EventInstance _eventInstance { private set; get; }
     private EVENT_CALLBACK _audioCallback;
 
     private CREATESOUNDEXINFO _soundInfo;
@@ -306,7 +305,7 @@ public class VivoxToFmodConverter : MonoBehaviour
 
                 res = _sound.unlock(ptr1, ptr2, len1, len2);
                 if (res != RESULT.OK)
-                {   
+                {
                     Debug.LogError("Error unlocking sound: " + res);
                     return;
                 }

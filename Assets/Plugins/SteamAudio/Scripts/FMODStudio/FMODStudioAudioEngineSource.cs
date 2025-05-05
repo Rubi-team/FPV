@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
 #if STEAMAUDIO_ENABLED
 
 using System;
@@ -23,34 +24,28 @@ namespace SteamAudio
 {
     public sealed class FMODStudioAudioEngineSource : AudioEngineSource
     {
-        bool mFoundDSP = false;
-        FMODUnity.StudioEventEmitter mEventEmitter = null;
-        FMOD.Studio.EventInstance mEventInstance;
-        FMOD.DSP mDSP;
-        SteamAudioSource mSteamAudioSource = null;
-        int mHandle = -1;
+        private bool mFoundDSP = false;
+        private FMODUnity.StudioEventEmitter mEventEmitter = null;
+        private FMOD.Studio.EventInstance mEventInstance;
+        private FMOD.DSP mDSP;
+        private SteamAudioSource mSteamAudioSource = null;
+        private int mHandle = -1;
 
-        const int kSimulationOutputsParamIndex = 33;
+        private const int kSimulationOutputsParamIndex = 33;
 
         public override void Initialize(GameObject gameObject)
         {
             FindDSP(gameObject);
 
             mSteamAudioSource = gameObject.GetComponent<SteamAudioSource>();
-            if (mSteamAudioSource)
-            {
-                mHandle = FMODStudioAPI.iplFMODAddSource(mSteamAudioSource.GetSource().Get());
-            }
+            if (mSteamAudioSource) mHandle = FMODStudioAPI.iplFMODAddSource(mSteamAudioSource.GetSource().Get());
         }
 
         public override void Destroy()
         {
             mFoundDSP = false;
 
-            if (mSteamAudioSource)
-            {
-                FMODStudioAPI.iplFMODRemoveSource(mHandle);
-            }
+            if (mSteamAudioSource) FMODStudioAPI.iplFMODRemoveSource(mHandle);
         }
 
         public override void UpdateParameters(SteamAudioSource source)
@@ -64,18 +59,16 @@ namespace SteamAudio
             mDSP.setParameterInt(kSimulationOutputsParamIndex, mHandle);
         }
 
-        void CheckForChangedEventInstance()
+        private void CheckForChangedEventInstance()
         {
             if (mEventEmitter != null)
             {
                 var eventInstance = mEventEmitter.EventInstance;
                 if (!eventInstance.Equals(mEventInstance))
-                {
                     // The event instance is different from the one we last used, which most likely means the
                     // event-related objects were destroyed and re-created. Make sure we look for the DSP instance
                     // when FindDSP is called next.
                     mFoundDSP = false;
-                }
             }
             else
             {
@@ -85,16 +78,28 @@ namespace SteamAudio
             }
         }
 
-        void FindDSP(GameObject gameObject)
+        private void FindDSP(GameObject gameObject)
         {
             if (mFoundDSP)
                 return;
 
-            mEventEmitter = gameObject.GetComponent<FMODUnity.StudioEventEmitter>();
-            if (mEventEmitter == null)
-                return;
 
-            mEventInstance = mEventEmitter.EventInstance;
+            try
+            {
+                mEventInstance = gameObject.GetComponent<VivoxToFmodConverter>()._eventInstance;
+                if (!mEventInstance.isValid())
+                {
+                    Debug.LogError("Vivox Fmod Event instance is not valid");
+                    return;
+                }
+            }
+            catch (Exception)
+            {
+                mEventEmitter = gameObject.GetComponent<FMODUnity.StudioEventEmitter>();
+                mEventInstance = mEventEmitter.EventInstance;
+                return;
+            }
+
             if (!mEventInstance.isValid())
                 return;
 
