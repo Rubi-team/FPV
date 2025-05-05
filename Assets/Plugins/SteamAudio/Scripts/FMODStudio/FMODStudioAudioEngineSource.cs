@@ -83,24 +83,26 @@ namespace SteamAudio
             if (mFoundDSP)
                 return;
 
-            mEventEmitter = gameObject.GetComponent<FMODUnity.StudioEventEmitter>();
-            if (mEventEmitter == null)
-                try
-                {
-                    mEventInstance = gameObject.GetComponent<VivoxToFmodConverter>()._eventInstance;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    return;
-                }
 
-            if (mEventEmitter)
+            try
             {
-                mEventInstance = mEventEmitter.EventInstance;
+                mEventInstance = gameObject.GetComponent<VivoxToFmodConverter>()._eventInstance;
                 if (!mEventInstance.isValid())
+                {
+                    Debug.LogError("Vivox Fmod Event instance is not valid");
                     return;
+                }
             }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                mEventEmitter = gameObject.GetComponent<FMODUnity.StudioEventEmitter>();
+                mEventInstance = mEventEmitter.EventInstance;
+                return;
+            }
+
+            if (!mEventInstance.isValid())
+                return;
 
             FMOD.ChannelGroup channelGroup;
             mEventInstance.getChannelGroup(out channelGroup);
