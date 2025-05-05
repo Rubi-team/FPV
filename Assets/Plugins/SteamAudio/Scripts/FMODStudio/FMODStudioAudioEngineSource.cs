@@ -93,9 +93,8 @@ namespace SteamAudio
                     return;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.LogError(e);
                 mEventEmitter = gameObject.GetComponent<FMODUnity.StudioEventEmitter>();
                 mEventInstance = mEventEmitter.EventInstance;
                 return;
