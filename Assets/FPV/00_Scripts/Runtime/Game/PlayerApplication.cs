@@ -52,6 +52,11 @@ namespace FPV
             }
         }
 
+        private void OnCollisionEnter(Collision other)
+        {
+            Model.Grounded = true;
+        }
+
 
         [Rpc(SendTo.Everyone)]
         internal void OnClientPrepareGameClientRpc()
