@@ -6,6 +6,7 @@ using Audio;
 using FMOD;
 using FMOD.Studio;
 using FMODUnity;
+using Unity.Services.Vivox.AudioTaps;
 using UnityEngine;
 using AudioSettings = UnityEngine.AudioSettings;
 using Debug = UnityEngine.Debug;
@@ -26,6 +27,8 @@ public class VivoxToFmodConverter : MonoBehaviour
     private Sound _sound;
     private Channel _channel;
 
+    private VivoxCaptureSourceTap _channelAudioTap;
+
     private readonly List<float> _audioBuffer = new();
     private uint _bufferSamplesWritten;
     private uint _bufferReadPosition;
@@ -45,6 +48,8 @@ public class VivoxToFmodConverter : MonoBehaviour
     {
         //GetComponent<SteamAudioSource>().pathingProbeBatch = Find
 
+        _channelAudioTap = GetComponent<VivoxCaptureSourceTap>();
+
         var audioModel = new AudioModel
         {
             Bank = "Master",
@@ -52,6 +57,11 @@ public class VivoxToFmodConverter : MonoBehaviour
         };
 
         Setup(audioModel);
+    }
+
+    private void Update()
+    {
+        //_channelAudioTap.
     }
 
 
