@@ -13,6 +13,8 @@ namespace FPV
         public float loudness;
 
         [SerializeField] private FMODStudioAudioEngineSource audioSource;
+        
+        private MyVOIP myVOIP;
 
         private bool isOwner;
 
@@ -32,17 +34,20 @@ namespace FPV
             }
 
             audioSource = GetComponentInChildren<FMODStudioAudioEngineSource>();
+            myVOIP = GetComponentInChildren<MyVOIP>();
         }
 
         private void Update()
         {
             if (!isOwner)
                 return;
+            loudness = myVOIP.GetLoudnessFromMicrophone();
         }
 
         [Rpc(SendTo.NotMe)]
         private void UpdateVOIPClientRpc(float loudness)
         {
+            
         }
     }
 }
