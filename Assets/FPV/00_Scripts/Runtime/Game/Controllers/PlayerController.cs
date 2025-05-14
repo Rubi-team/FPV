@@ -120,6 +120,7 @@ namespace FPV
 
             var interactable = GetInteractableObject();
             if (interactable != null)
+            {
                 if (interactable.GetTransform().GetComponent<PlayerApplication>() is { } player)
                     // On interagit avec un joueur
                     if (player != null)
@@ -128,13 +129,14 @@ namespace FPV
                             return; // Already picked up or carrying someone
                         if (player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)
                             return; // Already picked up or carrying someone
-
+                        
                         Debug.Log($"Interact with {interactable.GetTransform().name}", this);
                         interactable.Interact(IInteractable.InteractAction.Primary, transform);
-
+                        
                         Model.SetIsCarryingPlayerRpc(true);
                         Model.CarriedPlayer = player;
                     }
+            }
         }
 
         private void GroundedCheck()
@@ -372,8 +374,6 @@ namespace FPV
             {
                 time += Time.deltaTime;
 
-                _controller.enabled = false; // Disable controller to avoid collision
-
                 var displacement = velocity * time + 0.5f * Vector3.down * gravity * time * time;
                 App.transform.position = start + displacement;
 
@@ -382,7 +382,6 @@ namespace FPV
 
             // Arrivé au sol
             Model.SetIsPickedUpRpc(false);
-            _controller.enabled = true; // Enable controller again
         }
 
         #endregion

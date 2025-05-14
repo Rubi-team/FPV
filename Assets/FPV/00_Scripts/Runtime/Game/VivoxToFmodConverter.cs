@@ -6,7 +6,7 @@ using Audio;
 using FMOD;
 using FMOD.Studio;
 using FMODUnity;
-using Unity.Services.Vivox.AudioTaps;
+using SteamAudio;
 using UnityEngine;
 using AudioSettings = UnityEngine.AudioSettings;
 using Debug = UnityEngine.Debug;
@@ -20,14 +20,12 @@ public class VivoxToFmodConverter : MonoBehaviour
     private AudioModel _audioModel;
 
     private int _systemSampleRate;
-    public EventInstance _eventInstance { private set; get; }
+    private EventInstance _eventInstance;
     private EVENT_CALLBACK _audioCallback;
 
     private CREATESOUNDEXINFO _soundInfo;
     private Sound _sound;
     private Channel _channel;
-
-    private VivoxCaptureSourceTap _channelAudioTap;
 
     private readonly List<float> _audioBuffer = new();
     private uint _bufferSamplesWritten;
@@ -48,8 +46,6 @@ public class VivoxToFmodConverter : MonoBehaviour
     {
         //GetComponent<SteamAudioSource>().pathingProbeBatch = Find
 
-        _channelAudioTap = GetComponent<VivoxCaptureSourceTap>();
-
         var audioModel = new AudioModel
         {
             Bank = "Master",
@@ -57,11 +53,6 @@ public class VivoxToFmodConverter : MonoBehaviour
         };
 
         Setup(audioModel);
-    }
-
-    private void Update()
-    {
-        //_channelAudioTap.
     }
 
 
@@ -315,7 +306,7 @@ public class VivoxToFmodConverter : MonoBehaviour
 
                 res = _sound.unlock(ptr1, ptr2, len1, len2);
                 if (res != RESULT.OK)
-                {
+                {   
                     Debug.LogError("Error unlocking sound: " + res);
                     return;
                 }
