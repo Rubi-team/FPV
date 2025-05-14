@@ -1,6 +1,7 @@
 using System;
-using SteamAudio;
+using FMODUnity;
 using Unity.Netcode;
+using Unity.Services.Vivox;
 using UnityEngine;
 
 namespace FPV
@@ -10,10 +11,11 @@ namespace FPV
         public GameObject myVOIPObject;
         public GameObject mateVOIPObject;
 
-        public float loudness;
+        private float loudness;
+        private float mateLoudness;
 
-        [SerializeField] private FMODStudioAudioEngineSource audioSource;
-        
+        [SerializeField] private StudioEventEmitter audioSource;
+
         private MyVOIP myVOIP;
 
         private bool isOwner;
@@ -33,21 +35,30 @@ namespace FPV
                 mateVOIPObject.SetActive(true);
             }
 
-            audioSource = GetComponentInChildren<FMODStudioAudioEngineSource>();
+            audioSource = GetComponentInChildren<StudioEventEmitter>();
             myVOIP = GetComponentInChildren<MyVOIP>();
         }
 
         private void Update()
         {
+            // If not connected to a vivox channel, return TODO
+
+
             if (!isOwner)
+            {
+                // update the attenuation range of the fmod audio source based on the mate loudness
+                audioSource.OverrideMaxDistance = Mathf.Lerp(0, 100, mateLoudness);
                 return;
+            }
+
             loudness = myVOIP.GetLoudnessFromMicrophone();
+            UpdateVOIPClientRpc(loudness);
         }
 
         [Rpc(SendTo.NotMe)]
         private void UpdateVOIPClientRpc(float loudness)
         {
-            
+            mateLoudness = loudness;
         }
     }
 }
