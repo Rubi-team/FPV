@@ -67,6 +67,12 @@ namespace FPV
 
         #endregion
 
+        #region VOIP
+
+        [Header("VOIP")] [SerializeField] internal GameObject _voipObject;
+
+        #endregion
+
         [Header("Runtime Values")] public Transform PickerTransform;
         public NetworkObject _NetworkObject;
         public PlayerApplication CarriedPlayer;

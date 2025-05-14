@@ -35,6 +35,8 @@ namespace FPV
                     Controller._playerInput.DeactivateInput();
                 }
 
+                // We instantiate the VOIP object on the other players, so the FMOD event follow the player
+                Instantiate(Model._voipObject, View.transform);
                 return;
             }
 
@@ -48,11 +50,6 @@ namespace FPV
                 Controller._playerInput.enabled = true;
                 Controller._playerInput.ActivateInput();
             }
-        }
-
-        private void OnCollisionEnter(Collision other)
-        {
-            Model.Grounded = true;
         }
 
 
