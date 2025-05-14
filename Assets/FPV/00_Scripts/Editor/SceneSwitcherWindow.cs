@@ -66,13 +66,13 @@ namespace FPV
             }
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            
+    
             var sortedScenes = allScenePaths.OrderByDescending(path => favoriteScenes.ContainsKey(path) && favoriteScenes[path]).ToArray();
 
             foreach (string scenePath in sortedScenes)
             {
                 GUILayout.BeginHorizontal();
-                
+        
                 bool isFavorite = favoriteScenes.ContainsKey(scenePath) && favoriteScenes[scenePath];
                 bool newFavorite = GUILayout.Toggle(isFavorite, "", GUILayout.Width(20));
                 if (newFavorite != isFavorite)
@@ -80,18 +80,24 @@ namespace FPV
                     favoriteScenes[scenePath] = newFavorite;
                     SaveFavorites();
                 }
-                
+
                 string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePath);
                 if (GUILayout.Button(sceneName, GUILayout.Width(150), GUILayout.Height(30)))
                 {
                     OpenScene(scenePath);
                 }
-                
+
+                // Nouveau bouton additive
+                if (GUILayout.Button("+", GUILayout.Width(30), GUILayout.Height(30)))
+                {
+                    OpenSceneAdditive(scenePath);
+                }
+
                 GUILayout.EndHorizontal();
             }
-            
+    
             EditorGUILayout.EndScrollView();
-            
+    
             GUILayout.FlexibleSpace();
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -103,6 +109,7 @@ namespace FPV
             GUILayout.EndHorizontal();
         }
 
+
         private static void OpenScene(string scenePath)
         {
             if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
@@ -110,5 +117,14 @@ namespace FPV
                 EditorSceneManager.OpenScene(scenePath);
             }
         }
+        
+        private static void OpenSceneAdditive(string scenePath)
+        {
+            if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            {
+                EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+            }
+        }
+
     }
 }
