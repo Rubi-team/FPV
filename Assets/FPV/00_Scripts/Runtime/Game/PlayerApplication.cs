@@ -35,8 +35,6 @@ namespace FPV
                     Controller._playerInput.DeactivateInput();
                 }
 
-                // We instantiate the VOIP object on the other players, so the FMOD event follow the player
-                Instantiate(Model._voipObject, View.transform);
                 return;
             }
 
