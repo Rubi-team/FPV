@@ -46,7 +46,6 @@ namespace FPV
 
                         if (!Physics.Raycast(origin, directionToTarget, out hitInfo, distanceToTarget, obstructionMask))
                         {
-                            if (showDebug) Debug.Log("Player détecté et visible !");
                             detectedPlayer = hit.transform;
                         }
                         else
@@ -55,7 +54,8 @@ namespace FPV
                                 Debug.Log(
                                     $"Player détecté mais hors de vue (obstruction par : {hitInfo.collider.gameObject.name})");
 
-                            lastKnownPosition = detectedPlayer.position;
+                            // Sauvegarde la dernière position connue seulement si on avait déjà un joueur détecté
+                            if (detectedPlayer != null) lastKnownPosition = detectedPlayer.position;
                             detectedPlayer = null;
                         }
 
@@ -64,7 +64,6 @@ namespace FPV
                     else
                     {
                         if (showDebug) Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
-                        Debug.Log("Player détecté mais hors de vue (Pas dans Champ de vision).");
                     }
                 }
         }
