@@ -183,12 +183,8 @@ public class Menace : NetworkBehaviour
             return;
         }
 
-
         if (_lastTarget == MenaceListener.detectedPlayer)
-        {
-            Debug.Log("New target detected, initiating charge");
             Charge();
-        }
 
         if (_isCharging && !_hasExecutedCharge && Time.time - _lastChargeTime >= chargeWarmupTime)
         {
@@ -197,7 +193,9 @@ public class Menace : NetworkBehaviour
             _hasExecutedCharge = true;
         }
 
-        if (_hasExecutedCharge && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
+        
+        if (_hasExecutedCharge && !_navMeshAgent.pathPending &&
+            _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
         {
             EndCharge();
             _currentState = MenaceState.Patrolling;
