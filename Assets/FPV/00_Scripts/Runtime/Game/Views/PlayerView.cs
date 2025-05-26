@@ -12,7 +12,7 @@ namespace FPV
 
         public void AudioFootsteps()
         {
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.footSteep, transform.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.footStep, transform.position);
         }
     }
 }
