@@ -13,6 +13,11 @@ namespace Audio
         private static int _nextID;
 
         [SerializeField] private GameObject _emitterInstancePrefab;
+        
+        [field: Header("Player Controller")] 
+        [field: SerializeField] public EventReference footSteep { get; private set; }
+        [field: SerializeField] public EventReference jump { get; private set; }
+        [field: SerializeField] public EventReference land { get; private set; }
         public static AudioManager Instance { get; private set; }
 
         private void Awake()
