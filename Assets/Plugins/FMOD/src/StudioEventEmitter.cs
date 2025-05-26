@@ -55,7 +55,7 @@ namespace FMODUnity
 
         public FMOD.Studio.EventDescription EventDescription { get { return eventDescription; } }
 
-        public FMOD.Studio.EventInstance EventInstance { get { return instance; } }
+        public FMOD.Studio.EventInstance EventInstance;
 
         public bool IsActive { get; private set; }
 

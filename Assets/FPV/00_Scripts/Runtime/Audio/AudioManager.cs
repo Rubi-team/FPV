@@ -66,8 +66,8 @@ namespace Audio
             var emitterInstance = Instantiate(_emitterInstancePrefab, worldPos, Quaternion.identity);
             var emitter = emitterInstance.GetComponent<StudioEventEmitter>();
 
-            var eventReference = RuntimeManager.PathToGUID(soundPath);
-            emitter.EventReference.Guid = eventReference;
+            var EventInstance = RuntimeManager.CreateInstance(soundPath);
+            emitter.EventInstance = EventInstance;
 
             emitter.Play();
 
