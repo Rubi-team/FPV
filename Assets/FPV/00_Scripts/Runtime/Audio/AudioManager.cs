@@ -13,38 +13,45 @@ namespace Audio
         private static int _nextID;
 
         [SerializeField] private GameObject _emitterInstancePrefab;
-        
-        [field: Header("Player Movement")] 
-        [field: SerializeField] public EventReference footStep { get; private set; }
+
+        [field: Header("Player Movement")]
+        [field: SerializeField]
+        public EventReference footStep { get; private set; }
+
         [field: SerializeField] public EventReference loudFootStep { get; private set; }
         [field: SerializeField] public EventReference silentFootStep { get; private set; }
         [field: SerializeField] public EventReference runFootStep { get; private set; }
-        
+
         [field: SerializeField] public EventReference jump { get; private set; }
         [field: SerializeField] public EventReference land { get; private set; }
-        
-        
-        [field: Header("Player Action")] 
-        [field: SerializeField] public EventReference grabPlayer { get; private set; }
+
+
+        [field: Header("Player Action")]
+        [field: SerializeField]
+        public EventReference grabPlayer { get; private set; }
+
         [field: SerializeField] public EventReference grabItem { get; private set; }
         [field: SerializeField] public EventReference throwPlayer { get; private set; }
         [field: SerializeField] public EventReference throwItem { get; private set; }
         [field: SerializeField] public EventReference putDownPlayer { get; private set; }
         [field: SerializeField] public EventReference putDownItem { get; private set; }
-        
+
         [field: SerializeField] public EventReference takeDamage { get; private set; }
-        
-        
-        [field: Header("Threat")] 
-        [field: SerializeField] public EventReference threatFootstep { get; private set; }
+
+
+        [field: Header("Threat")]
+        [field: SerializeField]
+        public EventReference threatFootstep { get; private set; }
+
         [field: SerializeField] public EventReference threatCharging { get; private set; }
         [field: SerializeField] public EventReference threatHit { get; private set; }
-        
-        
-        [field: Header("Objects")] 
-        [field: SerializeField] public EventReference ferbyHit { get; private set; }
-        
-        
+
+
+        [field: Header("Objects")]
+        [field: SerializeField]
+        public EventReference ferbyHit { get; private set; }
+
+
         public static AudioManager Instance { get; private set; }
 
         private void Awake()
@@ -64,17 +71,19 @@ namespace Audio
         private void PlayOneShotRpc(string soundPath, Vector3 worldPos)
         {
             var emitterInstance = Instantiate(_emitterInstancePrefab, worldPos, Quaternion.identity);
-            var emitter = emitterInstance.GetComponent<StudioEventEmitter>();
 
-            var EventInstance = RuntimeManager.CreateInstance(soundPath);
-            emitter.EventInstance = EventInstance;
+            // Get reference to your RuntimeEventEmitter
+            var emitterCustom = GetComponent<RuntimeEventEmitter>();
 
-            emitter.Play();
+            // Set new event (using one of your existing event references as example)
+            emitterCustom.SetEvent(RuntimeManager.PathToEventReference(soundPath));
+
+            // Play the event if needed
+            emitterCustom.Play();
 
             // Destroy the emitter instance after the sound has played
             Destroy(emitterInstance, 1f);
         }
-
 
         public void PlayOneShotAttached(EventReference sound, GameObject objectAttached)
         {
