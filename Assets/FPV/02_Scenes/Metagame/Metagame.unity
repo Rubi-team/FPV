@@ -255,54 +255,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67a296cc341e2c54e852904131f71e3e, type: 3}
---- !u!1 &1120292488 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3729823768011248431, guid: e724456c868c04e4c92c9ae148937b81, type: 3}
-  m_PrefabInstance: {fileID: 1817451776}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1120292494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1120292488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nonRigidbodyVelocity: 0
-  attenuationObject: {fileID: 0}
---- !u!114 &1120292500
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1120292488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd9ebf1401392e4bbd47fea32f47642, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentBakedListener: {fileID: 0}
-  applyReverb: 0
-  reverbType: 0
-  useAllProbeBatches: 0
-  probeBatches: []
-  mTotalDataSize: 0
-  mProbeDataSizes: 
-  mIdentifier:
-    type: 0
-    variation: 0
-    endpointInfluence:
-      center:
-        x: 0
-        y: 0
-        z: 0
-      radius: 0
-  mProbeBatchesUsed: []
 --- !u!1 &1458976390
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,10 +331,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainCamera
       objectReference: {fileID: 0}
-    - target: {fileID: 5524547307449935217, guid: e724456c868c04e4c92c9ae148937b81, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5911342534141237329, guid: e724456c868c04e4c92c9ae148937b81, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.33
@@ -423,24 +371,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8834996024753237088, guid: e724456c868c04e4c92c9ae148937b81, type: 3}
-      propertyPath: field of view
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 8834996024753237088, guid: e724456c868c04e4c92c9ae148937b81, type: 3}
-      propertyPath: near clip plane
-      value: 0.2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3729823768011248431, guid: e724456c868c04e4c92c9ae148937b81, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1120292494}
-    - targetCorrespondingSourceObject: {fileID: 3729823768011248431, guid: e724456c868c04e4c92c9ae148937b81, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1120292500}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e724456c868c04e4c92c9ae148937b81, type: 3}
 --- !u!1001 &7975800822330746005
 PrefabInstance:
