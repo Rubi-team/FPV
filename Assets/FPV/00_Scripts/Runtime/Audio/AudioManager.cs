@@ -73,7 +73,7 @@ namespace Audio
             var emitterInstance = Instantiate(_emitterInstancePrefab, worldPos, Quaternion.identity);
 
             // Get reference to your RuntimeEventEmitter
-            var emitterCustom = GetComponent<RuntimeEventEmitter>();
+            var emitterCustom = emitterInstance.GetComponent<RuntimeEventEmitter>();
 
             // Set new event (using one of your existing event references as example)
             emitterCustom.SetEvent(RuntimeManager.PathToEventReference(soundPath));
