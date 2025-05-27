@@ -15,7 +15,7 @@ namespace FMODUnity
 
         public override string ToString()
         {
-            return string.Format("{0} ({1})", Guid, Path);
+            return Guid.ToString();
         }
 
         public bool IsNull
