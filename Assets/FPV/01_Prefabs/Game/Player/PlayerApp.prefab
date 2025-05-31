@@ -112,11 +112,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   MoveSpeed: 4
-  SprintSpeed: 5.5
+  SprintSpeed: 7
   RotationSpeed: 1
   SpeedChangeRate: 10
-  JumpHeight: 3
-  Gravity: -6
+  JumpHeight: 1.05
+  Gravity: -14
   JumpTimeout: 0.1
   FallTimeout: 0.15
   Grounded: 0
@@ -582,7 +582,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4567473451862141049
 Transform:
   m_ObjectHideFlags: 0
@@ -924,6 +924,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c97c0ef8e0af3cb47b62d475c8bfd3fe, type: 3}
       propertyPath: m_Name
       value: SM_Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c97c0ef8e0af3cb47b62d475c8bfd3fe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1732392152649895889, guid: c97c0ef8e0af3cb47b62d475c8bfd3fe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

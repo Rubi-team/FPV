@@ -1,0 +1,42 @@
+name: Auto Merge Between Branches
+
+on:
+  schedule:
+    - cron: '0 */3 * * *' # Toutes les 3 heures (UTC)
+  workflow_dispatch: # Pour exécuter manuellement depuis GitHub
+
+jobs:
+  merge-branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Nécessaire pour accéder à tout l'historique
+
+      - name: Set up Git user
+        run: |
+          git config user.name "GitHub Merge Bot"
+          git config user.email "t.druesne@rubika-edu.com"
+
+      - name: Merge each branch into the others
+        run: |
+          set -e
+          branches=("DEV" "GD-FP2" "GA")
+
+          for dest in "${branches[@]}"; do
+            for src in "${branches[@]}"; do
+              if [ "$src" != "$dest" ]; then
+                echo "🔄 Merging $src into $dest"
+                git checkout "$dest"
+                git pull origin "$dest"
+                git merge origin/"$src" --no-edit || {
+                  echo "❌ Merge conflict when merging $src into $dest"
+                  git merge --abort
+                  continue
+                }
+                git push origin "$dest"
+              fi
+            done
+          done
