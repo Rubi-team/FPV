@@ -124,6 +124,11 @@ namespace FPV
                     // On interagit avec un joueur
                     if (player != null)
                     {
+                        if (player == null ||
+                            Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value ||
+                            player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)
+                            return;
+
                         if (Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value)
                             return; // Already picked up or carrying someone
                         if (player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)
@@ -381,8 +386,12 @@ namespace FPV
             }
 
             // Arrivé au sol
+            yield return new WaitForSeconds(0.05f); // petite pause pour que les collisions se stabilisent
+
+            _controller.enabled = true;
+
+
             Model.SetIsPickedUpRpc(false);
-            _controller.enabled = true; // Enable controller again
         }
 
         #endregion

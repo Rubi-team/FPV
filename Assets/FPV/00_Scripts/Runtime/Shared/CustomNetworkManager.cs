@@ -40,6 +40,9 @@ namespace FPV.Runtime.Shared
         [SerializeField] private GameApplication m_GameAppPrefab;
         private GameApplication m_GameApp;
 
+        [SerializeField] private Menace m_MenacePrefab;
+        public Menace Menace;
+
         internal HashSet<PlayerApplication> ReadyPlayers { get; private set; }
         private NetworkManager m_NetworkManager;
 
