@@ -22,6 +22,7 @@ namespace FPV
         {
             base.OnNetworkSpawn();
 
+
             OwnerCheck();
         }
 
@@ -48,6 +49,9 @@ namespace FPV
                 Controller._playerInput.enabled = true;
                 Controller._playerInput.ActivateInput();
             }
+
+            // TODO remove and add Lobby Player Start
+            transform.position = FindObjectsByType<PlayerStart>(FindObjectsSortMode.None)[0].transform.position;
         }
 
         private void OnCollisionEnter(Collision other)
