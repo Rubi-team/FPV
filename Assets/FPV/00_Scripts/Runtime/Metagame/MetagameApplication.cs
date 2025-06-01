@@ -12,14 +12,13 @@ namespace FPV
 
         internal event Action OnReturnToMetagameAfterMatch;
         internal bool IsServer => NetworkManager.Singleton.IsServer && !NetworkManager.Singleton.IsClient;
-        
+
         internal bool IsHost => NetworkManager.Singleton.IsHost;
 
         protected override void Awake()
         {
             base.Awake();
             Instance = this;
-            DontDestroyOnLoad(this);
         }
 
         internal void CallOnReturnToMetagameAfterMatch()

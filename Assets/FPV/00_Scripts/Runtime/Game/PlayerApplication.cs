@@ -64,6 +64,7 @@ namespace FPV
             Debug.Log("[Local client] Preparing game [Showing loading screen]");
             if (!IsServer) //the server already does this before asking clients to do the same
                 CustomNetworkManager.Singleton.InstantiateGameApplication();
+            transform.position = FindObjectsByType<PlayerStart>(FindObjectsSortMode.None)[0].transform.position;
             OnClientReadyToStart();
         }
 

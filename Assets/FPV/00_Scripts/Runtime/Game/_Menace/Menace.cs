@@ -173,9 +173,6 @@ public class Menace : NetworkBehaviour
 
     private void HandleChasing()
     {
-        Debug.Log(
-            $"Chasing State - IsCharging: {_isCharging}, HasExecutedCharge: {_hasExecutedCharge}, TimeSinceLastCharge: {Time.time - _lastChargeTime}");
-
         if (_lastTarget == null)
         {
             Debug.Log("No target found in chasing state");
@@ -193,7 +190,7 @@ public class Menace : NetworkBehaviour
             _hasExecutedCharge = true;
         }
 
-        
+
         if (_hasExecutedCharge && !_navMeshAgent.pathPending &&
             _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
         {
@@ -206,7 +203,7 @@ public class Menace : NetworkBehaviour
     {
         Waypoint nearest = null;
         var nearestDistance = float.MaxValue;
-        var waypoints = FindObjectsOfType<Waypoint>();
+        var waypoints = FindObjectsByType<Waypoint>(FindObjectsSortMode.None);
 
         foreach (var waypoint in waypoints)
         {
@@ -262,8 +259,6 @@ public class Menace : NetworkBehaviour
             // Utiliser le point d'impact comme destination si on touche quelque chose
             var chargeDestination = hit.point;
 
-            Debug.Log($"Executing charge towards wall: {chargeDestination}, Speed: {chargeSpeed}");
-
             // Désactiver l'évitement d'obstacles pour aller en ligne droite
             _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
             _navMeshAgent.speed = chargeSpeed;
@@ -273,8 +268,6 @@ public class Menace : NetworkBehaviour
         {
             // Si aucun obstacle n'est détecté, utiliser la distance maximale
             var chargeDestination = transform.position + directionToTarget * chargeMaxDistance;
-
-            Debug.Log($"Executing charge towards max distance: {chargeDestination}, Speed: {chargeSpeed}");
 
             _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
             _navMeshAgent.speed = chargeSpeed;
