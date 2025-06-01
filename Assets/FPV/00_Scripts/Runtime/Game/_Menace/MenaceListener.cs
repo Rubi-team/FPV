@@ -22,6 +22,7 @@ namespace FPV
 
         private void Update()
         {
+            
             DetectPlayers();
         }
 

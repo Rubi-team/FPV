@@ -15,6 +15,8 @@ namespace FPV
 
         [SerializeField] private MatchDataSynchronizer matchDataSnchronizerPrefab;
         internal MatchDataSynchronizer matchDataSynchronizer;
+        [SerializeField] private Menace m_MenacePrefab;
+        internal Menace Menace;
         public const uint k_CountdownStartValue = 60;
 
         [Header("Server")] internal ulong PlayerObject0Id;
@@ -48,6 +50,8 @@ namespace FPV
             {
                 matchDataSynchronizer = Instantiate(matchDataSnchronizerPrefab);
                 matchDataSynchronizer.GetComponent<NetworkObject>().Spawn();
+                Menace = Instantiate(m_MenacePrefab);
+                Menace.GetComponent<NetworkObject>().Spawn();
             }
         }
     }

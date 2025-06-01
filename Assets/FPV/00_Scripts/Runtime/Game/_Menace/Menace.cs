@@ -46,10 +46,19 @@ public class Menace : NetworkBehaviour
         MenaceListener = GetComponentInChildren<MenaceListener>();
         _currentState = MenaceState.Roaming;
         _lastTarget = null;
+
+        if (!IsServer)
+        {
+            _navMeshAgent.enabled = false; // Disable NavMeshAgent on non-server instances
+            MenaceListener.enabled = false; // Disable MenaceListener on non-server instances
+            return;
+        }
     }
 
     private void Update()
     {
+        if (!IsServer)
+            return;
         switch (_currentState)
         {
             case MenaceState.Roaming:
