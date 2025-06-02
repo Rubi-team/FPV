@@ -19,6 +19,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Git user
+        run: |
+          git config user.name "GitHub Merge Bot"
+          git config user.email "t.druesne@rubika-edu.com"
+
+
       - name: Fetch all branches
         run: |
           git fetch origin
