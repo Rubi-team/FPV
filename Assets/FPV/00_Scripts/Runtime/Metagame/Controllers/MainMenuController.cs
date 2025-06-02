@@ -47,9 +47,9 @@ namespace FPV
 
         private async void CreateRelay(CreateRelayEvent evt)
         {
-            await CustomNetworkManager.Singleton.InitializeNetworkLogic(true);
-            // TODO: Add Loading Screen
             View.Hide();
+            // TODO: Add Loading Screen
+            await CustomNetworkManager.Singleton.InitializeNetworkLogic(true);
         }
 
         private async void JoinRelay(JoinRelayEvent evt)

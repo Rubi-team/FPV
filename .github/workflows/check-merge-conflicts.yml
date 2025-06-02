@@ -1,0 +1,33 @@
+name: Check Merge Conflicts Into DEV and main
+
+on:
+  push:
+    branches:
+      - GA
+      - GD-FP2
+
+jobs:
+  check-merge:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [DEV, main]
+
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all branches
+        run: |
+          git fetch origin
+
+      - name: Attempt merge into ${{ matrix.target }}
+        run: |
+          git checkout ${{ matrix.target }}
+          git merge --no-commit --no-ff HEAD@{1} || {
+            echo "❌ Merge conflict detected when merging $GITHUB_REF into ${{ matrix.target }}"
+            exit 1
+          }
+          echo "✅ No conflict when merging $GITHUB_REF into ${{ matrix.target }}"
