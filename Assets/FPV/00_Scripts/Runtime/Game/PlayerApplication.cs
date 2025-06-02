@@ -21,8 +21,6 @@ namespace FPV
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-
-
             OwnerCheck();
         }
 
