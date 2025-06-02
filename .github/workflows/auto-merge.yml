@@ -1,0 +1,50 @@
+name: Auto Merge Between Branches
+
+on:
+  schedule:
+    - cron: '0 */3 * * *' # Toutes les 3 heures (UTC)
+  workflow_dispatch:
+
+jobs:
+  merge-branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }} # Ce token ne suffit pas pour les pushs directs par script shell
+
+      - name: Set up Git user
+        run: |
+          git config user.name "GitHub Merge Bot"
+          git config user.email "t.druesne@rubika-edu.com"
+
+      - name: Force remote with token
+        run: |
+          git remote remove origin
+          git remote add origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}
+          git fetch origin
+          git remote -v
+
+      - name: Merge each branch into the others
+        run: |
+          set -e
+          branches=("DEV" "GD-FP2" "GA")
+
+          for dest in "${branches[@]}"; do
+            for src in "${branches[@]}"; do
+              if [ "$src" != "$dest" ]; then
+                echo "🔄 Merging $src into $dest"
+                git checkout "$dest"
+                git pull origin "$dest"
+                git merge origin/"$src" --no-edit || {
+                  echo "❌ Merge conflict when merging $src into $dest"
+                  git merge --abort
+                  continue
+                }
+                git push origin "$dest"
+              fi
+            done
+          done

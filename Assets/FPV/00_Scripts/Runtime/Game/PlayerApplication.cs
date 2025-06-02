@@ -22,6 +22,7 @@ namespace FPV
         {
             base.OnNetworkSpawn();
 
+
             OwnerCheck();
         }
 
@@ -48,6 +49,9 @@ namespace FPV
                 Controller._playerInput.enabled = true;
                 Controller._playerInput.ActivateInput();
             }
+
+            // TODO remove and add Lobby Player Start
+            transform.position = FindObjectsByType<PlayerStart>(FindObjectsSortMode.None)[0].transform.position;
         }
 
         private void OnCollisionEnter(Collision other)
@@ -64,6 +68,7 @@ namespace FPV
             Debug.Log("[Local client] Preparing game [Showing loading screen]");
             if (!IsServer) //the server already does this before asking clients to do the same
                 CustomNetworkManager.Singleton.InstantiateGameApplication();
+            transform.position = FindObjectsByType<PlayerStart>(FindObjectsSortMode.None)[0].transform.position;
             OnClientReadyToStart();
         }
 
@@ -147,12 +152,17 @@ namespace FPV
 
         public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
         {
-            if (Model.b_IsCarryingPlayer.Value) return;
-            if (Model.b_IsPickedUp.Value) return;
+            if (Model.b_IsCarryingPlayer.Value || Model.b_IsPickedUp.Value) return;
 
-            //TODO a changer 
-            GetPickedUpRpc(interactorTransform.GetComponentInParent<NetworkObject>().NetworkObjectId);
+            var interactorPlayer = interactorTransform.GetComponentInParent<PlayerApplication>();
+
+            // Prevent mutual pickup
+            if (interactorPlayer.Model.b_IsPickedUp.Value || interactorPlayer.Model.b_IsCarryingPlayer.Value) return;
+
+            // Une seule interaction possible ici
+            GetPickedUpRpc(interactorPlayer.NetworkObjectId);
         }
+
 
         public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()
         {

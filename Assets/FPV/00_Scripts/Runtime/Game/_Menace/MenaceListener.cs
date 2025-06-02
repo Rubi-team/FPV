@@ -22,6 +22,7 @@ namespace FPV
 
         private void Update()
         {
+            
             DetectPlayers();
         }
 
@@ -50,10 +51,6 @@ namespace FPV
                         }
                         else
                         {
-                            if (showDebug)
-                                Debug.Log(
-                                    $"Player détecté mais hors de vue (obstruction par : {hitInfo.collider.gameObject.name})");
-
                             // Sauvegarde la dernière position connue seulement si on avait déjà un joueur détecté
                             if (detectedPlayer != null) lastKnownPosition = detectedPlayer.position;
                             detectedPlayer = null;
