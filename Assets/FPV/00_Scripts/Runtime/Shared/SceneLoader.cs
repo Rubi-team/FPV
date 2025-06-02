@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 namespace FPV.Shared
 {
     public static class SceneLoader
     {
-        private class LoadingMonoBehaviour : MonoBehaviour
-        {
-        }
+        private class LoadingMonoBehaviour : MonoBehaviour { }
 
-        private static AsyncOperation asyncLoad;
+        private static List<AsyncOperation> asyncLoads = new List<AsyncOperation>();
 
         public enum Scene
         {
@@ -26,47 +25,49 @@ namespace FPV.Shared
             Game_LevelArt
         }
 
-        private static Action m_LoaderCallback;
-
-        public static void LoadScene(Scene scene, Action callback = null)
+        public static async Task LoadScenesAdditiveAsync(Scene mainScene, Scene[] additiveScenes)
         {
-            m_LoaderCallback = () =>
-            {
-                var loadingObject = new GameObject("LoadingMonoBehaviour");
-                loadingObject.AddComponent<LoadingMonoBehaviour>().StartCoroutine(LoadSceneAsync(scene));
-            };
+            asyncLoads.Clear();
 
-            // Load Loading Scene
-            SceneManager.LoadScene(nameof(Scene.Loading));
+            // Load main scene
+            var mainLoadOperation = SceneManager.LoadSceneAsync(mainScene.ToString(), LoadSceneMode.Single);
+            asyncLoads.Add(mainLoadOperation);
+        
+            // Attend que la scène principale soit chargée
+            await mainLoadOperation.AsTask();
+
+            // Load additive scenes
+            foreach (var scene in additiveScenes)
+            {
+                var asyncLoad = SceneManager.LoadSceneAsync(scene.ToString(), LoadSceneMode.Additive);
+                asyncLoads.Add(asyncLoad);
+            }
+
+            // Attend que toutes les scènes additives soient chargées
+            foreach (var operation in asyncLoads.Skip(1)) // Skip la scène principale qui est déjà chargée
+            {
+                await operation.AsTask();
+            }
         }
 
         public static float GetLoadingProgress()
         {
-            if (asyncLoad != null) return asyncLoad.progress;
-            return 1f;
+            if (asyncLoads.Count == 0) return 1f;
+
+            float totalProgress = 0f;
+            foreach (var operation in asyncLoads)
+            {
+                totalProgress += operation.progress;
+            }
+            return totalProgress / asyncLoads.Count;
         }
 
-        private static IEnumerator LoadSceneAsync(Scene scene)
+        // Helper extension method pour convertir AsyncOperation en Task
+        private static Task AsTask(this AsyncOperation asyncOp)
         {
-            yield return null;
-
-            asyncLoad = SceneManager.LoadSceneAsync(scene.ToString());
-
-            while (asyncLoad is { isDone: false }) yield return null;
-        }
-
-
-        public static void OnLoaderCallback()
-        {
-            if (m_LoaderCallback != null)
-            {
-                m_LoaderCallback.Invoke();
-                m_LoaderCallback = null;
-            }
-            else
-            {
-                Debug.LogError("Loader callback was not set before calling OnLoaderCallback!");
-            }
+            var tcs = new TaskCompletionSource<bool>();
+            asyncOp.completed += _ => tcs.SetResult(true);
+            return tcs.Task;
         }
     }
 }
