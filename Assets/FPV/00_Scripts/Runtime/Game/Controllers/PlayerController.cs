@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem.Composites;
@@ -124,6 +125,11 @@ namespace FPV
                     // On interagit avec un joueur
                     if (player != null)
                     {
+                        if (player == null ||
+                            Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value ||
+                            player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)
+                            return;
+
                         if (Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value)
                             return; // Already picked up or carrying someone
                         if (player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)
@@ -169,8 +175,50 @@ namespace FPV
             }
         }
 
+        private Vector3 _throwVelocity = Vector3.zero;
+        private bool _isBeingThrown = false;
+
+        [Rpc(SendTo.Owner)]
+        internal void OnPlayerThrowMeRpc(Vector3 dir, float force)
+        {
+            if (!Model.b_IsPickedUp.Value)
+            {
+                Debug.LogError("OnPlayerThrowMeRpc called but I am not picked up", this);
+                return;
+            }
+
+            // Initialiser la vélocité du lancer
+            _throwVelocity = dir * force;
+            _throwVelocity.y = force * 0.5f;
+            _isBeingThrown = true;
+
+            // Libérer immédiatement le joueur
+            Model.SetIsPickedUpRpc(false);
+        }
+
         private void Move()
         {
+            if (Model.b_IsPickedUp.Value)
+                return;
+
+            if (_isBeingThrown)
+            {
+                // Appliquer la gravité à la vélocité du lancer
+                _throwVelocity.y += Model.Gravity * Time.deltaTime;
+
+                // Déplacer le joueur
+                _controller.Move(_throwVelocity * Time.deltaTime);
+
+                // Si on touche le sol, arrêter le lancer
+                if (Model.Grounded)
+                {
+                    _isBeingThrown = false;
+                    _throwVelocity = Vector3.zero;
+                }
+
+                return;
+            }
+
             // set target speed based on move speed, sprint speed and if sprint is pressed
             var targetSpeed = _input.sprint ? Model.SprintSpeed : Model.MoveSpeed;
 
@@ -341,7 +389,7 @@ namespace FPV
 
         #region Throw
 
-        [Rpc(SendTo.Owner)]
+        /*[Rpc(SendTo.Owner)]
         internal void OnPlayerThrowMeRpc(Vector3 dir, float force)
         {
             if (!Model.b_IsPickedUp.Value)
@@ -365,25 +413,33 @@ namespace FPV
             var time = 0f;
             var start = App.transform.position;
             var velocity = dir * force;
-            velocity.y = force * 0.5f; // donne un peu de hauteur
+            velocity.y = force * 0.5f;
 
+            // Désactiver le CharacterController pendant le vol
+            _controller.enabled = false;
 
-            while (!Model.Grounded) // TODO a fix ça bug 
+            while (!Model.Grounded)
             {
                 time += Time.deltaTime;
-
-                _controller.enabled = false; // Disable controller to avoid collision
-
                 var displacement = velocity * time + 0.5f * Vector3.down * gravity * time * time;
                 App.transform.position = start + displacement;
-
                 yield return null;
             }
 
-            // Arrivé au sol
+            // Attendre que la position soit stable
+            yield return new WaitForFixedUpdate();
+
+            // Réactiver le CharacterController
+            _controller.enabled = true;
+
+            // S'assurer que le NetworkTransform a bien propagé la position finale
+            yield return new WaitForSeconds(0.1f);
+
+            // Maintenant on peut changer l'état
             Model.SetIsPickedUpRpc(false);
-            _controller.enabled = true; // Enable controller again
         }
+
+*/
 
         #endregion
 
