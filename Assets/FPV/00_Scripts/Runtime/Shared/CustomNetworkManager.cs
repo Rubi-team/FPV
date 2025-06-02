@@ -39,7 +39,7 @@ namespace FPV.Runtime.Shared
 
         [SerializeField] private GameApplication m_GameAppPrefab;
         private GameApplication m_GameApp;
-        
+
 
         internal HashSet<PlayerApplication> ReadyPlayers { get; private set; }
         private NetworkManager m_NetworkManager;
@@ -72,9 +72,11 @@ namespace FPV.Runtime.Shared
             {
                 await RelayManager.CreateRelayAsync();
 
-                await SceneManager.LoadSceneAsync("Game_Main", LoadSceneMode.Single);
-                await SceneManager.LoadSceneAsync("Game_Blocking", LoadSceneMode.Additive);
-                await SceneManager.LoadSceneAsync("Game_LevelArt", LoadSceneMode.Additive);
+                // Chargement des scènes de manière asynchrone
+                await SceneLoader.LoadScenesAdditiveAsync(
+                    SceneLoader.Scene.Game_Main,
+                    new[] { SceneLoader.Scene.Game_Blocking, SceneLoader.Scene.Game_LevelArt }
+                );
 
                 StartHost();
             }
