@@ -23,6 +23,11 @@ jobs:
         run: |
           git fetch origin
 
+      - name: Set Git identity (required for merge simulation)
+        run: |
+          git config user.name "GitHub Merge Bot"
+          git config user.email "merge-bot@example.com"
+
       - name: Attempt merge into ${{ matrix.target }}
         run: |
           git checkout ${{ matrix.target }}
