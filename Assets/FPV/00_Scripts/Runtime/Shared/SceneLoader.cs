@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
@@ -11,13 +9,11 @@ namespace FPV.Shared
 {
     public static class SceneLoader
     {
-        private class LoadingMonoBehaviour : MonoBehaviour { }
-
-        private static List<AsyncOperation> asyncLoads = new List<AsyncOperation>();
+        private static List<AsyncOperation> asyncLoads = new();
 
         public enum Scene
         {
-            Loading,
+            LoadingScene,
             Metagame,
             Game_Lobby,
             Game_Main,
@@ -29,44 +25,45 @@ namespace FPV.Shared
         {
             asyncLoads.Clear();
 
-            // Load main scene
-            var mainLoadOperation = SceneManager.LoadSceneAsync(mainScene.ToString(), LoadSceneMode.Single);
-            asyncLoads.Add(mainLoadOperation);
-        
-            // Attend que la scène principale soit chargée
-            await mainLoadOperation.AsTask();
+            // 1. Charger la scène de loading (Single)
+            var loadingOp = SceneManager.LoadSceneAsync(nameof(Scene.LoadingScene), LoadSceneMode.Single);
+            await loadingOp.AsTask();
 
-            // Load additive scenes
+            // 2. Lancer la scène principale en additive
+            var mainLoadOp = SceneManager.LoadSceneAsync(mainScene.ToString(), LoadSceneMode.Additive);
+            asyncLoads.Add(mainLoadOp);
+
+            // 3. Lancer les scènes additives
             foreach (var scene in additiveScenes)
             {
-                var asyncLoad = SceneManager.LoadSceneAsync(scene.ToString(), LoadSceneMode.Additive);
-                asyncLoads.Add(asyncLoad);
+                var op = SceneManager.LoadSceneAsync(scene.ToString(), LoadSceneMode.Additive);
+                asyncLoads.Add(op);
             }
 
-            // Attend que toutes les scènes additives soient chargées
-            foreach (var operation in asyncLoads.Skip(1)) // Skip la scène principale qui est déjà chargée
-            {
-                await operation.AsTask();
-            }
+            // 4. Attendre que tout soit chargé
+            foreach (var op in asyncLoads) await op.AsTask();
+
+            // 5. Définir la scène principale comme active
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(mainScene.ToString()));
+
+            // 6. Décharger la scène de Loading
+            var loadingScene = SceneManager.GetSceneByName(nameof(Scene.LoadingScene));
+            if (loadingScene.IsValid() && loadingScene.isLoaded) SceneManager.UnloadSceneAsync(loadingScene);
         }
 
         public static float GetLoadingProgress()
         {
             if (asyncLoads.Count == 0) return 1f;
 
-            float totalProgress = 0f;
-            foreach (var operation in asyncLoads)
-            {
-                totalProgress += operation.progress;
-            }
+            var totalProgress = 0f;
+            foreach (var operation in asyncLoads) totalProgress += operation.progress;
             return totalProgress / asyncLoads.Count;
         }
 
-        // Helper extension method pour convertir AsyncOperation en Task
         private static Task AsTask(this AsyncOperation asyncOp)
         {
             var tcs = new TaskCompletionSource<bool>();
-            asyncOp.completed += _ => tcs.SetResult(true);
+            asyncOp.completed += _ => tcs.TrySetResult(true);
             return tcs.Task;
         }
     }
