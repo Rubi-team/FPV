@@ -1,4 +1,5 @@
 using System;
+using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -16,12 +17,31 @@ namespace FPV
         {
             base.Awake();
             Instance = this;
+            LockCursor(true);
+        }
+
+        public void Start()
+        {
+            Broadcast(new ServerPrepareGameEvent());
         }
 
         protected void OnApplicationFocus(bool hasFocus)
         {
-            //lock cursor when the game is focused
-            Cursor.lockState = hasFocus ? CursorLockMode.Locked : CursorLockMode.None;
+            LockCursor(hasFocus);
+        }
+
+        protected void LockCursor(bool lockCursor)
+        {
+            if (lockCursor)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
         }
     }
 }

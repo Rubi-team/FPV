@@ -10,4 +10,8 @@
     internal class GameSceneLoadedEvent : AppEvent
     {
     }
+
+    internal class ServerPrepareGameEvent : AppEvent
+    {
+    }
 }

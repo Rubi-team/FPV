@@ -40,6 +40,8 @@ namespace FPV.Runtime.Shared
         [SerializeField] private GameApplication m_GameAppPrefab;
         private GameApplication m_GameApp;
 
+        public Action OnServerPrepareGame;
+
 
         internal HashSet<PlayerApplication> ReadyPlayers { get; private set; }
         private NetworkManager m_NetworkManager;
@@ -177,6 +179,7 @@ namespace FPV.Runtime.Shared
             Debug.Log("[Server] Preparing game");
             m_PreparedGame = true;
             InstantiateGameApplication();
+            OnServerPrepareGame();
             foreach (var connectionToClient in m_NetworkManager.ConnectedClients.Values)
                 connectionToClient.PlayerObject.GetComponent<PlayerApplication>().OnClientPrepareGameClientRpc();
         }
