@@ -21,6 +21,7 @@ namespace Audio
         [field: SerializeField] public EventReference concreteFootStep { get; private set; }
         [field: SerializeField] public EventReference carpetFootStep { get; private set; }
         [field: SerializeField] public EventReference woodFootStep { get; private set; }
+        [field: SerializeField] public EventReference metalFootstep { get; private set; }
 
         [field: SerializeField] public EventReference jump { get; private set; }
         [field: SerializeField] public EventReference land { get; private set; }
@@ -53,7 +54,7 @@ namespace Audio
         [field: SerializeField] public EventReference laserHit { get; private set; }
         [field: SerializeField] public EventReference doorOpen { get; private set; }
         [field: SerializeField] public EventReference doorClose { get; private set; }
-
+        [field: SerializeField] public EventReference target { get; private set; }
 
         public static AudioManager Instance { get; private set; }
 
