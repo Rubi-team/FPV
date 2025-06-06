@@ -7,11 +7,12 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_King 1
-  m_Shader: {fileID: -6465566751694194690, guid: 90962f36dd3f51c4187d54b59d7e1897, type: 3}
+  m_Name: M_King
+  m_Shader: {fileID: -6465566751694194690, guid: 32041212239a9e54a942ebfd5aa45278, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _MODE_IDLE
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -54,6 +55,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Emissive_Mask:
+        m_Texture: {fileID: 2800000, guid: 1e3b2603be461a7499570da58c9b1d1c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Emissive_Mask_2:
+        m_Texture: {fileID: 2800000, guid: e5f1abae12cbba3478d2abe5c2e1c571, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GradientTex:
@@ -124,15 +133,21 @@ Material:
     - _Deplacement: 0
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _Detect_mode: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _Emission: 0
+    - _Emission: 15
+    - _Emission_2: 24.94
+    - _Emission_2_Detect: 13
+    - _Emission_2_Idle: 3
     - _EnvironmentReflections: 1
+    - _Float: 3.15
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Gradiant_Opacity: 1
     - _Gradient_opacity: 0.3
+    - _MODE: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -143,6 +158,7 @@ Material:
     - _ReceiveShadows: 1
     - _Roughness: 0.84
     - _Roughness_Intensity: 0.58
+    - _Sine_speed: 5
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 1
@@ -165,7 +181,11 @@ Material:
     - _Color_Gradient: {r: 1, g: 0.6939233, b: 0.6462264, a: 0}
     - _Direction: {r: 0, g: 0.2, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Emissive_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _Emissive_2_Idle: {r: 1, g: 1, b: 1, a: 0}
+    - _Emissive_Color: {r: 1, g: 0.026395647, b: 0, a: 0}
+    - _Emissive_Color_2: {r: 1, g: 0, b: 0, a: 0}
+    - _Emissive_Color_2_Detect: {r: 1, g: 0.03137255, b: 0.13333334, a: 0}
+    - _Emissive_Color_2_Idle: {r: 1, g: 1, b: 1, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
