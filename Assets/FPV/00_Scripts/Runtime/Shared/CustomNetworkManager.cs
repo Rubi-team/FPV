@@ -77,7 +77,7 @@ namespace FPV.Runtime.Shared
                 // Chargement des scènes de manière asynchrone
                 await SceneLoader.LoadScenesAdditiveAsync(
                     SceneLoader.Scene.Game_Main,
-                    new[] { SceneLoader.Scene.Game_Blocking, SceneLoader.Scene.Game_LevelArt }
+                    new[] { SceneLoader.Scene.Game_LevelArt }
                 );
 
                 StartHost();
