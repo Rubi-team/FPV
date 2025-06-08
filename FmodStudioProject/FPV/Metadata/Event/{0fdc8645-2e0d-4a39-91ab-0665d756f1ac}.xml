@@ -2,13 +2,13 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="Event" id="{0fdc8645-2e0d-4a39-91ab-0665d756f1ac}">
 		<property name="name">
-			<value>Footstep</value>
+			<value>WalkConcrete</value>
 		</property>
 		<property name="outputFormat">
 			<value>6</value>
 		</property>
 		<relationship name="folder">
-			<destination>{f0a63205-e41d-4c58-980e-dbb9bf2d4aff}</destination>
+			<destination>{3d057fea-7bee-4168-93fd-70cd32a93e87}</destination>
 		</relationship>
 		<relationship name="mixer">
 			<destination>{0a7992ab-e594-4d79-9046-b5f83239dcd3}</destination>
@@ -84,7 +84,7 @@
 	</object>
 	<object class="MultiSound" id="{331df0d8-5385-4e5b-a0a5-c35b4e288a68}">
 		<relationship name="sounds">
-			<destination>{b80a5b40-a7ec-4df6-a3e0-c957cca5a30d}</destination>
+			<destination>{25db974e-d109-42c8-8696-febe9052ba2f}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{53438282-c345-4823-b241-e15b5922fcd6}">
@@ -100,12 +100,14 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{7bc37c49-f642-476c-843d-f01b79b4f97d}" />
-	<object class="MultiSound" id="{b80a5b40-a7ec-4df6-a3e0-c957cca5a30d}">
+	<object class="MultiSound" id="{25db974e-d109-42c8-8696-febe9052ba2f}">
 		<relationship name="sounds">
-			<destination>{07f316bb-b8e1-46db-905c-0e94f37a0418}</destination>
-			<destination>{d7761c76-c7e9-47d9-b3d8-495d9094368f}</destination>
-			<destination>{8a50759a-a133-43d5-b5eb-a2148d33aded}</destination>
-			<destination>{d1ef4e2b-6211-4d08-89a3-5ec5ddd212f0}</destination>
+			<destination>{f7d08e01-3ca7-4776-92db-8bd518003c56}</destination>
+			<destination>{96f8e935-83c8-40fd-ab34-f82409f4f341}</destination>
+			<destination>{6c441ebe-2aac-4379-9097-f1a114f36e89}</destination>
+			<destination>{9c26fd99-aed3-464d-a936-a19d53db412f}</destination>
+			<destination>{b8e88668-a497-4be7-a714-88a9ba27bf0d}</destination>
+			<destination>{08efc113-a34a-42c0-bc0f-10fd9e3b8453}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{49001b12-d288-4bcf-bb47-2c4439c9308e}" />
@@ -115,24 +117,34 @@
 			<destination>{264f4a69-149d-4df3-b664-e14634dc2467}</destination>
 		</relationship>
 	</object>
-	<object class="SingleSound" id="{07f316bb-b8e1-46db-905c-0e94f37a0418}">
+	<object class="SingleSound" id="{f7d08e01-3ca7-4776-92db-8bd518003c56}">
 		<relationship name="audioFile">
-			<destination>{ddfb01dc-d141-4ffc-8262-2613c16b9e95}</destination>
+			<destination>{385c700a-0cd9-4328-b1a7-6a73cef7907e}</destination>
 		</relationship>
 	</object>
-	<object class="SingleSound" id="{d7761c76-c7e9-47d9-b3d8-495d9094368f}">
+	<object class="SingleSound" id="{96f8e935-83c8-40fd-ab34-f82409f4f341}">
 		<relationship name="audioFile">
-			<destination>{9b1514b3-2617-4be0-b0e1-08356e73a79e}</destination>
+			<destination>{f36b3227-0d22-4001-bdb5-2cb693f99fea}</destination>
 		</relationship>
 	</object>
-	<object class="SingleSound" id="{8a50759a-a133-43d5-b5eb-a2148d33aded}">
+	<object class="SingleSound" id="{6c441ebe-2aac-4379-9097-f1a114f36e89}">
 		<relationship name="audioFile">
-			<destination>{a17489dd-2942-4e5c-a0e7-7d06377b1208}</destination>
+			<destination>{f32ee82b-a8ff-44f4-9182-c3df9284bb8e}</destination>
 		</relationship>
 	</object>
-	<object class="SingleSound" id="{d1ef4e2b-6211-4d08-89a3-5ec5ddd212f0}">
+	<object class="SingleSound" id="{9c26fd99-aed3-464d-a936-a19d53db412f}">
 		<relationship name="audioFile">
-			<destination>{d9755d91-8978-49e7-bcca-8772e928fed1}</destination>
+			<destination>{b5a329e8-fbdb-4cac-b3ed-39e2572363c8}</destination>
+		</relationship>
+	</object>
+	<object class="SingleSound" id="{b8e88668-a497-4be7-a714-88a9ba27bf0d}">
+		<relationship name="audioFile">
+			<destination>{eb72bb27-9aa5-4b0c-b3da-a81ace29e6ff}</destination>
+		</relationship>
+	</object>
+	<object class="SingleSound" id="{08efc113-a34a-42c0-bc0f-10fd9e3b8453}">
+		<relationship name="audioFile">
+			<destination>{dacf96bb-b6d3-4000-9562-540a77880eaf}</destination>
 		</relationship>
 	</object>
 	<object class="Plugin" id="{264f4a69-149d-4df3-b664-e14634dc2467}">
