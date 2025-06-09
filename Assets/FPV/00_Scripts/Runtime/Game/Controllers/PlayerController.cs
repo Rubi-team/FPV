@@ -39,7 +39,6 @@ namespace FPV.Runtime
 #endif
         internal CharacterController _controller;
         internal InputController _input;
-        internal GameObject _mainCamera;
 
         private const float _threshold = 0.01f;
 
@@ -119,6 +118,8 @@ namespace FPV.Runtime
                 Model.SetIsCarryingPlayerRpc(false);
                 return;
             }
+
+            if (Model.b_IsCarryingFurby.Value) return;
 
             // Obtenez l'objet interactable
             var interactable = GetInteractableObject();
@@ -359,8 +360,8 @@ namespace FPV.Runtime
                 var interactableHitPosition = interactableHitPositionList[i];
 
                 if (closestInteractable == null ||
-                    Vector3.Distance(_mainCamera.transform.position, interactableHitPosition) <
-                    Vector3.Distance(_mainCamera.transform.position, closestInteracableHitPosition))
+                    Vector3.Distance(Camera.main.transform.position, interactableHitPosition) <
+                    Vector3.Distance(Camera.main.transform.position, closestInteracableHitPosition))
                 {
                     // Déterminer l'interactable le plus proche
                     closestInteractable = interactable;
