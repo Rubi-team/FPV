@@ -13,7 +13,6 @@ namespace FPV.Runtime
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
 
-        private NetworkObject netObject;
         private Rigidbody rb;
         private bool hasExploded = false;
 
@@ -31,8 +30,6 @@ namespace FPV.Runtime
 
         public void Init()
         {
-            netObject = GetComponent<NetworkObject>();
-
             if (!IsHost)
             {
                 Debug.LogError("Furby must be spawned on the server.");
@@ -40,7 +37,7 @@ namespace FPV.Runtime
                 return;
             }
 
-            if (!netObject.IsSpawned) netObject.Spawn();
+            if (!NetworkObject.IsSpawned) NetworkObject.Spawn();
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -87,7 +84,7 @@ namespace FPV.Runtime
             if (interactorPlayer == null) return;
 
             // Transfer ownership to the picking player
-            netObject.ChangeOwnership(interactorPlayer.NetworkObject.OwnerClientId);
+            NetworkObject.ChangeOwnership(interactorPlayer.NetworkObject.OwnerClientId);
             GetPickedUpRpc(interactorPlayer.NetworkObjectId);
         }
 
@@ -95,7 +92,7 @@ namespace FPV.Runtime
         private void GetPickedUpRpc(ulong pickerObjectId)
         {
             var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
-            transform.position = pickerTransform.position + Vector3.up;
+            transform.position = pickerTransform.position + Vector3.up * 0.5f; // Adjust position above the picker
             transform.parent = pickerTransform;
         }
 
