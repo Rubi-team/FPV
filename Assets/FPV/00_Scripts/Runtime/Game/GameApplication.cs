@@ -3,7 +3,7 @@ using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace FPV
+namespace FPV.Runtime
 {
     /// <summary>
     /// Manages the flow of the Game part of the application

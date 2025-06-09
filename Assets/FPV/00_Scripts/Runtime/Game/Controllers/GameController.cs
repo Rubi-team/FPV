@@ -6,7 +6,7 @@ using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace FPV
+namespace FPV.Runtime
 {
     /// <summary>
     /// Main controller of the <see cref="GameApplication"></see>

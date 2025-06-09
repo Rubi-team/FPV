@@ -8,7 +8,7 @@ using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine.InputSystem.Composites;
 
-namespace FPV
+namespace FPV.Runtime
 {
     public class PlayerApplication : BaseNetworkApplication<PlayerModel, PlayerView, PlayerController>, IInteractable
     {

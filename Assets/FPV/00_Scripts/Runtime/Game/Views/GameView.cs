@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace FPV
+namespace FPV.Runtime
 {
     /// <summary>
     /// Main View of the <see cref="GameApplication"></see>
