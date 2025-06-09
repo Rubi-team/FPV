@@ -65,7 +65,7 @@ namespace FPV.Runtime
                     var direction = (hit.transform.position - transform.position).normalized;
                     var force = Mathf.Lerp(explosionForce, 0,
                         Vector3.Distance(transform.position, hit.transform.position) / explosionRadius);
-                    player.Controller.OnPlayerThrowMeRpc(direction, force);
+                    player.Controller.OnPlayerThrowMeRpc(direction, force, true);
                 }
 
                 // Vérifie si c'est une cible
@@ -101,6 +101,7 @@ namespace FPV.Runtime
         private void GetPickedUpRpc(ulong pickerObjectId)
         {
             rb.isKinematic = true; // Permet au rigidbody de rester immobile
+            pickedUp = true;
             var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
             transform.position = pickerTransform.position + Vector3.up * 0.5f; // Adjust position above the picker
             transform.parent = pickerTransform;

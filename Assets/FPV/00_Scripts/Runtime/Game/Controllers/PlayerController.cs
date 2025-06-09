@@ -201,9 +201,9 @@ namespace FPV.Runtime
         private bool _isBeingThrown = false;
 
         [Rpc(SendTo.Owner)]
-        internal void OnPlayerThrowMeRpc(Vector3 dir, float force)
+        internal void OnPlayerThrowMeRpc(Vector3 dir, float force, bool calledByFurby = false)
         {
-            if (!Model.b_IsPickedUp.Value)
+            if (!Model.b_IsPickedUp.Value && !calledByFurby)
             {
                 Debug.LogError("OnPlayerThrowMeRpc called but I am not picked up", this);
                 return;
