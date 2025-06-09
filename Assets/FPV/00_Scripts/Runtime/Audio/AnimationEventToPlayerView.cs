@@ -1,12 +1,14 @@
-using FPV;
 using UnityEngine;
 
-public class AnimationEventToPlayerView : MonoBehaviour
+namespace FPV.Runtime
 {
-    [SerializeField] private PlayerView playerView;
-
-    private void Footsteps()
+    public class AnimationEventToPlayerView : MonoBehaviour
     {
-        playerView.AudioFootsteps();
+        [SerializeField] private PlayerView playerView;
+
+        private void Footsteps()
+        {
+            playerView.AudioFootsteps();
+        }
     }
 }

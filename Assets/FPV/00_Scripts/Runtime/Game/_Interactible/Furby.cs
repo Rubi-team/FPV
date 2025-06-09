@@ -7,12 +7,12 @@ namespace FPV.Runtime
 {
     public class Furby : NetworkBehaviour, IInteractable
     {
-        [Header("Push Settings")]
-        [SerializeField] private float explosionRadius = 5f;
+        [Header("Push Settings")] [SerializeField]
+        private float explosionRadius = 5f;
+
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
-        
-        private NetworkObject netObject;
+
         private Rigidbody rb;
         private bool hasExploded = false;
 
@@ -30,8 +30,6 @@ namespace FPV.Runtime
 
         public void Init()
         {
-            netObject = GetComponent<NetworkObject>();
-
             if (!IsHost)
             {
                 Debug.LogError("Furby must be spawned on the server.");
@@ -39,7 +37,7 @@ namespace FPV.Runtime
                 return;
             }
 
-            if (!netObject.IsSpawned) netObject.Spawn();
+            if (!NetworkObject.IsSpawned) NetworkObject.Spawn();
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -66,7 +64,7 @@ namespace FPV.Runtime
                     var direction = (hit.transform.position - transform.position).normalized;
                     var distance = Vector3.Distance(transform.position, hit.transform.position);
                     var force = Mathf.Lerp(explosionForce, 0, distance / explosionRadius);
-                    
+
                     // Use the existing throw mechanics from PlayerController
                     player.Controller.OnPlayerThrowMeRpc(direction, force);
                 }
@@ -78,13 +76,15 @@ namespace FPV.Runtime
 
         public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
         {
+            Debug.Log($"Furby interacted with action: {interactAction}");
             if (interactAction != IInteractable.InteractAction.Primary) return;
+            Debug.Log("Furby picked up");
 
             var interactorPlayer = interactorTransform.GetComponentInParent<PlayerApplication>();
             if (interactorPlayer == null) return;
 
             // Transfer ownership to the picking player
-            netObject.ChangeOwnership(interactorPlayer.NetworkObject.OwnerClientId);
+            NetworkObject.ChangeOwnership(interactorPlayer.NetworkObject.OwnerClientId);
             GetPickedUpRpc(interactorPlayer.NetworkObjectId);
         }
 
@@ -92,7 +92,7 @@ namespace FPV.Runtime
         private void GetPickedUpRpc(ulong pickerObjectId)
         {
             var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
-            transform.position = pickerTransform.position + Vector3.up;
+            transform.position = pickerTransform.position + Vector3.up * 0.5f; // Adjust position above the picker
             transform.parent = pickerTransform;
         }
 
