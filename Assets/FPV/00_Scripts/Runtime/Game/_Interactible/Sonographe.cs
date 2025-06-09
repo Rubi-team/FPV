@@ -73,12 +73,12 @@ namespace FPV
         }
 
         [ClientRpc]
-        private void ActiveClientRpc()
+        public void ActiveClientRpc()
         {
             Debug.LogWarning("Sonographe activated!");
         }
 
-        private void Active()
+        public void Active()
         {
             ActiveClientRpc();
         }

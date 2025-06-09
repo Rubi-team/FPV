@@ -70,6 +70,7 @@ namespace FPV.Runtime
         [Header("Runtime Values")] public Transform PickerTransform;
         public NetworkObject _NetworkObject;
         public PlayerApplication CarriedPlayer;
+        public Furby CarriedFurby;
 
         public override void OnNetworkSpawn()
         {

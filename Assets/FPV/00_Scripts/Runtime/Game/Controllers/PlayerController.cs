@@ -119,7 +119,19 @@ namespace FPV.Runtime
                 return;
             }
 
-            if (Model.b_IsCarryingFurby.Value) return;
+            if (Model.b_IsCarryingFurby.Value)
+            {
+                // Calcule la direction et applique la force pour le lancer
+                var furby = Model.CarriedFurby; // Une référence au Furby tenu
+                var throwDirection = App.transform.forward; // Direction du lancer (par exemple, vers l'avant)
+                var throwForce = Model.ThrowForce; // Ajouter une valeur de force dans le modèle si nécessaire
+                furby.Throw(throwDirection, throwForce);
+
+                // Réinitialise l'état du joueur
+                Model.SetIsCarryingFurbyRpc(false);
+                Model.CarriedFurby = null;
+                return;
+            }
 
             // Obtenez l'objet interactable
             var interactable = GetInteractableObject();
@@ -147,10 +159,9 @@ namespace FPV.Runtime
             }
             else
             {
-                Debug.Log(App.GetComponent<NetworkObject>().OwnerClientId +
-                          " Interacting with: " + interactable.GetTransform().name, this);
                 interactable.Interact(IInteractable.InteractAction.Primary, App.transform);
                 Model.SetIsCarryingFurbyRpc(true);
+                Model.CarriedFurby = interactable.GetTransform().GetComponent<Furby>();
             }
         }
 

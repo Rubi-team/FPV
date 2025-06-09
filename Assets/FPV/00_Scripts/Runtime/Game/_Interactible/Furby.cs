@@ -13,6 +13,7 @@ namespace FPV.Runtime
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
 
+        private bool pickedUp = false;
         private Rigidbody rb;
         private bool hasExploded = false;
 
@@ -32,7 +33,6 @@ namespace FPV.Runtime
         {
             if (!IsHost)
             {
-                Debug.LogError("Furby must be spawned on the server.");
                 Destroy(gameObject);
                 return;
             }
@@ -42,7 +42,7 @@ namespace FPV.Runtime
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (!IsServer || hasExploded || rb == null || !rb.isKinematic) return;
+            if (!IsServer || hasExploded || rb == null || rb.isKinematic || !pickedUp) return;
 
             ExplodeServerRpc();
         }
@@ -53,24 +53,33 @@ namespace FPV.Runtime
             if (hasExploded) return;
             hasExploded = true;
 
-            // Explosion effect using SphereCast
+            // SphereCast pour détecter les objets à proximité
             var hits = Physics.OverlapSphere(transform.position, explosionRadius, affectedLayers);
             foreach (var hit in hits)
             {
+                // Vérifie si c'est un joueur
                 var player = hit.GetComponent<PlayerApplication>();
                 if (player != null)
                 {
-                    // Calculate direction and distance for force calculation
+                    // Calcul de la direction et application du bump (en utilisant une méthode existante dans le contrôleur)
                     var direction = (hit.transform.position - transform.position).normalized;
-                    var distance = Vector3.Distance(transform.position, hit.transform.position);
-                    var force = Mathf.Lerp(explosionForce, 0, distance / explosionRadius);
-
-                    // Use the existing throw mechanics from PlayerController
+                    var force = Mathf.Lerp(explosionForce, 0,
+                        Vector3.Distance(transform.position, hit.transform.position) / explosionRadius);
                     player.Controller.OnPlayerThrowMeRpc(direction, force);
                 }
+
+                // Vérifie si c'est une cible
+                var target = hit.GetComponent<Target>();
+                if (target != null)
+                    // Par exemple : Active la cible s’il est actif
+                    target.DeactivateTarget();
+
+                // Vérifie si c'est un Sonographe, active si proche
+                var sonographe = hit.GetComponent<Sonographe>();
+                if (sonographe != null) sonographe.ActiveClientRpc(); // Appelle la méthode qui gère l'activation
             }
 
-            // Destroy the Furby
+            // Détruire ou désactiver le Furby après impact
             NetworkObject.Despawn(true);
         }
 
@@ -91,6 +100,7 @@ namespace FPV.Runtime
         [Rpc(SendTo.Owner)]
         private void GetPickedUpRpc(ulong pickerObjectId)
         {
+            rb.isKinematic = true; // Permet au rigidbody de rester immobile
             var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
             transform.position = pickerTransform.position + Vector3.up * 0.5f; // Adjust position above the picker
             transform.parent = pickerTransform;
@@ -118,6 +128,17 @@ namespace FPV.Runtime
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, explosionRadius);
+        }
+
+        public void Throw(Vector3 direction, float force)
+        {
+            if (rb != null)
+            {
+                rb.isKinematic = false; // Permet au rigidbody de prendre le contrôle
+                transform.parent = null; // Détache le Furby de son porteur
+                rb.AddForce(direction.normalized * force + Vector3.up,
+                    ForceMode.Impulse); // Applique une force impulsive
+            }
         }
     }
 }

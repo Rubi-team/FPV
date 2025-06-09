@@ -7,17 +7,17 @@ namespace FPV.Runtime
 {
     public class Target : NetworkBehaviour
     {
-        [Header("References")]
-        [SerializeField] private Laser[] lasersToDeactivate;
+        [Header("References")] [SerializeField]
+        private Laser[] lasersToDeactivate;
+
         [SerializeField] private GameObject[] objectsToActivate;
 
-        [Header("Settings")]
-        [SerializeField] private LayerMask activationLayers;
+        [Header("Settings")] [SerializeField] private LayerMask activationLayers;
         [SerializeField] private bool isActive = true;
 
         private NetworkObject netObject;
-        private NetworkVariable<bool> isTargetActive = new NetworkVariable<bool>(true);
-        
+        private NetworkVariable<bool> isTargetActive = new(true);
+
         public UnityEvent onTargetDeactivated;
 
         private void Awake()
@@ -29,7 +29,7 @@ namespace FPV.Runtime
         {
             base.OnNetworkSpawn();
             if (!IsServer) enabled = false;
-            
+
             isTargetActive.OnValueChanged += OnTargetStateChanged;
         }
 
@@ -54,13 +54,10 @@ namespace FPV.Runtime
             if (!isTargetActive.Value) return;
 
             // Vérifie si l'objet qui a touché la cible est sur un des layers autorisés
-            if (((1 << collision.gameObject.layer) & activationLayers) != 0)
-            {
-                DeactivateTarget();
-            }
+            if (((1 << collision.gameObject.layer) & activationLayers) != 0) DeactivateTarget();
         }
 
-        private void DeactivateTarget()
+        public void DeactivateTarget()
         {
             isTargetActive.Value = false;
             DeactivateLasersClientRpc();
@@ -76,33 +73,21 @@ namespace FPV.Runtime
         }
 
         [ClientRpc]
-        private void DeactivateLasersClientRpc()
+        public void DeactivateLasersClientRpc()
         {
             if (lasersToDeactivate != null)
-            {
                 foreach (var laser in lasersToDeactivate)
-                {
                     if (laser != null)
-                    {
                         laser.gameObject.SetActive(false);
-                    }
-                }
-            }
         }
 
         [ClientRpc]
         private void ActivateObjectsClientRpc()
         {
             if (objectsToActivate != null)
-            {
                 foreach (var obj in objectsToActivate)
-                {
                     if (obj != null)
-                    {
                         obj.SetActive(true);
-                    }
-                }
-            }
         }
 
         private void OnDrawGizmosSelected()
