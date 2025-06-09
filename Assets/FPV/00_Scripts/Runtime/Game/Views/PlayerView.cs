@@ -1,9 +1,10 @@
 ﻿using System;
 using Audio;
+using FPV.Runtime;
 using Unity.Cinemachine;
 using UnityEngine;
 
-namespace FPV
+namespace FPV.Runtime
 {
     public class PlayerView : NetworkView<PlayerApplication>
     {

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
-namespace FPV
+namespace FPV.Runtime
 {
     public class PlayerModel : NetworkModel<PlayerApplication>
     {
@@ -84,6 +84,9 @@ namespace FPV
         public NetworkVariable<bool> b_IsCarryingPlayer = new(false, NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
+        public NetworkVariable<bool> b_IsCarryingFurby = new(false, NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
         public NetworkVariable<bool> b_CanInteract = new(true, NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
@@ -97,6 +100,12 @@ namespace FPV
         internal void SetIsCarryingPlayerRpc(bool isCarrying)
         {
             b_IsCarryingPlayer.Value = isCarrying;
+        }
+
+        [Rpc(SendTo.Owner)]
+        internal void SetIsCarryingFurbyRpc(bool isCarrying)
+        {
+            b_IsCarryingFurby.Value = isCarrying;
         }
     }
 }

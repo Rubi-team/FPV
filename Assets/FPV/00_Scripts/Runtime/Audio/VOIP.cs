@@ -4,7 +4,7 @@ using Unity.Netcode;
 using Unity.Services.Vivox;
 using UnityEngine;
 
-namespace FPV
+namespace FPV.Runtime
 {
     public class VOIP : NetworkBehaviour
     {

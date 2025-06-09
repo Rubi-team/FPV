@@ -4,7 +4,7 @@ using FPV.Shared;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace FPV
+namespace FPV.Runtime
 {
     /// <summary>
     /// Main model of the <see cref="GameApplication"></see>

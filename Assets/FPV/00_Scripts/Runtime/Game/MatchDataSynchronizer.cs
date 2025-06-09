@@ -1,7 +1,7 @@
 ﻿using Unity.Netcode;
 using UnityEngine;
 
-namespace FPV
+namespace FPV.Runtime
 {
     /// <summary>
     /// Holds the logical state of a game and synchronizes it across the network

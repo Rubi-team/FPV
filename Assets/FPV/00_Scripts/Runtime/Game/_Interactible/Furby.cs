@@ -7,11 +7,12 @@ namespace FPV.Runtime
 {
     public class Furby : NetworkBehaviour, IInteractable
     {
-        [Header("Push Settings")]
-        [SerializeField] private float explosionRadius = 5f;
+        [Header("Push Settings")] [SerializeField]
+        private float explosionRadius = 5f;
+
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
-        
+
         private NetworkObject netObject;
         private Rigidbody rb;
         private bool hasExploded = false;
@@ -66,7 +67,7 @@ namespace FPV.Runtime
                     var direction = (hit.transform.position - transform.position).normalized;
                     var distance = Vector3.Distance(transform.position, hit.transform.position);
                     var force = Mathf.Lerp(explosionForce, 0, distance / explosionRadius);
-                    
+
                     // Use the existing throw mechanics from PlayerController
                     player.Controller.OnPlayerThrowMeRpc(direction, force);
                 }
@@ -78,7 +79,9 @@ namespace FPV.Runtime
 
         public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
         {
+            Debug.Log($"Furby interacted with action: {interactAction}");
             if (interactAction != IInteractable.InteractAction.Primary) return;
+            Debug.Log("Furby picked up");
 
             var interactorPlayer = interactorTransform.GetComponentInParent<PlayerApplication>();
             if (interactorPlayer == null) return;

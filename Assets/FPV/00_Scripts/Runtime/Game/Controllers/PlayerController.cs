@@ -11,7 +11,7 @@ using UnityEngine.InputSystem.Composites;
 using UnityEngine.InputSystem;
 #endif
 
-namespace FPV
+namespace FPV.Runtime
 {
 #if ENABLE_INPUT_SYSTEM
     [RequireComponent(typeof(PlayerInput))]
@@ -58,7 +58,6 @@ namespace FPV
         private void Awake()
         {
             // get a reference to our main camera
-            if (_mainCamera == null) _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
 
             _controller = App.GetComponent<CharacterController>();
 
@@ -86,13 +85,13 @@ namespace FPV
 
             GroundedCheck();
 
-            if (Model.b_CanInteract.Value) Interact();
-
             if (Model.b_IsPickedUp.Value)
             {
                 FollowPicker();
                 return;
             }
+
+            if (Model.b_CanInteract.Value) Interact();
 
             JumpAndGravity();
             Move();
@@ -108,9 +107,12 @@ namespace FPV
         private void Interact()
         {
             if (!_input.interact) return;
+            if (Model.b_IsPickedUp.Value) return;
 
+            // Reset le state d'interaction à false
             _input.interact = false;
 
+            // Gestion de l'interaction avec un joueur porté
             if (Model.b_IsCarryingPlayer.Value)
             {
                 Model.CarriedPlayer.Controller.OnPlayerThrowMeRpc(App.transform.forward, Model.ThrowForce);
@@ -118,29 +120,37 @@ namespace FPV
                 return;
             }
 
-
+            // Obtenez l'objet interactable
             var interactable = GetInteractableObject();
-            if (interactable != null)
-                if (interactable.GetTransform().GetComponent<PlayerApplication>() is { } player)
-                    // On interagit avec un joueur
-                    if (player != null)
-                    {
-                        if (player == null ||
-                            Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value ||
-                            player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)
-                            return;
 
-                        if (Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value)
-                            return; // Already picked up or carrying someone
-                        if (player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)
-                            return; // Already picked up or carrying someone
+            // Si aucun interactable n'est trouvé ou s'il est null/détruit, sortez immédiatement
+            if (interactable == null || interactable.GetTransform() == null)
+            {
+                Debug.LogWarning("Aucun objet interactable valide trouvé.");
+                return;
+            }
 
-                        Debug.Log($"Interact with {interactable.GetTransform().name}", this);
-                        interactable.Interact(IInteractable.InteractAction.Primary, transform);
+            // Interaction avec un autre joueur si applicable
+            if (interactable.GetTransform().GetComponent<PlayerApplication>() is { } player)
+            {
+                // Empêchez l'interaction si l'état ne le permet pas
+                if (player == null || Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value ||
+                    player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)
+                    return;
 
-                        Model.SetIsCarryingPlayerRpc(true);
-                        Model.CarriedPlayer = player;
-                    }
+                Debug.Log($"Interagir avec : {interactable.GetTransform().name}", this);
+                interactable.Interact(IInteractable.InteractAction.Primary, App.transform);
+
+                Model.SetIsCarryingPlayerRpc(true);
+                Model.CarriedPlayer = player;
+            }
+            else
+            {
+                Debug.Log(App.GetComponent<NetworkObject>().OwnerClientId +
+                          " Interacting with: " + interactable.GetTransform().name, this);
+                interactable.Interact(IInteractable.InteractAction.Primary, App.transform);
+                Model.SetIsCarryingFurbyRpc(true);
+            }
         }
 
         private void GroundedCheck()
@@ -306,65 +316,55 @@ namespace FPV
             return Mathf.Clamp(lfAngle, lfMin, lfMax);
         }
 
-        private void OnDrawGizmosSelected()
-        {
-            var transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
-            var transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
-
-            if (Model.Grounded) Gizmos.color = transparentGreen;
-            else Gizmos.color = transparentRed;
-
-            // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
-            Gizmos.DrawSphere(
-                new Vector3(App.transform.position.x, App.transform.position.y - Model.GroundedOffset,
-                    App.transform.position.z),
-                Model.GroundedRadius);
-        }
-
-        private void OnDrawGizmos()
-        {
-            var spherePosition = Model.CinemachineCameraTarget.transform.position +
-                                 Model.CinemachineCameraTarget.transform.forward * Model.InteractDistance;
-            Gizmos.DrawSphere(spherePosition, Model.InteractRadius);
-        }
-
         public IInteractable GetInteractableObject()
         {
             List<IInteractable> interactableList = new();
             var interactableHitPositionList = new List<Vector3>();
-            var raycastHitArray = Physics.SphereCastAll(_mainCamera.transform.position, Model.InteractRadius,
-                _mainCamera.transform.forward, Model.InteractDistance);
-            foreach (var raycastHit in raycastHitArray)
-                if (raycastHit.transform.TryGetComponent(out IInteractable interactable))
-                {
-                    interactableList.Add(interactable);
-                    interactableHitPositionList.Add(raycastHit.point);
-                }
 
-            // Sort by closest
+            var raycastHitArray = Physics.SphereCastAll(
+                Camera.main.transform.position,
+                Model.InteractRadius,
+                Camera.main.transform.forward,
+                Model.InteractDistance
+            );
+
+            foreach (var raycastHit in raycastHitArray)
+            {
+                // Vérifiez si le transform est null
+                if (raycastHit.transform == null)
+                    continue;
+
+                // Essayez de récupérer l'interactable uniquement si le transform n'est pas null
+                if (raycastHit.transform.TryGetComponent(out IInteractable interactable))
+                    // Assurez-vous que l'objet interactable n'est pas null ou détruit
+                    if (interactable != null && interactable.GetTransform() != null)
+                    {
+                        interactableList.Add(interactable);
+                        interactableHitPositionList.Add(raycastHit.point);
+                    }
+            }
+
+            // Trier les objets interactables par proximité
             IInteractable closestInteractable = null;
-            Vector3 closestInteracableHitPosition = Vector2.zero;
+            var closestInteracableHitPosition = Vector3.zero;
+
             for (var i = 0; i < interactableList.Count; i++)
             {
                 var interactable = interactableList[i];
 
-                if (interactable.GetTransform() == App.transform) continue; // Ignore self
+                // Ignorez les références à soi-même
+                if (interactable.GetTransform() == App.transform)
+                    continue;
 
-                Vector2 interactableHitPosition = interactableHitPositionList[i];
-                if (closestInteractable == null)
+                var interactableHitPosition = interactableHitPositionList[i];
+
+                if (closestInteractable == null ||
+                    Vector3.Distance(_mainCamera.transform.position, interactableHitPosition) <
+                    Vector3.Distance(_mainCamera.transform.position, closestInteracableHitPosition))
                 {
+                    // Déterminer l'interactable le plus proche
                     closestInteractable = interactable;
                     closestInteracableHitPosition = interactableHitPosition;
-                }
-                else
-                {
-                    if (Vector2.Distance(_mainCamera.transform.position, interactableHitPosition) <
-                        Vector2.Distance(_mainCamera.transform.position, closestInteracableHitPosition))
-                    {
-                        // Closer
-                        closestInteractable = interactable;
-                        closestInteracableHitPosition = interactableHitPosition;
-                    }
                 }
             }
 
@@ -387,66 +387,32 @@ namespace FPV
             if (Model.RotateWithPicker) App.transform.rotation = Model.PickerTransform.rotation;
         }
 
-        #region Throw
-
-        /*[Rpc(SendTo.Owner)]
-        internal void OnPlayerThrowMeRpc(Vector3 dir, float force)
-        {
-            if (!Model.b_IsPickedUp.Value)
-            {
-                Debug.LogError("OnPlayerThrowMeRpc called but I am not picked up", this);
-                return;
-            }
-
-            if (Model.b_IsCarryingPlayer.Value)
-            {
-                Debug.LogError("ya 3 joueurs ??? montrez ça a thomas", this);
-                return;
-            }
-
-            StartCoroutine(ThrowTrajectory(dir, force));
-        }
-
-        private IEnumerator ThrowTrajectory(Vector3 dir, float force)
-        {
-            var gravity = -Model.Gravity;
-            var time = 0f;
-            var start = App.transform.position;
-            var velocity = dir * force;
-            velocity.y = force * 0.5f;
-
-            // Désactiver le CharacterController pendant le vol
-            _controller.enabled = false;
-
-            while (!Model.Grounded)
-            {
-                time += Time.deltaTime;
-                var displacement = velocity * time + 0.5f * Vector3.down * gravity * time * time;
-                App.transform.position = start + displacement;
-                yield return null;
-            }
-
-            // Attendre que la position soit stable
-            yield return new WaitForFixedUpdate();
-
-            // Réactiver le CharacterController
-            _controller.enabled = true;
-
-            // S'assurer que le NetworkTransform a bien propagé la position finale
-            yield return new WaitForSeconds(0.1f);
-
-            // Maintenant on peut changer l'état
-            Model.SetIsPickedUpRpc(false);
-        }
-
-*/
-
-        #endregion
-
 
         internal override void RemoveListeners()
         {
             // to add
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            var transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
+            var transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
+
+            if (Model.Grounded) Gizmos.color = transparentGreen;
+            else Gizmos.color = transparentRed;
+
+            // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
+            Gizmos.DrawSphere(
+                new Vector3(App.transform.position.x, App.transform.position.y - Model.GroundedOffset,
+                    App.transform.position.z),
+                Model.GroundedRadius);
+        }
+
+        private void OnDrawGizmos()
+        {
+            var spherePosition = Model.CinemachineCameraTarget.transform.position +
+                                 Model.CinemachineCameraTarget.transform.forward * Model.InteractDistance;
+            Gizmos.DrawSphere(spherePosition, Model.InteractRadius);
         }
     }
 }
