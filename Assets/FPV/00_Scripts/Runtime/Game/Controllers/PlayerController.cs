@@ -121,10 +121,12 @@ namespace FPV.Runtime
 
             if (Model.b_IsCarryingFurby.Value)
             {
-                // Calcule la direction et applique la force pour le lancer
+                // Calcule la direction à partir de la caméra principale
                 var furby = Model.CarriedFurby; // Une référence au Furby tenu
-                var throwDirection = App.transform.forward; // Direction du lancer (par exemple, vers l'avant)
+                var cameraTransform = Camera.main.transform; // Récupère le Transform de la caméra principale
+                var throwDirection = cameraTransform.forward; // Utilise la direction que regarde la caméra
                 var throwForce = Model.ThrowForce; // Ajouter une valeur de force dans le modèle si nécessaire
+
                 furby.Throw(throwDirection, throwForce);
 
                 // Réinitialise l'état du joueur
@@ -211,7 +213,7 @@ namespace FPV.Runtime
 
             // Initialiser la vélocité du lancer
             _throwVelocity = dir * force;
-            _throwVelocity.y = force * 0.5f;
+            _throwVelocity.y = force;
             _isBeingThrown = true;
 
             // Libérer immédiatement le joueur
