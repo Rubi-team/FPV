@@ -137,8 +137,8 @@ namespace FPV.Runtime
             {
                 rb.isKinematic = false; // Permet au rigidbody de prendre le contrôle
                 transform.parent = null; // Détache le Furby de son porteur
-                rb.AddForce(direction.normalized * force + Vector3.up,
-                    ForceMode.Impulse); // Applique une force impulsive
+                rb.AddForce(direction.normalized * force + Vector3.up * 0.5f,
+                    ForceMode.Impulse); // Ajoute une impulsion
             }
         }
     }
