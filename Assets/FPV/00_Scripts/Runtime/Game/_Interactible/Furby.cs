@@ -44,17 +44,25 @@ namespace FPV.Runtime
         {
             if (!IsServer || hasExploded || rb == null || rb.isKinematic || !pickedUp) return;
 
-            ExplodeServerRpc();
+            // Calculer la direction du mouvement à partir de la vélocité
+            var impactDirection = rb.velocity.normalized;
+
+            // Ajuster la position d'explosion d'une unité dans cette direction
+            var adjustedImpactPosition = transform.position + impactDirection;
+
+            // Déclencher l'explosion avec la position ajustée
+            ExplodeServerRpc(adjustedImpactPosition);
         }
 
         [ServerRpc]
-        private void ExplodeServerRpc()
+        private void ExplodeServerRpc(Vector3 explosionPosition)
         {
             if (hasExploded) return;
             hasExploded = true;
 
             // SphereCast pour détecter les objets à proximité
-            var hits = Physics.OverlapSphere(transform.position, explosionRadius, affectedLayers);
+            var hits = Physics.OverlapSphere(explosionPosition, explosionRadius, affectedLayers);
+
             foreach (var hit in hits)
             {
                 // Vérifie si c'est un joueur
@@ -62,9 +70,9 @@ namespace FPV.Runtime
                 if (player != null)
                 {
                     // Calcul de la direction et application du bump (en utilisant une méthode existante dans le contrôleur)
-                    var direction = (hit.transform.position - transform.position).normalized;
+                    var direction = (hit.transform.position - explosionPosition).normalized;
                     var force = Mathf.Lerp(explosionForce, 0,
-                        Vector3.Distance(transform.position, hit.transform.position) / explosionRadius);
+                        Vector3.Distance(explosionPosition, hit.transform.position) / explosionRadius);
                     player.Controller.OnPlayerThrowMeRpc(direction, force, true);
                 }
 
