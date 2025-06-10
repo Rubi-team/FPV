@@ -42,6 +42,8 @@ namespace FPV.Runtime.Shared
 
         public Action OnServerPrepareGame;
 
+        public Action OnScenesFinishedLoading;
+
 
         internal HashSet<PlayerApplication> ReadyPlayers { get; private set; }
         private NetworkManager m_NetworkManager;
@@ -81,6 +83,7 @@ namespace FPV.Runtime.Shared
                 );
 
                 StartHost();
+                OnServerPrepareGame?.Invoke();
             }
             else
             {

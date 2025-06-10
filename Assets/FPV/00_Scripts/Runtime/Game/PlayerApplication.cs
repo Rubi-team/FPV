@@ -22,6 +22,7 @@ namespace FPV.Runtime
         {
             base.OnNetworkSpawn();
             OwnerCheck();
+            TpAtSpawn();
         }
 
         private void OwnerCheck()
@@ -47,9 +48,27 @@ namespace FPV.Runtime
                 Controller._playerInput.enabled = true;
                 Controller._playerInput.ActivateInput();
             }
+        }
 
-            // TODO remove and add Lobby Player Start
-            transform.position = FindObjectsByType<PlayerStart>(FindObjectsSortMode.None)[0].transform.position;
+        // Change spawn 
+        private void TpAtSpawn()
+        {
+            if (!IsOwner) return;
+
+            // TODO REPARER 
+
+            // On récupère le composant NetworkTransform
+            var networkTransform = GetComponent<AnticipatedNetworkTransform>();
+            if (networkTransform != null)
+                networkTransform.enabled = false; // Désactiver temporairement la synchronisation
+
+            // Téléportation au PlayerStart
+            var playerStart = FindFirstObjectByType<PlayerStart>();
+            transform.position = playerStart.transform.position;
+            Debug.Log($"Player téléporté à la position : {transform.position}");
+
+            if (networkTransform != null)
+                networkTransform.enabled = true; // Réactiver la synchronisation après la téléportation
         }
 
         private void OnCollisionEnter(Collision other)
