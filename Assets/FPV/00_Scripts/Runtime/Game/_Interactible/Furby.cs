@@ -45,7 +45,7 @@ namespace FPV.Runtime
             if (!IsServer || hasExploded || rb == null || rb.isKinematic || !pickedUp) return;
 
             // Calculer la direction du mouvement à partir de la vélocité
-            var impactDirection = rb.velocity.normalized;
+            var impactDirection = rb.linearVelocity.normalized;
 
             // Ajuster la position d'explosion d'une unité dans cette direction
             var adjustedImpactPosition = transform.position + impactDirection;
