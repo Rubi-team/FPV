@@ -12,6 +12,7 @@ namespace FPV.Runtime
 
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
+        [SerializeField] private float impactDirectionMultiplier = 5f; // Nouveau paramètre configuré dans l'inspecteur
 
         private bool pickedUp = false;
         private Rigidbody rb;
@@ -44,18 +45,27 @@ namespace FPV.Runtime
         {
             if (!IsServer || hasExploded || rb == null || rb.isKinematic || !pickedUp) return;
 
-            // Calculer la direction du mouvement à partir de la vélocité
-            var impactDirection = rb.linearVelocity.normalized;
+            // Récupérer le premier point de contact
+            var contact = collision.contacts[0];
 
-            // Ajuster la position d'explosion d'une unité dans cette direction
-            var adjustedImpactPosition = transform.position + impactDirection;
+            // Calculer une direction basée sur le point de collision
+            var impactDirection = (contact.point - transform.position).normalized;
 
-            // Déclencher l'explosion avec la position ajustée
-            ExplodeServerRpc(adjustedImpactPosition);
+            // Appliquer une force supplémentaire vers le haut à la direction d'impact
+            impactDirection.y += 1.0f; // Ajoute une force verticale (modifiable pour l'intensité)
+
+            // Normaliser la direction finale (pour éviter un déséquilibre dans les forces)
+            impactDirection = impactDirection.normalized;
+
+            // Calculer la position précise de l'explosion (léger décalage dans la surface touchée)
+            var adjustedImpactPosition = contact.point + contact.normal * -0.5f;
+
+            // Déclencher l'explosion à la position ajustée
+            ExplodeServerRpc(adjustedImpactPosition, impactDirection);
         }
 
         [ServerRpc]
-        private void ExplodeServerRpc(Vector3 explosionPosition)
+        private void ExplodeServerRpc(Vector3 explosionPosition, Vector3 direction)
         {
             if (hasExploded) return;
             hasExploded = true;
@@ -69,22 +79,20 @@ namespace FPV.Runtime
                 var player = hit.GetComponent<PlayerApplication>();
                 if (player != null)
                 {
-                    // Calcul de la direction et application du bump (en utilisant une méthode existante dans le contrôleur)
-                    var direction = (hit.transform.position - explosionPosition).normalized;
+                    // Appliquer la direction calculée avec une composante verticale
                     var force = Mathf.Lerp(explosionForce, 0,
                         Vector3.Distance(explosionPosition, hit.transform.position) / explosionRadius);
+                    player.Controller._input.jump = true; // Simule un saut pour le joueur
                     player.Controller.OnPlayerThrowMeRpc(direction, force, true);
                 }
 
                 // Vérifie si c'est une cible
                 var target = hit.GetComponent<Target>();
-                if (target != null)
-                    // Par exemple : Active la cible s’il est actif
-                    target.DeactivateTarget();
+                if (target != null) target.DeactivateTarget();
 
-                // Vérifie si c'est un Sonographe, active si proche
+                // Vérifie si c'est un Sonographe
                 var sonographe = hit.GetComponent<Sonographe>();
-                if (sonographe != null) sonographe.ActiveClientRpc(); // Appelle la méthode qui gère l'activation
+                if (sonographe != null) sonographe.ActiveClientRpc();
             }
 
             // Détruire ou désactiver le Furby après impact
