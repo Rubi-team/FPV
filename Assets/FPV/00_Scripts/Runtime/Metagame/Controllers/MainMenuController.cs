@@ -55,9 +55,9 @@ namespace FPV
         private async void JoinRelay(JoinRelayEvent evt)
         {
             View.EnableButtonsAndInputField(false);
+            View.Hide();
             //TODO: Handle Error and add Loading Screen
             await CustomNetworkManager.Singleton.InitializeNetworkLogic(false, evt.RelayId);
-            View.Hide();
         }
     }
 }

@@ -94,14 +94,10 @@ namespace FPV.Runtime.Shared
                 var result = await RelayManager.JoinRelayAsync(relayCode);
                 if (result == 0)
                 {
-                    // Chargement des scènes de manière asynchrone
-                    await SceneLoader.LoadScenesAdditiveAsync(
-                        SceneLoader.Scene.Game_Main,
-                        new[] { SceneLoader.Scene.Game_LevelArt }
-                    );
-                    StartClient();
+                    // TODO add a loading screen for Client here
+                    Debug.Log($"[Relay] Relay joined with code: {relayCode}, starting client...");
+                    await StartClient();
                 }
-
                 else
                 {
                     Debug.LogError("Failed to join relay. StartClient() aborted.");
@@ -134,15 +130,16 @@ namespace FPV.Runtime.Shared
             return Task.CompletedTask;
         }
 
-        internal void StartClient()
+        internal Task StartClient()
         {
             if (m_NetworkManager.IsHost || m_NetworkManager.IsClient)
             {
-                Debug.LogWarning("Already started as host or client");
-                return;
+                Debug.LogError("Already started as host or client");
+                return Task.CompletedTask;
             }
 
             m_NetworkManager.StartClient();
+            return Task.CompletedTask;
         }
 
         internal void OnServerQuitAfter(float seconds)

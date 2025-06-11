@@ -109,8 +109,15 @@ namespace FPV.Runtime
             if (interactorPlayer == null) return;
 
             // Transfer ownership to the picking player
-            NetworkObject.ChangeOwnership(interactorPlayer.NetworkObject.OwnerClientId);
+            ChangeOwnershipServerRpc(interactorPlayer.NetworkObjectId);
             GetPickedUpRpc(interactorPlayer.NetworkObjectId);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void ChangeOwnershipServerRpc(ulong newOwnerId)
+        {
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(newOwnerId, out var newOwnerObject))
+                NetworkObject.ChangeOwnership(newOwnerObject.OwnerClientId);
         }
 
         [Rpc(SendTo.Owner)]
