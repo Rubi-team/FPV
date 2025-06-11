@@ -13,17 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
 #if STEAMAUDIO_ENABLED
 
 using System;
 using System.Reflection;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace SteamAudio
 {
     public sealed class FMODStudioAudioEngineState : AudioEngineState
     {
-        public override void Initialize(IntPtr context, IntPtr defaultHRTF, SimulationSettings simulationSettings, PerspectiveCorrection correction)
+        public override void Initialize(IntPtr context, IntPtr defaultHRTF, SimulationSettings simulationSettings,
+            PerspectiveCorrection correction)
         {
             FMODStudioAPI.iplFMODInitialize(context);
             FMODStudioAPI.iplFMODSetHRTF(defaultHRTF);
@@ -57,25 +60,33 @@ namespace SteamAudio
     {
         public override Transform GetListenerTransform()
         {
-            var fmodStudioListener = (MonoBehaviour) GameObject.FindObjectOfType<FMODUnity.StudioListener>();
-            return (fmodStudioListener != null) ? fmodStudioListener.transform : null;
+            var fmodStudioListener = (MonoBehaviour)Object.FindFirstObjectByType<FMODUnity.StudioListener>();
+            if (fmodStudioListener == null)
+            {
+                Debug.LogWarning(
+                    "FMOD Studio Listener not found. Ensure you have a FMODUnity.StudioListener in your scene.");
+                return null;
+            }
+
+            return fmodStudioListener != null ? fmodStudioListener.transform : null;
         }
 
         public override AudioSettings GetAudioSettings()
         {
             var audioSettings = new AudioSettings { };
 
-            int samplingRate = 0;
-            FMOD.SPEAKERMODE speakerMode = FMOD.SPEAKERMODE.DEFAULT;
-            int numRawSpeakers = 0;
-            FMODUnity.RuntimeManager.CoreSystem.getSoftwareFormat(out samplingRate, out speakerMode, out numRawSpeakers);
+            var samplingRate = 0;
+            var speakerMode = FMOD.SPEAKERMODE.DEFAULT;
+            var numRawSpeakers = 0;
+            FMODUnity.RuntimeManager.CoreSystem.getSoftwareFormat(out samplingRate, out speakerMode,
+                out numRawSpeakers);
 
-            uint frameSize = 0u;
-            int numBuffers = 0;
+            var frameSize = 0u;
+            var numBuffers = 0;
             FMODUnity.RuntimeManager.CoreSystem.getDSPBufferSize(out frameSize, out numBuffers);
 
             audioSettings.samplingRate = samplingRate;
-            audioSettings.frameSize = (int) frameSize;
+            audioSettings.frameSize = (int)frameSize;
 
             return audioSettings;
         }

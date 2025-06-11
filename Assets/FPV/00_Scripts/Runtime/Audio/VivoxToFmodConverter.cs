@@ -52,7 +52,6 @@ public class VivoxToFmodConverter : MonoBehaviour
 
         var audioModel = new AudioModel
         {
-            Bank = "Master",
             EventName = "event:/VOIP"
         };
 
