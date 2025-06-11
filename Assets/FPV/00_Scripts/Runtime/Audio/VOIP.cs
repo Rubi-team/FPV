@@ -33,6 +33,10 @@ namespace FPV.Runtime
 
         private async Task Init()
         {
+            tap = GetComponentInChildren<VivoxParticipantTap>(true);
+            audioSource = GetComponentInChildren<StudioEventEmitter>(true);
+            myVOIP = GetComponentInChildren<MyVOIP>(true);
+
             if (GetComponentInParent<PlayerApplication>().IsOwner)
             {
                 isOwner = true;
@@ -48,9 +52,6 @@ namespace FPV.Runtime
                 // Demande le nom au serveur
                 GetPlayerAuthIDRpc();
             }
-
-            audioSource = GetComponentInChildren<StudioEventEmitter>();
-            myVOIP = GetComponentInChildren<MyVOIP>();
         }
 
         [Rpc(SendTo.Owner)]
@@ -63,22 +64,27 @@ namespace FPV.Runtime
         private void SendParticipantNameClientRpc(string participantName)
         {
             this.participantName = participantName;
-            var tap = GetComponent<VivoxParticipantTap>();
-            tap.ChannelName = RelayManager.JoinCode;
-            tap.ParticipantName = participantName;
+
+            TrySetupTap();
         }
 
 
-        [Rpc(SendTo.Owner)]
-        private Task<string> GetParticipantNameServerRpc()
+        private void TrySetupTap()
         {
-            // Get AuthenticationService.Instance.PlayerId;
-            return Task.FromResult(AuthenticationService.Instance.PlayerId);
+            tap.ChannelName = RelayManager.JoinCode;
+            tap.ParticipantName = null;
+            tap.ParticipantName = participantName;
+
+            tap.AutoAcquireChannel = true;
         }
+
+        private VivoxParticipantTap tap;
 
         private void Update()
         {
             // If not connected to a vivox channel, return TODO
+
+            if (!tap.IsRunning) TrySetupTap();
 
 
             if (!isOwner)
