@@ -114,10 +114,13 @@ namespace FPV.Runtime
         }
 
         [Rpc(SendTo.Server)]
-        private void ChangeOwnershipServerRpc(ulong newOwnerId)
+        private void ChangeOwnershipServerRpc(ulong newOwnerId = 0, bool isThrown = false)
         {
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(newOwnerId, out var newOwnerObject))
+            {
                 NetworkObject.ChangeOwnership(newOwnerObject.OwnerClientId);
+                if (!isThrown) GetComponent<NetworkObject>().TrySetParent(newOwnerObject);
+            }
         }
 
         [Rpc(SendTo.Owner)]
@@ -127,7 +130,6 @@ namespace FPV.Runtime
             pickedUp = true;
             var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
             transform.position = pickerTransform.position + Vector3.up * 0.5f; // Adjust position above the picker
-            transform.parent = pickerTransform;
         }
 
         public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()
@@ -159,7 +161,7 @@ namespace FPV.Runtime
             if (rb != null)
             {
                 rb.isKinematic = false; // Permet au rigidbody de prendre le contrôle
-                transform.parent = null; // Détache le Furby de son porteur
+                ChangeOwnershipServerRpc(0, true);
                 rb.AddForce(direction.normalized * force + Vector3.up * 0.5f,
                     ForceMode.Impulse); // Ajoute une impulsion
             }
