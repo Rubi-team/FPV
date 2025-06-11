@@ -61,9 +61,7 @@ namespace FPV
 
             for (var i = 0; i < numColliders; i++)
             {
-                Debug.Log($"Hit {hitColliders[i].name}");
                 var voip = hitColliders[i].GetComponentInChildren<MyVOIP>();
-                if (voip != null) Debug.Log($"Bruit de {voip.name} : {voip.GetLoudnessFromMicrophone()}");
                 if (voip != null && voip.GetLoudnessFromMicrophone() > 0.1f)
                 {
                     Active();
