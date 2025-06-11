@@ -93,9 +93,19 @@ namespace FPV.Runtime.Shared
                 Debug.Log($"[Relay] PlayerID: {UnityServiceAuthenticator.PlayerId}");
                 var result = await RelayManager.JoinRelayAsync(relayCode);
                 if (result == 0)
+                {
+                    // Chargement des scènes de manière asynchrone
+                    await SceneLoader.LoadScenesAdditiveAsync(
+                        SceneLoader.Scene.Game_Main,
+                        new[] { SceneLoader.Scene.Game_LevelArt }
+                    );
                     StartClient();
+                }
+
                 else
+                {
                     Debug.LogError("Failed to join relay. StartClient() aborted.");
+                }
             }
         }
 
