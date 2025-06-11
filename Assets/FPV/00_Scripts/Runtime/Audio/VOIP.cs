@@ -2,6 +2,7 @@ using System;
 using FMODUnity;
 using Unity.Netcode;
 using Unity.Services.Vivox;
+using Unity.Services.Vivox.AudioTaps;
 using UnityEngine;
 
 namespace FPV.Runtime
@@ -33,6 +34,9 @@ namespace FPV.Runtime
                 isOwner = false;
                 myVOIPObject.SetActive(false);
                 mateVOIPObject.SetActive(true);
+                var tap = mateVOIPObject.GetComponent<VivoxParticipantTap>();
+                tap.ChannelName = RelayManager.JoinCode;
+                tap.ParticipantName = VivoxService.Instance.SignedInPlayerId;
             }
 
             audioSource = GetComponentInChildren<StudioEventEmitter>();
