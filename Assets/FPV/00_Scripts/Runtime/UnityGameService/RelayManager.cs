@@ -97,10 +97,13 @@ namespace FPV
             try
             {
                 // Join an existing Relay allocation
-                var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+
 
                 // Get the join code
                 JoinCode = joinCode.ToUpper();
+                Debug.Log($"[Relay] Trying to join with code: {JoinCode}");
+
+                var joinAllocation = await RelayService.Instance.JoinAllocationAsync(JoinCode);
 
                 var host = joinAllocation.RelayServer.IpV4;
                 var port = (ushort)joinAllocation.RelayServer.Port;
@@ -155,6 +158,7 @@ namespace FPV
             catch (RelayServiceException e)
             {
                 // Handle not found by creating a new Relay
+                Debug.LogError($"Failed to join Relay: {e}");
                 switch (e.Reason)
                 {
                     case RelayExceptionReason.JoinCodeNotFound:
