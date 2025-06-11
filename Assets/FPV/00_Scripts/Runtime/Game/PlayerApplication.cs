@@ -21,11 +21,11 @@ namespace FPV.Runtime
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-            OwnerCheck();
+            Init();
             TpAtSpawn();
         }
 
-        private void OwnerCheck()
+        private void Init()
         {
             if (!IsOwner)
             {
@@ -48,6 +48,9 @@ namespace FPV.Runtime
                 Controller._playerInput.enabled = true;
                 Controller._playerInput.ActivateInput();
             }
+
+            // Join Vivox channel
+            VivoxManager.Instance.VivoxInit();
         }
 
         // Change spawn 
@@ -93,9 +96,6 @@ namespace FPV.Runtime
         {
             Debug.Log("[Local client] Notifying server I'm ready");
             OnServerNotifiedOfClientReadinessServerRpc();
-
-            // Join Vivox channel
-            VivoxManager.Instance.VivoxInit();
         }
 
 
