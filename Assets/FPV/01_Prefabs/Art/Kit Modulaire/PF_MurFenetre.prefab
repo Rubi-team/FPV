@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3176496989084834265}
   - component: {fileID: 4863662239671928534}
   - component: {fileID: 4776469017362617794}
+  - component: {fileID: 2535670379371256511}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -109,6 +110,21 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2535670379371256511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2822319462938602968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e829c87dc2a2ed2419c5f67848317fe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 11400000, guid: 08bf73ad12cb44944875b02ce7f9d694, type: 2}
+  exportAllChildren: 0
+  terrainSimplificationLevel: 0
 --- !u!1 &4062767581272976618
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,6 +221,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 28591c30e68ecf34bb49990ad3d86e6b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7146261048915965247}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 28591c30e68ecf34bb49990ad3d86e6b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7214878260244854807}
   m_SourcePrefab: {fileID: 100100000, guid: 28591c30e68ecf34bb49990ad3d86e6b, type: 3}
 --- !u!1 &3654328424445865831 stripped
 GameObject:
@@ -232,6 +251,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.45179385, y: 10.000453, z: 6.0097003}
   m_Center: {x: -0.024102971, y: 5.0002265, z: 0}
+--- !u!114 &7214878260244854807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3654328424445865831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e829c87dc2a2ed2419c5f67848317fe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 11400000, guid: a086f686223eed942816c70be67841b0, type: 2}
+  exportAllChildren: 0
+  terrainSimplificationLevel: 0
 --- !u!4 &4178523498622563805 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 28591c30e68ecf34bb49990ad3d86e6b, type: 3}
