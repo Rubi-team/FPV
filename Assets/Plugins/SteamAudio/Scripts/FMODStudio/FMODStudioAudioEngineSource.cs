@@ -90,7 +90,7 @@ namespace SteamAudio
                 if (!mEventInstance.isValid())
                 {
                     Debug.LogError("Vivox Fmod Event instance is not valid");
-                    return;
+                    throw new NullReferenceException();
                 }
             }
             catch (Exception)
