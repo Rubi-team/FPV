@@ -1,6 +1,8 @@
 using System;
+using System.Threading.Tasks;
 using FMODUnity;
 using Unity.Netcode;
+using Unity.Services.Authentication;
 using Unity.Services.Vivox;
 using Unity.Services.Vivox.AudioTaps;
 using UnityEngine;
@@ -15,6 +17,8 @@ namespace FPV.Runtime
         private float loudness;
         private float mateLoudness;
 
+        private string participantName;
+
         [SerializeField] private StudioEventEmitter audioSource;
 
         private MyVOIP myVOIP;
@@ -22,6 +26,12 @@ namespace FPV.Runtime
         private bool isOwner;
 
         public override void OnNetworkSpawn()
+        {
+            Init();
+        }
+
+
+        private async Task Init()
         {
             if (GetComponentInParent<PlayerApplication>().IsOwner)
             {
@@ -34,13 +44,36 @@ namespace FPV.Runtime
                 isOwner = false;
                 myVOIPObject.SetActive(false);
                 mateVOIPObject.SetActive(true);
-                var tap = mateVOIPObject.GetComponent<VivoxParticipantTap>();
-                tap.ChannelName = RelayManager.JoinCode;
-                tap.ParticipantName = VivoxService.Instance.SignedInPlayerId;
+
+                // Demande le nom au serveur
+                GetPlayerAuthIDRpc();
             }
 
             audioSource = GetComponentInChildren<StudioEventEmitter>();
             myVOIP = GetComponentInChildren<MyVOIP>();
+        }
+
+        [Rpc(SendTo.Owner)]
+        private void GetPlayerAuthIDRpc()
+        {
+            SendParticipantNameClientRpc(AuthenticationService.Instance.PlayerId);
+        }
+
+        [Rpc(SendTo.NotMe)]
+        private void SendParticipantNameClientRpc(string participantName)
+        {
+            this.participantName = participantName;
+            var tap = GetComponent<VivoxParticipantTap>();
+            tap.ChannelName = RelayManager.JoinCode;
+            tap.ParticipantName = participantName;
+        }
+
+
+        [Rpc(SendTo.Owner)]
+        private Task<string> GetParticipantNameServerRpc()
+        {
+            // Get AuthenticationService.Instance.PlayerId;
+            return Task.FromResult(AuthenticationService.Instance.PlayerId);
         }
 
         private void Update()
