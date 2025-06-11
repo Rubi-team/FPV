@@ -18,7 +18,8 @@ namespace FPV
             try
             {
                 // Create a Relay allocation
-                var allocation = await RelayService.Instance.CreateAllocationAsync(2);
+                var allocation = await RelayService.Instance.CreateAllocationAsync(4
+                );
 
                 // Get the join code
                 var joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
