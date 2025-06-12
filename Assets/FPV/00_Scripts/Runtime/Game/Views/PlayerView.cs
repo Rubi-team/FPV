@@ -27,11 +27,9 @@ namespace FPV.Runtime
         public void AudioFootsteps()
         {
             var index = (int)currentGroundType.groundType;
+            if (currentGroundType == null) index = 0; // Default to 0 if no ground type is set
             RuntimeManager.StudioSystem.setParameterByName("Surface", index);
-            if (Controller._input.sprint)
-                RuntimeManager.StudioSystem.setParameterByName("WalkState", 1);
-            else
-                RuntimeManager.StudioSystem.setParameterByName("WalkState", 0);
+            RuntimeManager.StudioSystem.setParameterByName("WalkState", Controller._input.sprint ? 1 : 0);
 
             footEmitter.Play();
         }
