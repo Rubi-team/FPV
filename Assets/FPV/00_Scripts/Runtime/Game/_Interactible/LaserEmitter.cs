@@ -14,10 +14,19 @@ namespace FPV.Runtime
         private float lastCheckTime;
         private RaycastHit[] hits = new RaycastHit[1];
 
+        public bool IsActive { get; set; } = true;
+
         private void Update()
         {
             if (Time.time - lastCheckTime >= checkInterval)
             {
+                if (!IsActive)
+                {
+                    lineRenderer.enabled = false;
+                    return;
+                }
+
+                lineRenderer.enabled = true;
                 lastCheckTime = Time.time;
                 UpdateLaser();
             }
