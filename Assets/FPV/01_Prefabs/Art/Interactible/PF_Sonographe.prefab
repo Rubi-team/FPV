@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5793064602959630598}
   - component: {fileID: 7825577945326812153}
-  - component: {fileID: 2028788146687043304}
+  - component: {fileID: 1294291726597109170}
   m_Layer: 0
   m_Name: PF_Sonographe
   m_TagString: Untagged
@@ -59,7 +59,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &2028788146687043304
+--- !u!114 &1294291726597109170
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -76,7 +76,10 @@ MonoBehaviour:
   checkInterval: 0.1
   detectionLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
+  activationDuration: 15
+  doorsToActivate: []
+  lasersToDeactivate: []
 --- !u!1001 &7290920466661780019
 PrefabInstance:
   m_ObjectHideFlags: 0
