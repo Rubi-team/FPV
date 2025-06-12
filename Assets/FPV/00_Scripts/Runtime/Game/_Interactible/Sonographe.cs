@@ -8,13 +8,15 @@ namespace FPV
 {
     public class Sonographe : NetworkBehaviour
     {
-        [Header("Detection Settings")] 
-        [SerializeField] private float detectionRadius = 5f;
+        [Header("Detection Settings")] [SerializeField]
+        private float detectionRadius = 5f;
+
         [SerializeField] private float checkInterval = 0.1f;
         [SerializeField] private LayerMask detectionLayers;
 
-        [Header("Activation Settings")]
-        [SerializeField] private float activationDuration = 5f;
+        [Header("Activation Settings")] [SerializeField]
+        private float activationDuration = 5f;
+
         [SerializeField] private GameObject[] doorsToActivate;
         [SerializeField] private Laser[] lasersToDeactivate;
 
@@ -76,7 +78,7 @@ namespace FPV
             }
         }
 
-        private void ActivateSonographe()
+        public void ActivateSonographe()
         {
             ActivateClientRpc();
             StartCoroutine(ExecuteActivationSequence());
@@ -99,34 +101,22 @@ namespace FPV
         {
             // Désactive les lasers et active les portes
             if (lasersToDeactivate != null)
-            {
                 foreach (var laser in lasersToDeactivate)
-                {
                     if (laser != null)
                         laser.isActive = false;
-                }
-            }
 
             if (doorsToActivate != null)
-            {
                 foreach (var door in doorsToActivate)
-                {
                     if (door != null)
                         door.GetComponent<Door>().TriggerDoorAnimation();
-                }
-            }
 
             // Attends un temps donné avant de réactiver les lasers
             yield return new WaitForSeconds(activationDuration);
 
             if (lasersToDeactivate != null)
-            {
                 foreach (var laser in lasersToDeactivate)
-                {
                     if (laser != null)
                         laser.isActive = true;
-                }
-            }
         }
 
         private void OnDrawGizmosSelected()
