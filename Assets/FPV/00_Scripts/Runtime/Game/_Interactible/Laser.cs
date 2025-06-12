@@ -31,6 +31,8 @@ namespace FPV.Runtime
         private RaycastHit[] raycastHits = new RaycastHit[1];
         private List<LineRenderer> lineRenderers = new();
 
+        public bool isActive = true;
+
         private void Start()
         {
             foreach (Transform child in transform)
@@ -43,6 +45,21 @@ namespace FPV.Runtime
 
         private void Update()
         {
+            if (!isActive)
+            {
+                //disable all line renderers
+                foreach (var lr in lineRenderers)
+                    if (lr != null)
+                        lr.enabled = false;
+                return;
+            }
+
+            //enable all line renderers
+            foreach (var lr in lineRenderers)
+                if (lr != null)
+                    lr.enabled = true;
+
+
             if (isRotating && rotationPivot != null)
                 transform.RotateAround(rotationPivot.position, Vector3.up, rotationSpeed * Time.deltaTime);
 

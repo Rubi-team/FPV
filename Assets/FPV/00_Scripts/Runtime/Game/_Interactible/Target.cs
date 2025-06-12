@@ -9,13 +9,14 @@ namespace FPV.Runtime
     {
         [Header("References")] [SerializeField]
         private Laser[] lasersToDeactivate;
+        private LaserEmitter[] laserEmittersToDeactivate;
 
         [SerializeField] private GameObject[] objectsToActivate;
 
         [Header("Settings")] [SerializeField] private LayerMask activationLayers;
         [SerializeField] private bool isActive = true;
-        [SerializeField] 
-        
+        [SerializeField] private float TimeToDeactivate = 5f;
+
         private NetworkObject netObject;
         private NetworkVariable<bool> isTargetActive = new(true);
 
