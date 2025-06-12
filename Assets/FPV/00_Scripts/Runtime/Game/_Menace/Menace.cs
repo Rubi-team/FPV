@@ -59,6 +59,12 @@ public class Menace : NetworkBehaviour
     {
         if (!IsServer)
             return;
+
+        if (!_navMeshAgent.enabled)
+        {
+            _navMeshAgent.enabled = true; // Enable NavMeshAgent if it was disabled
+            return;
+        }
         switch (_currentState)
         {
             case MenaceState.Roaming:
