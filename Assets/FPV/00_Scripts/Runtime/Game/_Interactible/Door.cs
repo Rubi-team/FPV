@@ -1,6 +1,4 @@
 ﻿using System;
-using FPV.Runtime.Shared;
-using FPV.Shared;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,6 +8,15 @@ namespace FPV.Runtime
     public class Door : MonoBehaviour
     {
         private Animation _animation; // Référence au composant Animation
+        private bool _isDoorOpen = false;
+
+        [Tooltip("Indique si la porte s'ouvre automatiquement lorsqu'elle est déclenchée")] [SerializeField]
+        public bool AutoOpenWhenStaffIsRecover = false;
+
+        [Tooltip("Indique si la porte nécessite deux tentatives pour s'ouvrir")] [SerializeField]
+        private bool _requiresTwoAttempts = false;
+
+        private int _attempts = 0; // Compteur des tentatives
 
         private void Awake()
         {
@@ -17,11 +24,33 @@ namespace FPV.Runtime
         }
 
         /// <summary>
-        /// Méthode publique pour déclencher l'animation de la porte.
+        /// Méthode publique pour déclencher l'ouverture de la porte.
         /// </summary>
-        public void TriggerDoorAnimation()
+        public void TriggerDoor()
         {
-            if (NetworkManager.Singleton.IsHost) PlayAnimationOnClientsRpc();
+            if (_isDoorOpen) return;
+
+            if (_requiresTwoAttempts)
+            {
+                _attempts++;
+
+                if (_attempts < 2) return;
+            }
+
+            OpenDoor();
+        }
+
+        /// <summary>
+        /// Méthode pour gérer l'ouverture de la porte.
+        /// </summary>
+        private void OpenDoor()
+        {
+            if (NetworkManager.Singleton.IsHost)
+            {
+                _isDoorOpen = true;
+                PlayAnimationOnClientsRpc();
+                Debug.Log("La porte s'est ouverte !");
+            }
         }
 
         /// <summary>
@@ -31,7 +60,7 @@ namespace FPV.Runtime
         private void PlayAnimationOnClientsRpc()
         {
             if (_animation != null)
-                _animation.Play(); // Remplace par le nom de ton animation si nécessaire, ex: "_animation.Play('DoorOpen')"
+                _animation.Play(); // Remplacez par le nom de l'animation si nécessaire (ex. "DoorOpen")
         }
     }
 }

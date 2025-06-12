@@ -108,7 +108,7 @@ namespace FPV
             if (doorsToActivate != null)
                 foreach (var door in doorsToActivate)
                     if (door != null)
-                        door.GetComponent<Door>().TriggerDoorAnimation();
+                        door.GetComponent<Door>().TriggerDoor();
 
             // Attends un temps donné avant de réactiver les lasers
             yield return new WaitForSeconds(activationDuration);

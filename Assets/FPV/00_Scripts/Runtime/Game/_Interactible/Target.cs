@@ -111,7 +111,7 @@ namespace FPV.Runtime
             if (objectsToActivate != null)
                 foreach (var obj in objectsToActivate)
                     if (obj != null && NetworkManager.Singleton.IsHost)
-                        GetComponent<Door>().TriggerDoorAnimation();
+                        GetComponent<Door>().TriggerDoor();
         }
 
         private void OnDrawGizmosSelected()
