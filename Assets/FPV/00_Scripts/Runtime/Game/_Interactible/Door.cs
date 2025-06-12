@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FPV.Runtime
 {
-    [RequireComponent(typeof(NetworkObject), typeof(Animation))]
+    [RequireComponent(typeof(Animation))]
     public class Door : MonoBehaviour
     {
         private Animation _animation; // Référence au composant Animation

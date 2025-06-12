@@ -1,4 +1,5 @@
-﻿using FPV.Runtime.Shared;
+﻿using System.Collections;
+using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,6 +10,7 @@ namespace FPV.Runtime
     {
         [Header("References")] [SerializeField]
         private Laser[] lasersToDeactivate;
+
         private LaserEmitter[] laserEmittersToDeactivate;
 
         [SerializeField] private GameObject[] objectsToActivate;
@@ -80,7 +82,27 @@ namespace FPV.Runtime
             if (lasersToDeactivate != null)
                 foreach (var laser in lasersToDeactivate)
                     if (laser != null)
-                        laser.gameObject.SetActive(false);
+                        laser.isActive = false;
+            if (laserEmittersToDeactivate != null)
+                foreach (var laserEmitter in laserEmittersToDeactivate)
+                    if (laserEmitter != null)
+                        laserEmitter.IsActive = false;
+
+            // Démarre la coroutine pour réactiver les lasers après un délai
+            StartCoroutine(ReactivateLasersAfterDelay(TimeToDeactivate));
+        }
+
+        private IEnumerator ReactivateLasersAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if (lasersToDeactivate != null)
+                foreach (var laser in lasersToDeactivate)
+                    if (laser != null)
+                        laser.isActive = true;
+            if (laserEmittersToDeactivate != null)
+                foreach (var laserEmitter in laserEmittersToDeactivate)
+                    if (laserEmitter != null)
+                        laserEmitter.IsActive = true;
         }
 
         [ClientRpc]
@@ -96,7 +118,6 @@ namespace FPV.Runtime
         {
             // Visualisation de la cible dans l'éditeur
             Gizmos.color = isActive ? Color.green : Color.red;
-            Gizmos.DrawWireCube(transform.position, Vector3.one);
         }
     }
 }
