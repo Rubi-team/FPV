@@ -14,7 +14,8 @@ namespace FPV.Runtime
 
         [Header("Settings")] [SerializeField] private LayerMask activationLayers;
         [SerializeField] private bool isActive = true;
-
+        [SerializeField] 
+        
         private NetworkObject netObject;
         private NetworkVariable<bool> isTargetActive = new(true);
 
@@ -86,8 +87,8 @@ namespace FPV.Runtime
         {
             if (objectsToActivate != null)
                 foreach (var obj in objectsToActivate)
-                    if (obj != null)
-                        obj.SetActive(true);
+                    if (obj != null && NetworkManager.Singleton.IsHost)
+                        GetComponent<Door>().TriggerDoorAnimation();
         }
 
         private void OnDrawGizmosSelected()
