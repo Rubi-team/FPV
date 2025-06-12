@@ -118,7 +118,6 @@ namespace FPV.Runtime
         {
             // Visualisation de la cible dans l'éditeur
             Gizmos.color = isActive ? Color.green : Color.red;
-            Gizmos.DrawWireCube(transform.position, Vector3.one);
         }
     }
 }
