@@ -30,6 +30,7 @@ namespace FPV.Runtime
 
         private void Update()
         {
+            if (!IsOwner || !IsSpawned) return;
             CurrentLoudness = _Voip.GetLoudnessFromMicrophone();
         }
 
