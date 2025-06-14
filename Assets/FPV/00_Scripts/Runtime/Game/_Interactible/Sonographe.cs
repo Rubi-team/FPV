@@ -8,13 +8,15 @@ namespace FPV
 {
     public class Sonographe : NetworkBehaviour
     {
-        [Header("Detection Settings")] 
-        [SerializeField] private float detectionRadius = 5f;
+        [Header("Detection Settings")] [SerializeField]
+        private float detectionRadius = 5f;
+
         [SerializeField] private float checkInterval = 0.1f;
         [SerializeField] private LayerMask detectionLayers;
 
-        [Header("Activation Settings")] 
-        [SerializeField] private float activationDuration = 5f;
+        [Header("Activation Settings")] [SerializeField]
+        private float activationDuration = 5f;
+
         [SerializeField] private float activationCooldown = 10f; // Temps de cooldown avant une nouvelle activation
 
         [SerializeField] private GameObject[] doorsToActivate;
@@ -70,8 +72,8 @@ namespace FPV
 
             for (var i = 0; i < numColliders; i++)
             {
-                var voip = hitColliders[i].GetComponentInChildren<MyVOIP>();
-                if (voip != null && voip.GetLoudnessFromMicrophone() > 0.1f)
+                var voip = hitColliders[i].GetComponent<PlayerApplication>();
+                if (voip != null && voip.CurrentLoudness > 0.2f)
                 {
                     ActivateSonographe();
                     break; // On sort de la boucle dès qu'on trouve un joueur qui fait du bruit

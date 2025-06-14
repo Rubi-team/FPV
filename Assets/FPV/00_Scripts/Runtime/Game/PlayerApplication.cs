@@ -12,6 +12,9 @@ namespace FPV.Runtime
 {
     public class PlayerApplication : BaseNetworkApplication<PlayerModel, PlayerView, PlayerController>, IInteractable
     {
+        [SerializeField] public float CurrentLoudness = 0f;
+        [SerializeField] private MyVOIP _Voip;
+
         protected override void Awake()
         {
             base.Awake();
@@ -23,6 +26,11 @@ namespace FPV.Runtime
             base.OnNetworkSpawn();
             Init();
             TpAtSpawn();
+        }
+
+        private void Update()
+        {
+            CurrentLoudness = _Voip.GetLoudnessFromMicrophone();
         }
 
         private void Init()

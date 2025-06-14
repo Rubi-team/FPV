@@ -90,7 +90,7 @@ namespace FPV.Runtime
             if (!isOwner)
             {
                 // update the attenuation range of the fmod audio source based on the mate loudness
-                audioSource.OverrideMaxDistance = Mathf.Lerp(0, 100, mateLoudness);
+                audioSource.OverrideMaxDistance = Mathf.Lerp(10, 200, mateLoudness);
                 return;
             }
 

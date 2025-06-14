@@ -66,7 +66,7 @@ namespace FPV
                     // Si jamais la Loudness du joueur est supérieure à 0.5, on le considère comme détecté
                     if (detectedPlayer != null && hit.TryGetComponent<PlayerApplication>(out var player))
                     {
-                        if (player.GetComponentInChildren<MyVOIP>().GetLoudnessFromMicrophone() > 0.5f)
+                        if (player.CurrentLoudness > 0.2f)
                             lastKnownPosition = hit.transform.position;
                         else
                             detectedPlayer =
