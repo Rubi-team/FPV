@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="MixerReturn" id="{3844e863-24f4-4712-a89a-b5af7a43a736}">
+		<property name="name">
+			<value>Reverb</value>
+		</property>
+		<relationship name="effectChain">
+			<destination>{84d43573-9af1-4a1b-a06c-24e7532679a9}</destination>
+		</relationship>
+		<relationship name="panner">
+			<destination>{0cb80c42-8203-4739-94bd-eacd0ed24962}</destination>
+		</relationship>
+		<relationship name="output">
+			<destination>{d9bfb2e3-c85b-404c-8fdf-16f506e8639e}</destination>
+		</relationship>
+	</object>
+	<object class="MixerBusEffectChain" id="{84d43573-9af1-4a1b-a06c-24e7532679a9}">
+		<relationship name="effects">
+			<destination>{2a2077c5-4dc5-44cc-8cc6-ef59817f7fdd}</destination>
+			<destination>{a97d3d22-1eb9-4b53-bc0f-82f69c3eef73}</destination>
+		</relationship>
+	</object>
+	<object class="MixerBusPanner" id="{0cb80c42-8203-4739-94bd-eacd0ed24962}" />
+	<object class="MixerBusFader" id="{2a2077c5-4dc5-44cc-8cc6-ef59817f7fdd}" />
+	<object class="PluginEffect" id="{a97d3d22-1eb9-4b53-bc0f-82f69c3eef73}">
+		<relationship name="plugin">
+			<destination>{f0100172-8bbf-4aa4-94ac-8b4d4351fe26}</destination>
+		</relationship>
+	</object>
+	<object class="Plugin" id="{f0100172-8bbf-4aa4-94ac-8b4d4351fe26}">
+		<property name="identifier">
+			<value>Steam Audio Reverb</value>
+		</property>
+		<relationship name="pluginParameters">
+			<destination>{14ce90d5-edc8-4994-92d2-e0950cd3e1cb}</destination>
+			<destination>{4348d5cf-4f94-4957-b04d-6d5c3f6f4014}</destination>
+		</relationship>
+	</object>
+	<object class="BoolPluginParameter" id="{14ce90d5-edc8-4994-92d2-e0950cd3e1cb}">
+		<property name="name">
+			<value>Binaural</value>
+		</property>
+		<property name="value">
+			<value>true</value>
+		</property>
+	</object>
+	<object class="IntPluginParameter" id="{4348d5cf-4f94-4957-b04d-6d5c3f6f4014}">
+		<property name="name">
+			<value>OutputFormat</value>
+		</property>
+		<property name="value">
+			<value>0</value>
+		</property>
+		<property name="minimumValue">
+			<value>0</value>
+		</property>
+		<property name="maximumValue">
+			<value>2</value>
+		</property>
+	</object>
+</objects>

@@ -17,7 +17,7 @@
 	<object class="MixerBusEffectChain" id="{63eb9efd-3ccd-4827-a56a-0e5900147820}">
 		<relationship name="effects">
 			<destination>{641cc593-28a4-455d-a89b-92030460ad2d}</destination>
-			<destination>{70249978-aaa1-4de8-889c-17417f85e0ac}</destination>
+			<destination>{59ba728e-2329-4cdf-ab75-6f4103beacd9}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{ceb7aeb3-4551-42bc-b429-220906a61733}">
@@ -26,43 +26,15 @@
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{641cc593-28a4-455d-a89b-92030460ad2d}" />
-	<object class="PluginEffect" id="{70249978-aaa1-4de8-889c-17417f85e0ac}">
-		<property name="bypass">
-			<value>true</value>
+	<object class="MixerSend" id="{59ba728e-2329-4cdf-ab75-6f4103beacd9}">
+		<property name="level">
+			<value>-3</value>
 		</property>
-		<relationship name="plugin">
-			<destination>{97d00938-cfe3-403f-962c-4349510df836}</destination>
+		<property name="inputFormat">
+			<value>6</value>
+		</property>
+		<relationship name="mixerReturn">
+			<destination>{3844e863-24f4-4712-a89a-b5af7a43a736}</destination>
 		</relationship>
-	</object>
-	<object class="Plugin" id="{97d00938-cfe3-403f-962c-4349510df836}">
-		<property name="identifier">
-			<value>Steam Audio Reverb</value>
-		</property>
-		<relationship name="pluginParameters">
-			<destination>{f128d605-c0d9-4489-a5ec-f1e6f838e278}</destination>
-			<destination>{58e4010c-da7e-4da1-8a58-fe97b637d743}</destination>
-		</relationship>
-	</object>
-	<object class="BoolPluginParameter" id="{f128d605-c0d9-4489-a5ec-f1e6f838e278}">
-		<property name="name">
-			<value>Binaural</value>
-		</property>
-		<property name="value">
-			<value>true</value>
-		</property>
-	</object>
-	<object class="IntPluginParameter" id="{58e4010c-da7e-4da1-8a58-fe97b637d743}">
-		<property name="name">
-			<value>OutputFormat</value>
-		</property>
-		<property name="value">
-			<value>0</value>
-		</property>
-		<property name="minimumValue">
-			<value>0</value>
-		</property>
-		<property name="maximumValue">
-			<value>2</value>
-		</property>
 	</object>
 </objects>
