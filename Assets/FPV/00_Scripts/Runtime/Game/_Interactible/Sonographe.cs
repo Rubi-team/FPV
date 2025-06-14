@@ -55,8 +55,6 @@ namespace FPV
 
         private void Update()
         {
-            if (!IsServer) return;
-
             // Système de tick pour ne pas vérifier à chaque frame
             if (Time.time - lastCheckTime < checkInterval) return;
 
@@ -88,7 +86,6 @@ namespace FPV
 
             lastActivationTime = Time.time; // Met à jour le temps de la dernière activation
             ActivateClientRpc();
-            StartCoroutine(ExecuteActivationSequence());
         }
 
         /// <summary>
@@ -98,7 +95,7 @@ namespace FPV
         private void ActivateClientRpc()
         {
             Debug.LogWarning("Sonographe activated!");
-            // Ajoute ici des effets visuels ou sonores pour l'activation.
+            StartCoroutine(ExecuteActivationSequence());
         }
 
         /// <summary>
