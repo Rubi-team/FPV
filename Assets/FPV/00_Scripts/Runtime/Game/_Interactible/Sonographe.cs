@@ -71,7 +71,7 @@ namespace FPV
             for (var i = 0; i < numColliders; i++)
             {
                 var voip = hitColliders[i].GetComponent<PlayerApplication>();
-                if (voip != null && voip.CurrentLoudness > 0.2f)
+                if (voip != null && voip.CurrentLoudness > 0.05f)
                 {
                     ActivateSonographe();
                     break; // On sort de la boucle dès qu'on trouve un joueur qui fait du bruit

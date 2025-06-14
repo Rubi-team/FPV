@@ -54,11 +54,9 @@ namespace FPV.Runtime
 
             var distance = maxDistance;
             var ray = new Ray(start, dir);
-            var hitCount = Physics.RaycastNonAlloc(ray, hits, maxDistance, obstacleLayers | detectionLayers);
 
-            if (hitCount > 0)
+            if (Physics.Raycast(ray, out var hit, maxDistance, obstacleLayers | detectionLayers))
             {
-                var hit = hits[0];
                 distance = hit.distance;
 
                 if (((1 << hit.collider.gameObject.layer) & detectionLayers) != 0)
