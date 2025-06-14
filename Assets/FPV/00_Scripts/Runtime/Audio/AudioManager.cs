@@ -49,7 +49,9 @@ namespace Audio
 
 
         [field: Header("Objects")]
-        [field: SerializeField] public EventReference ferbyHit { get; private set; }
+        [field: SerializeField]
+        public EventReference ferbyHit { get; private set; }
+
         [field: SerializeField] public EventReference laserLoop { get; private set; }
         [field: SerializeField] public EventReference laserHit { get; private set; }
         [field: SerializeField] public EventReference doorOpen { get; private set; }
@@ -77,10 +79,9 @@ namespace Audio
             var emitterInstance = Instantiate(_emitterInstancePrefab, worldPos, Quaternion.identity);
 
             // Get reference to your RuntimeEventEmitter
-            var emitterCustom = emitterInstance.GetComponent<RuntimeEventEmitter>();
+            var emitterCustom = emitterInstance.GetComponent<StudioEventEmitter>();
 
             // Set new event (using one of your existing event references as example)
-            emitterCustom.SetEvent(RuntimeManager.PathToEventReference(soundPath));
 
             // Play the event if needed
             emitterCustom.Play();

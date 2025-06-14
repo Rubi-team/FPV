@@ -9,10 +9,7 @@ namespace FPV.Runtime
 
         private void Update()
         {
-            if (pivot != null)
-            {
-                pivot.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
-            }
+            if (pivot != null) pivot.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.Self);
         }
     }
 }

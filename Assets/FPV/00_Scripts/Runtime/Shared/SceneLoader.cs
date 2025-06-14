@@ -48,7 +48,7 @@ namespace FPV.Shared
 
             // 6. Décharger la scène de Loading
             var loadingScene = SceneManager.GetSceneByName(nameof(Scene.LoadingScene));
-            if (loadingScene.IsValid() && loadingScene.isLoaded) await SceneManager.UnloadSceneAsync(loadingScene);
+            if (loadingScene.IsValid() && loadingScene.isLoaded) SceneManager.UnloadSceneAsync(loadingScene);
         }
 
         public static float GetLoadingProgress()

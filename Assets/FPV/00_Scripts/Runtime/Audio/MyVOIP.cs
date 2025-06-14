@@ -42,7 +42,7 @@ namespace FPV
 
             for (var i = 0; i < waveData.Length; i++) totalLoudness += Mathf.Abs(waveData[i]);
 
-            return totalLoudness / sampleWindow;
+            return totalLoudness * 2 / sampleWindow;
         }
     }
 }

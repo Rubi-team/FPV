@@ -39,6 +39,8 @@ public class Menace : NetworkBehaviour
     private bool _isCharging = false;
     private bool _hasExecutedCharge = false;
 
+    public static Menace Instance { get; private set; }
+
 
     private void Awake()
     {
@@ -46,6 +48,8 @@ public class Menace : NetworkBehaviour
         MenaceListener = GetComponentInChildren<MenaceListener>();
         _currentState = MenaceState.Roaming;
         _lastTarget = null;
+
+        Instance = this;
 
         if (!IsServer)
         {
@@ -59,6 +63,13 @@ public class Menace : NetworkBehaviour
     {
         if (!IsServer)
             return;
+
+        if (!_navMeshAgent.enabled)
+        {
+            _navMeshAgent.enabled = true; // Enable NavMeshAgent if it was disabled
+            return;
+        }
+
         switch (_currentState)
         {
             case MenaceState.Roaming:
@@ -290,5 +301,43 @@ public class Menace : NetworkBehaviour
         _lastChargeTime = Time.time;
         _navMeshAgent.speed = 3.5f;
         _lastTarget = null;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void DetectThreatServerRpc(ulong playerNetObjectId, int maxDistance)
+    {
+        // Trouver l'objet Player à partir de son playerNetObjectId
+        var networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[playerNetObjectId];
+        if (networkObject == null || !networkObject.TryGetComponent(out Transform playerTransform))
+        {
+            Debug.LogWarning("Player object not found or does not have a Transform component.");
+            return;
+        }
+
+        // Calculer la direction et vérifier la distance
+        var directionToPlayer = (playerTransform.position - transform.position).normalized;
+        var distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+
+        if (distanceToPlayer <= maxDistance)
+        {
+            // Raycast pour vérifier s'il n'y a pas d'obstruction entre le Menace et le joueur
+            var origin = transform.position + Vector3.up * 1f; // Ajuster la hauteur si nécessaire
+            if (Physics.Raycast(origin, directionToPlayer, out var hitInfo, distanceToPlayer))
+            {
+                if (hitInfo.transform == playerTransform)
+                {
+                    // Le joueur est visible et non obstrué
+                    SetGoingTo(playerTransform.position);
+                }
+                else
+                {
+                    // Joueur obstrué par un obstacle
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"Player is too far: {distanceToPlayer} units.");
+        }
     }
 }

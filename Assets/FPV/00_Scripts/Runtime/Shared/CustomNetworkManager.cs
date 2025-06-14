@@ -7,7 +7,6 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Matchmaker.Models;
 using Unity.Services.Relay;
-using UnityEditor;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -99,7 +98,6 @@ namespace FPV.Runtime.Shared
                     Debug.Log($"[Relay] Relay joined with code: {relayCode}, starting client...");
                     await StartClient();
                 }
-
                 else
                 {
                     Debug.LogError("Failed to join relay. StartClient() aborted.");

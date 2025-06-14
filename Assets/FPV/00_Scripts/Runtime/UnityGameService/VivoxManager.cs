@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FMOD;
 using FMODUnity;
 using NUnit.Framework.Constraints;
+using Unity.Netcode;
 using Unity.Services.Matchmaker.Models;
 using Unity.Services.Vivox;
 using Unity.Services.Vivox.AudioTaps;
@@ -53,7 +54,8 @@ namespace FPV
             try
             {
                 //TODO add DisplayName si utile
-                var options = new LoginOptions { EnableTTS = false };
+                var options = new LoginOptions
+                    { EnableTTS = false, DisplayName = NetworkManager.Singleton.LocalClientId.ToString() };
                 await VivoxService.Instance.LoginAsync(options);
             }
             catch (Exception e)

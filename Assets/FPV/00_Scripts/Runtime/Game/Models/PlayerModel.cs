@@ -49,6 +49,7 @@ namespace FPV.Runtime
         [Header("Interactions")] public float InteractRadius = 1f;
         public float InteractDistance = 2f;
         public float ThrowForce = 10f;
+        public float FurbyThrowForce = 5f;
 
         [Tooltip("Does the player rotate with the picker?")]
         public bool RotateWithPicker = false;
@@ -70,6 +71,8 @@ namespace FPV.Runtime
         [Header("Runtime Values")] public Transform PickerTransform;
         public NetworkObject _NetworkObject;
         public PlayerApplication CarriedPlayer;
+        public Furby CarriedFurby;
+        public bool isSlowDownActive = false;
 
         public override void OnNetworkSpawn()
         {

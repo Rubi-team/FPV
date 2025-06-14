@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using FMODUnity;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEditor;
@@ -19,6 +20,7 @@ namespace FPV.Runtime
     public class PlayerController : NetworkController<PlayerApplication>
     {
         internal PlayerModel Model => App.Model;
+        internal PlayerView View => App.View;
 
         // cinemachine
         private float _cinemachineTargetPitch;
@@ -116,10 +118,41 @@ namespace FPV.Runtime
             {
                 Model.CarriedPlayer.Controller.OnPlayerThrowMeRpc(App.transform.forward, Model.ThrowForce);
                 Model.SetIsCarryingPlayerRpc(false);
+
+                // SOUND //
+                RuntimeManager.StudioSystem.setParameterByName("ActionType", 1);
+                //si PLAYER
+                RuntimeManager.StudioSystem.setParameterByName("ActionSubject", 0);
+
+
+                //3. APPELER LE SON
+                View.actionEmitter.Play();
                 return;
             }
 
-            if (Model.b_IsCarryingFurby.Value) return;
+            if (Model.b_IsCarryingFurby.Value)
+            {
+                // Calcule la direction à partir de la caméra principale
+                var furby = Model.CarriedFurby; // Une référence au Furby tenu
+                var cameraTransform = Camera.main.transform; // Récupère le Transform de la caméra principale
+                var throwDirection = cameraTransform.forward; // Utilise la direction que regarde la caméra
+                var throwForce = Model.FurbyThrowForce; // Ajouter une valeur de force dans le modèle si nécessaire
+
+                furby.Throw(throwDirection, throwForce);
+
+                // Réinitialise l'état du joueur
+                Model.SetIsCarryingFurbyRpc(false);
+                Model.CarriedFurby = null;
+
+                // SOUND //
+                RuntimeManager.StudioSystem.setParameterByName("ActionType", 1);
+                //si PLAYER
+                RuntimeManager.StudioSystem.setParameterByName("ActionSubject", 1);
+
+                //3. APPELER LE SON
+                View.actionEmitter.Play();
+                return;
+            }
 
             // Obtenez l'objet interactable
             var interactable = GetInteractableObject();
@@ -130,6 +163,7 @@ namespace FPV.Runtime
                 Debug.LogWarning("Aucun objet interactable valide trouvé.");
                 return;
             }
+
 
             // Interaction avec un autre joueur si applicable
             if (interactable.GetTransform().GetComponent<PlayerApplication>() is { } player)
@@ -144,13 +178,29 @@ namespace FPV.Runtime
 
                 Model.SetIsCarryingPlayerRpc(true);
                 Model.CarriedPlayer = player;
+
+                // SOUND //
+                RuntimeManager.StudioSystem.setParameterByName("ActionType", 0);
+                //si PLAYER
+                RuntimeManager.StudioSystem.setParameterByName("ActionSubject", 0);
+
+                //3. APPELER LE SON
+                View.actionEmitter.Play();
             }
             else
             {
-                Debug.Log(App.GetComponent<NetworkObject>().OwnerClientId +
-                          " Interacting with: " + interactable.GetTransform().name, this);
                 interactable.Interact(IInteractable.InteractAction.Primary, App.transform);
                 Model.SetIsCarryingFurbyRpc(true);
+                Model.CarriedFurby = interactable.GetTransform().GetComponent<Furby>();
+
+                // SOUND //
+                RuntimeManager.StudioSystem.setParameterByName("ActionType", 0);
+                //si PLAYER
+                RuntimeManager.StudioSystem.setParameterByName("ActionSubject", 1);
+
+
+                //3. APPELER LE SON
+                View.actionEmitter.Play();
             }
         }
 
@@ -161,6 +211,19 @@ namespace FPV.Runtime
                 App.transform.position.z);
             Model.Grounded = Physics.CheckSphere(spherePosition, Model.GroundedRadius, Model.GroundLayers,
                 QueryTriggerInteraction.Ignore);
+
+            // Set View.CurrentGroundedState to the floor i Hit getting Ground Component\
+            if (Model.Grounded)
+            {
+                // Get the ground component
+                var hit = Physics.OverlapSphere(spherePosition, Model.GroundedRadius, Model.GroundLayers,
+                    QueryTriggerInteraction.Ignore);
+
+                if (hit[0].gameObject.TryGetComponent<GroundType>(out var groundType))
+                    View.currentGroundType = groundType;
+                else
+                    View.currentGroundType = null;
+            }
         }
 
         private void CameraRotation()
@@ -190,17 +253,25 @@ namespace FPV.Runtime
         private bool _isBeingThrown = false;
 
         [Rpc(SendTo.Owner)]
-        internal void OnPlayerThrowMeRpc(Vector3 dir, float force)
+        internal void OnPlayerThrowMeRpc(Vector3 dir, float force, bool calledByFurby = false)
         {
-            if (!Model.b_IsPickedUp.Value)
+            if (!Model.b_IsPickedUp.Value && !calledByFurby)
             {
                 Debug.LogError("OnPlayerThrowMeRpc called but I am not picked up", this);
                 return;
             }
 
+            // If called by a furby, teleport the player 0.2f units above the ground
+            if (calledByFurby)
+            {
+                var groundPosition = App.transform.position;
+                groundPosition.y += 0.2f; // Adjust the height above the ground
+                App.transform.position = groundPosition;
+            }
+
             // Initialiser la vélocité du lancer
             _throwVelocity = dir * force;
-            _throwVelocity.y = force * 0.5f;
+            _throwVelocity.y = force;
             _isBeingThrown = true;
 
             // Libérer immédiatement le joueur

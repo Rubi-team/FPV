@@ -21,10 +21,11 @@ namespace FPV.Runtime
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-            OwnerCheck();
+            Init();
+            TpAtSpawn();
         }
 
-        private void OwnerCheck()
+        private void Init()
         {
             if (!IsOwner)
             {
@@ -36,9 +37,6 @@ namespace FPV.Runtime
 
                 return;
             }
-            
-            // Join Vivox channel
-            VivoxManager.Instance.VivoxInit();
 
             // If the player is the owner, we need to enable the input and set the camera
 
@@ -51,13 +49,37 @@ namespace FPV.Runtime
                 Controller._playerInput.ActivateInput();
             }
 
-            // TODO remove and add Lobby Player Start
-            transform.position = FindObjectsByType<PlayerStart>(FindObjectsSortMode.None)[0].transform.position;
+            // Join Vivox channel
+            VivoxManager.Instance.VivoxInit();
+        }
+
+        // Change spawn 
+        private void TpAtSpawn()
+        {
+            if (!IsOwner) return;
+
+            // TODO REPARER 
+
+            // On récupère le composant NetworkTransform
+            var networkTransform = GetComponent<AnticipatedNetworkTransform>();
+            if (networkTransform != null)
+                networkTransform.enabled = false; // Désactiver temporairement la synchronisation
+
+            // Téléportation au PlayerStart
+            var playerStart = FindFirstObjectByType<PlayerStart>();
+            transform.position = playerStart.transform.position;
+            Debug.Log($"Player téléporté à la position : {transform.position}");
+
+            if (networkTransform != null)
+                networkTransform.enabled = true; // Réactiver la synchronisation après la téléportation
         }
 
         private void OnCollisionEnter(Collision other)
         {
             Model.Grounded = true;
+            // if we hit a target, we want to interact with it
+            if (other.collider.TryGetComponent<Target>(out var target))
+                target.DeactivateTarget();
         }
 
 
@@ -77,9 +99,6 @@ namespace FPV.Runtime
         {
             Debug.Log("[Local client] Notifying server I'm ready");
             OnServerNotifiedOfClientReadinessServerRpc();
-
-            // Join Vivox channel
-            //VivoxManager.Instance.VivoxInit();
         }
 
 
@@ -117,6 +136,10 @@ namespace FPV.Runtime
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
             if (canPush) PushRigidBodies(hit);
+
+            // if we hit a target, we want to interact with it
+            if (hit.collider.TryGetComponent<Target>(out var target))
+                target.DeactivateTarget();
         }
 
         private void PushRigidBodies(ControllerColliderHit hit)

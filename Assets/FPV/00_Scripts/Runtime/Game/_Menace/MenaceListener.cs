@@ -1,4 +1,5 @@
 ﻿using System;
+using FPV.Runtime;
 using UnityEngine;
 
 namespace FPV
@@ -22,7 +23,6 @@ namespace FPV
 
         private void Update()
         {
-            
             DetectPlayers();
         }
 
@@ -43,9 +43,9 @@ namespace FPV
                         // Vérifie s'il y a une ligne de vue
                         var distanceToTarget = Vector3.Distance(transform.position, hit.transform.position);
                         var origin = transform.position + Vector3.up * 1f;
-                        RaycastHit hitInfo;
 
-                        if (!Physics.Raycast(origin, directionToTarget, out hitInfo, distanceToTarget, obstructionMask))
+                        if (!Physics.Raycast(origin, directionToTarget, out var hitInfo, distanceToTarget,
+                                obstructionMask))
                         {
                             detectedPlayer = hit.transform;
                         }
@@ -62,8 +62,19 @@ namespace FPV
                     {
                         if (showDebug) Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
                     }
+
+                    // Si jamais la Loudness du joueur est supérieure à 0.5, on le considère comme détecté
+                    if (detectedPlayer != null && hit.TryGetComponent<PlayerApplication>(out var player))
+                    {
+                        if (player.GetComponentInChildren<MyVOIP>().GetLoudnessFromMicrophone() > 0.5f)
+                            lastKnownPosition = hit.transform.position;
+                        else
+                            detectedPlayer =
+                                null; // Si la Loudness est trop basse, on ne le considère pas comme détecté
+                    }
                 }
         }
+
 
         private void OnDrawGizmosSelected()
         {

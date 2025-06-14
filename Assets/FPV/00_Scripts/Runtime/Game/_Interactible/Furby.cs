@@ -12,7 +12,9 @@ namespace FPV.Runtime
 
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
+        [SerializeField] private float impactDirectionMultiplier = 5f; // Nouveau paramètre configuré dans l'inspecteur
 
+        private bool pickedUp = false;
         private Rigidbody rb;
         private bool hasExploded = false;
 
@@ -32,7 +34,6 @@ namespace FPV.Runtime
         {
             if (!IsHost)
             {
-                Debug.LogError("Furby must be spawned on the server.");
                 Destroy(gameObject);
                 return;
             }
@@ -42,35 +43,58 @@ namespace FPV.Runtime
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (!IsServer || hasExploded || rb == null || !rb.isKinematic) return;
+            if (!IsServer || hasExploded || rb == null || rb.isKinematic || !pickedUp) return;
 
-            ExplodeServerRpc();
+            // Récupérer le premier point de contact
+            var contact = collision.contacts[0];
+
+            // Calculer une direction basée sur le point de collision
+            var impactDirection = (contact.point - transform.position).normalized;
+
+            // Appliquer une force supplémentaire vers le haut à la direction d'impact
+            impactDirection.y += 1.0f; // Ajoute une force verticale (modifiable pour l'intensité)
+
+            // Normaliser la direction finale (pour éviter un déséquilibre dans les forces)
+            impactDirection = impactDirection.normalized;
+
+            // Calculer la position précise de l'explosion (léger décalage dans la surface touchée)
+            var adjustedImpactPosition = contact.point + contact.normal * -0.5f;
+
+            // Déclencher l'explosion à la position ajustée
+            ExplodeServerRpc(adjustedImpactPosition, impactDirection);
         }
 
         [ServerRpc]
-        private void ExplodeServerRpc()
+        private void ExplodeServerRpc(Vector3 explosionPosition, Vector3 direction)
         {
             if (hasExploded) return;
             hasExploded = true;
 
-            // Explosion effect using SphereCast
-            var hits = Physics.OverlapSphere(transform.position, explosionRadius, affectedLayers);
+            // SphereCast pour détecter les objets à proximité
+            var hits = Physics.OverlapSphere(explosionPosition, explosionRadius, affectedLayers);
+
             foreach (var hit in hits)
             {
+                // Vérifie si c'est un joueur
                 var player = hit.GetComponent<PlayerApplication>();
                 if (player != null)
                 {
-                    // Calculate direction and distance for force calculation
-                    var direction = (hit.transform.position - transform.position).normalized;
-                    var distance = Vector3.Distance(transform.position, hit.transform.position);
-                    var force = Mathf.Lerp(explosionForce, 0, distance / explosionRadius);
-
-                    // Use the existing throw mechanics from PlayerController
-                    player.Controller.OnPlayerThrowMeRpc(direction, force);
+                    // Appliquer la direction calculée avec une composante verticale
+                    var force = Mathf.Lerp(explosionForce, 0,
+                        Vector3.Distance(explosionPosition, hit.transform.position) / explosionRadius);
+                    player.Controller.OnPlayerThrowMeRpc(direction, force, true);
                 }
+
+                // Vérifie si c'est une cible
+                var target = hit.GetComponent<Target>();
+                if (target != null) target.DeactivateTarget();
+
+                // Vérifie si c'est un Sonographe
+                var sonographe = hit.GetComponent<Sonographe>();
+                if (sonographe != null) sonographe.ActivateSonographe();
             }
 
-            // Destroy the Furby
+            // Détruire ou désactiver le Furby après impact
             NetworkObject.Despawn(true);
         }
 
@@ -84,16 +108,27 @@ namespace FPV.Runtime
             if (interactorPlayer == null) return;
 
             // Transfer ownership to the picking player
-            NetworkObject.ChangeOwnership(interactorPlayer.NetworkObject.OwnerClientId);
+            ChangeOwnershipServerRpc(interactorPlayer.NetworkObjectId);
             GetPickedUpRpc(interactorPlayer.NetworkObjectId);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void ChangeOwnershipServerRpc(ulong newOwnerId = 0, bool isThrown = false)
+        {
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(newOwnerId, out var newOwnerObject))
+            {
+                NetworkObject.ChangeOwnership(newOwnerObject.OwnerClientId);
+                if (!isThrown) GetComponent<NetworkObject>().TrySetParent(newOwnerObject);
+            }
         }
 
         [Rpc(SendTo.Owner)]
         private void GetPickedUpRpc(ulong pickerObjectId)
         {
+            rb.isKinematic = true; // Permet au rigidbody de rester immobile
+            pickedUp = true;
             var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
             transform.position = pickerTransform.position + Vector3.up * 0.5f; // Adjust position above the picker
-            transform.parent = pickerTransform;
         }
 
         public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()
@@ -118,6 +153,17 @@ namespace FPV.Runtime
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, explosionRadius);
+        }
+
+        public void Throw(Vector3 direction, float force)
+        {
+            if (rb != null)
+            {
+                rb.isKinematic = false; // Permet au rigidbody de prendre le contrôle
+                ChangeOwnershipServerRpc(0, true);
+                rb.AddForce(direction.normalized * force + Vector3.up * 0.5f,
+                    ForceMode.Impulse); // Ajoute une impulsion
+            }
         }
     }
 }
