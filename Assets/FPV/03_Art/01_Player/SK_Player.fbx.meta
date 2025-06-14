@@ -17,12 +17,17 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'Torse_1' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\t'Cou_1' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'Cou_3'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -55,7 +60,7 @@ ModelImporter:
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
-    optimizeBones: 1
+    optimizeBones: 0
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -80,7 +85,147 @@ ModelImporter:
   humanDescription:
     serializedVersion: 3
     human: []
-    skeleton: []
+    skeleton:
+    - name: SK_Player(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Player
+      parentName: SK_Player(Clone)
+      position: {x: -0.050319824, y: 0, z: -0.12546508}
+      rotation: {x: -2.6934462e-25, y: 4.32978e-17, z: -0.7071067, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Box728
+      parentName: SK_Player(Clone)
+      position: {x: 0.056332868, y: 1.0849191, z: -0.14865837}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    - name: Pubis
+      parentName: SK_Player(Clone)
+      position: {x: 0.0000000037252903, y: 0.5734009, z: 0.000000014901161}
+      rotation: {x: -0.49999997, y: 0.50000006, z: -0.4999999, w: 0.5000001}
+      scale: {x: 0.9999999, y: 0.9999999, z: 1}
+    - name: Jambe_G1
+      parentName: Pubis
+      position: {x: -0.000000038146972, y: 0.0000000047683715, z: 0.08826191}
+      rotation: {x: 0.0026279103, y: 0.99964285, z: 0.017371334, w: 0.02013833}
+      scale: {x: 0.9999998, y: 0.9999997, z: 1.0000001}
+    - name: Jambe_G2
+      parentName: Jambe_G1
+      position: {x: -0.25822422, y: 0.00000027179718, z: -0.000000019073486}
+      rotation: {x: -0.0018087577, y: -0.0035218052, z: 0.08831043, w: 0.9960851}
+      scale: {x: 1.000003, y: 0.9999976, z: 1.0000001}
+    - name: Pied_G1
+      parentName: Jambe_G2
+      position: {x: -0.25386685, y: 0, z: 0.0000000011920929}
+      rotation: {x: -0.0011509162, y: 0.030336818, z: -0.7755213, w: 0.6305911}
+      scale: {x: 1.0000056, y: 0.99999505, z: 1.0000002}
+    - name: Torse_1
+      parentName: Pubis
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.000000009866302, y: -0.00000007912517, z: -0.011892349, w: 0.9999293}
+      scale: {x: 1.0000001, y: 1, z: 1}
+    - name: Torse_2
+      parentName: Torse_1
+      position: {x: -0.13967372, y: -0.000000019073486, z: 0.000000028610229}
+      rotation: {x: -0.00000095328437, y: -0.000000031042873, z: -0.010180348, w: 0.99994826}
+      scale: {x: 1.0000007, y: 1.0000005, z: 1.0000001}
+    - name: Torse_3
+      parentName: Torse_2
+      position: {x: -0.13967384, y: 0, z: 0}
+      rotation: {x: 0.00000095328795, y: 0.000000029818793, z: 0.010174089, w: 0.9999483}
+      scale: {x: 0.99999994, y: 0.9999999, z: 1.0000001}
+    - name: Torse
+      parentName: Torse_3
+      position: {x: -0.13964584, y: 0.0000000047683715, z: 0}
+      rotation: {x: 0.000000009889049, y: 0.00000008035507, z: 0.011898608, w: 0.99992925}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: Epaule_G
+      parentName: Torse
+      position: {x: -0, y: 0.027229164, z: 0.044130858}
+      rotation: {x: 0.018522583, y: 0.7068641, z: 0.018522311, w: 0.7068642}
+      scale: {x: 1.0000004, y: 1.0000007, z: 1.0000006}
+    - name: Bras_G1
+      parentName: Epaule_G
+      position: {x: -0.053830173, y: 0, z: 0}
+      rotation: {x: 0.032755677, y: 0.019608099, z: -0.025215345, w: 0.99895287}
+      scale: {x: 0.9999997, y: 0.9999998, z: 1.0000007}
+    - name: Bras_G2
+      parentName: Bras_G1
+      position: {x: -0.265145, y: -0.0000000047683715, z: 0}
+      rotation: {x: -0.015020946, y: 0.017820774, z: -0.019535815, w: 0.9995375}
+      scale: {x: 1.0000014, y: 0.9999984, z: 0.9999996}
+    - name: Main_G
+      parentName: Bras_G2
+      position: {x: -0.26034907, y: 0, z: 0}
+      rotation: {x: -0.012654564, y: 0.01157157, z: -0.011749548, w: 0.99978393}
+      scale: {x: 1.0000044, y: 1.0000005, z: 0.99999666}
+    - name: Cou_1
+      parentName: Torse
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.000000008520021, y: -0.00000008025166, z: -0.022055387, w: 0.99975675}
+      scale: {x: 1.0000006, y: 1.0000005, z: 1}
+    - name: Cou_2
+      parentName: Cou_1
+      position: {x: -0.13948753, y: 0, z: 0}
+      rotation: {x: -0.00000052195145, y: -0.00000002922473, z: -0.018863145, w: 0.99982214}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Cou_3
+      parentName: Cou_2
+      position: {x: -0.13948761, y: 0, z: 0.000000009536743}
+      rotation: {x: 0.00000052195134, y: 0.000000029224545, z: 0.018863413, w: 0.99982214}
+      scale: {x: 1.0000005, y: 1.0000004, z: 1}
+    - name: "T\xEAte"
+      parentName: Cou_3
+      position: {x: -0.13948753, y: 0, z: 0}
+      rotation: {x: 0.000000008520144, y: 0.00000008025169, z: 0.022055121, w: 0.99975675}
+      scale: {x: 0.99999994, y: 1.0000001, z: 1}
+    - name: Epaule_D
+      parentName: Torse
+      position: {x: -0, y: 0.027229156, z: -0.044130858}
+      rotation: {x: -0.018522538, y: -0.70686424, z: 0.0185223, w: 0.70686406}
+      scale: {x: 1, y: 1.0000004, z: 1.0000004}
+    - name: Bras_D1
+      parentName: Epaule_D
+      position: {x: -0.053830184, y: -0.0000000011920929, z: 0}
+      rotation: {x: 0.032755066, y: 0.019607682, z: 0.025215155, w: -0.99895287}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1.000001}
+    - name: Bras_D2
+      parentName: Bras_D1
+      position: {x: -0.26514503, y: 0, z: 0}
+      rotation: {x: 0.015015624, y: -0.017820772, z: -0.019536814, w: 0.9995376}
+      scale: {x: 1.0000012, y: 1.0000006, z: 0.9999986}
+    - name: Main_D
+      parentName: Bras_D2
+      position: {x: -0.26034904, y: 0, z: 0}
+      rotation: {x: 0.012651393, y: -0.011570938, z: -0.011750261, w: 0.999784}
+      scale: {x: 1.0000042, y: 1.0000002, z: 0.9999972}
+    - name: Jambe_D1
+      parentName: Pubis
+      position: {x: 0.000000038146972, y: 0, z: -0.08826192}
+      rotation: {x: 0.0026270142, y: 0.9996427, z: -0.017377801, w: -0.020136612}
+      scale: {x: 0.9999998, y: 0.9999997, z: 1.0000001}
+    - name: Jambe_D2
+      parentName: Jambe_D1
+      position: {x: -0.2582242, y: 0.00000025272368, z: 0.000000038146972}
+      rotation: {x: 0.0018115726, y: 0.0035253111, z: 0.08831154, w: 0.9960851}
+      scale: {x: 1.000003, y: 0.999998, z: 0.9999999}
+    - name: Pied_D1
+      parentName: Jambe_D2
+      position: {x: -0.25386676, y: -0.000000009536743, z: 0}
+      rotation: {x: 0.0011664736, y: -0.03033136, z: -0.7756218, w: 0.6304677}
+      scale: {x: 1.0000056, y: 0.9999948, z: 1.0000008}
+    - name: Pied_G2
+      parentName: SK_Player(Clone)
+      position: {x: -0.043432735, y: 0.000000028759375, z: 0.014330491}
+      rotation: {x: -0.7071068, y: 7.850461e-15, z: 7.8504614e-15, w: 0.7071067}
+      scale: {x: 0.9999999, y: 0.9999999, z: 1}
+    - name: Pied_D2
+      parentName: SK_Player(Clone)
+      position: {x: -0.04343274, y: -0.000000016791807, z: -0.26526067}
+      rotation: {x: -0.7071068, y: 7.850461e-15, z: 7.8504614e-15, w: 0.7071067}
+      scale: {x: 0.9999999, y: 0.9999999, z: 1}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -91,13 +236,13 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0
