@@ -36,6 +36,9 @@ namespace FPV.Runtime
 
                 return;
             }
+            
+            // Join Vivox channel
+            VivoxManager.Instance.VivoxInit();
 
             // If the player is the owner, we need to enable the input and set the camera
 
@@ -76,7 +79,7 @@ namespace FPV.Runtime
             OnServerNotifiedOfClientReadinessServerRpc();
 
             // Join Vivox channel
-            VivoxManager.Instance.VivoxInit();
+            //VivoxManager.Instance.VivoxInit();
         }
 
 
