@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using FPV.Runtime.Shared;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
@@ -118,7 +119,8 @@ namespace FPV
                         isSecure = endpoint.Secure;
                     }
 
-                NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(host,
+                CustomNetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(
+                    host,
                     port, joinAllocationId, connectionData, hostConnectionData, key, isSecure));
 
 
