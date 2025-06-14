@@ -49,6 +49,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   myVOIPObject: {fileID: 8364932813865028740}
   mateVOIPObject: {fileID: 8704534920566215122}
+  audioSource: {fileID: 0}
 --- !u!1 &8364932813865028740
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,9 +205,9 @@ GameObject:
   - component: {fileID: 4678910258995034292}
   - component: {fileID: 3334608909665482425}
   - component: {fileID: 8326747160356834161}
-  - component: {fileID: 8834129370863534927}
   - component: {fileID: 990954139213698304}
   - component: {fileID: 2534815429487212258}
+  - component: {fileID: 110543786176781982}
   m_Layer: 7
   m_Name: Mate VOIP
   m_TagString: Untagged
@@ -338,20 +339,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &8834129370863534927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8704534920566215122}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4e239a6f9250a94f8074232314da7a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ChannelUri: 
-  m_ChannelName: 
 --- !u!114 &990954139213698304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -465,3 +452,20 @@ MonoBehaviour:
   - 0
   applyHRTFToPathing: 0
   pathingMixLevel: 1
+--- !u!114 &110543786176781982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8704534920566215122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a17143a20f8cc14eae94b6e586ade44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ChannelUri: 
+  m_ChannelName: 
+  m_ParticipantUri: 
+  m_ParticipantName: 
+  m_SilenceInChannelAudioMix: 1
