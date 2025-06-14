@@ -31,7 +31,7 @@ jobs:
       - name: Merge each branch into the others
         run: |
           set -e
-          branches=("DEV" "GD-FP2" "GA")
+          branches=("DEV" "GA")
 
           for dest in "${branches[@]}"; do
             for src in "${branches[@]}"; do
