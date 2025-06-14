@@ -119,6 +119,7 @@ namespace FPV.Runtime
             {
                 NetworkObject.ChangeOwnership(newOwnerObject.OwnerClientId);
                 if (!isThrown) GetComponent<NetworkObject>().TrySetParent(newOwnerObject);
+                else transform.parent = null; // Si lancé, on ne garde pas de parent
             }
         }
 
