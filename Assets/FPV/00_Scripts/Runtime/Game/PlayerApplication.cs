@@ -58,6 +58,9 @@ namespace FPV.Runtime
                 Controller._playerInput.ActivateInput();
             }
 
+            // Disable our SkinnedMeshRenderer to avoid rendering the local player model
+            if (Model.Mesh != null) Model.Mesh.enabled = false;
+
             // Join Vivox channel
             VivoxManager.Instance.VivoxInit();
         }

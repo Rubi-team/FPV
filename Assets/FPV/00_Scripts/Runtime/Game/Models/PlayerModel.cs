@@ -66,6 +66,9 @@ namespace FPV.Runtime
         [Tooltip("How far in degrees can you move the camera down")]
         public float BottomClamp = -90.0f;
 
+        [SerializeField] internal Transform Graph;
+        [SerializeField] internal SkinnedMeshRenderer Mesh;
+
         #endregion
 
         [Header("Runtime Values")] public Transform PickerTransform;

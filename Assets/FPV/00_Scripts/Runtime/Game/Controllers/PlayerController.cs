@@ -35,6 +35,8 @@ namespace FPV.Runtime
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
 
+        internal Camera mainCamera;
+
 
 #if ENABLE_INPUT_SYSTEM
         internal PlayerInput _playerInput;
@@ -65,6 +67,9 @@ namespace FPV.Runtime
             // get references to our input
             _playerInput = GetComponent<PlayerInput>();
             _input = GetComponent<InputController>();
+
+            if (FindFirstObjectByType<MainCamera>())
+                mainCamera = FindFirstObjectByType<MainCamera>().GetComponent<Camera>();
         }
 
         private void Start()
@@ -118,15 +123,7 @@ namespace FPV.Runtime
             {
                 Model.CarriedPlayer.Controller.OnPlayerThrowMeRpc(App.transform.forward, Model.ThrowForce);
                 Model.SetIsCarryingPlayerRpc(false);
-
-                // SOUND //
-                RuntimeManager.StudioSystem.setParameterByName("ActionType", 1);
-                //si PLAYER
-                RuntimeManager.StudioSystem.setParameterByName("ActionSubject", 0);
-
-
-                //3. APPELER LE SON
-                View.actionEmitter.Play();
+                View.SetAnimatorTriggerRpc("ThrowPlayer");
                 return;
             }
 
@@ -134,7 +131,7 @@ namespace FPV.Runtime
             {
                 // Calcule la direction à partir de la caméra principale
                 var furby = Model.CarriedFurby; // Une référence au Furby tenu
-                var cameraTransform = Camera.main.transform; // Récupère le Transform de la caméra principale
+                var cameraTransform = mainCamera.transform; // Récupère le Transform de la caméra principale
                 var throwDirection = cameraTransform.forward; // Utilise la direction que regarde la caméra
                 var throwForce = Model.FurbyThrowForce; // Ajouter une valeur de force dans le modèle si nécessaire
 
@@ -151,6 +148,9 @@ namespace FPV.Runtime
 
                 //3. APPELER LE SON
                 View.actionEmitter.Play();
+
+                // CALL ANIMATOR TRIGGER
+                View.SetAnimatorTriggerRpc("ThrowFurby");
                 return;
             }
 
@@ -186,6 +186,9 @@ namespace FPV.Runtime
 
                 //3. APPELER LE SON
                 View.actionEmitter.Play();
+
+                // CALL ANIMATOR TRIGGER
+                View.SetAnimatorTriggerRpc("GrabPlayer");
             }
             else
             {
@@ -201,6 +204,9 @@ namespace FPV.Runtime
 
                 //3. APPELER LE SON
                 View.actionEmitter.Play();
+
+                // CALL ANIMATOR TRIGGER
+                View.SetAnimatorTriggerRpc("GrabFurby");
             }
         }
 
@@ -228,26 +234,24 @@ namespace FPV.Runtime
 
         private void CameraRotation()
         {
-            // if there is an input
             if (_input.look.sqrMagnitude >= _threshold)
             {
-                //Don't multiply mouse input by Time.deltaTime
                 var deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
                 _cinemachineTargetPitch += _input.look.y * Model.RotationSpeed * deltaTimeMultiplier;
-                _rotationVelocity = _input.look.x * Model.RotationSpeed * deltaTimeMultiplier;
+                _rotationVelocity += _input.look.x * Model.RotationSpeed * deltaTimeMultiplier;
 
-                // clamp our pitch rotation
+                // Clamp pitch
                 _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, Model.BottomClamp, Model.TopClamp);
 
-                // Update Cinemachine camera target pitch
+                // Applique les deux axes à la target
+                var targetRotation = Quaternion.Euler(_cinemachineTargetPitch, _rotationVelocity, 0.0f);
                 Model.CinemachineCameraTarget.transform.localRotation =
-                    Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
-
-                // rotate the player left and right
-                App.transform.Rotate(Vector3.up * _rotationVelocity);
+                    Quaternion.Slerp(Model.CinemachineCameraTarget.transform.localRotation, targetRotation,
+                        Time.deltaTime * 20f);
             }
         }
+
 
         private Vector3 _throwVelocity = Vector3.zero;
         private bool _isBeingThrown = false;
@@ -339,8 +343,31 @@ namespace FPV.Runtime
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
             if (_input.move != Vector2.zero)
-                // move
-                inputDirection = App.transform.right * _input.move.x + App.transform.forward * _input.move.y;
+            {
+                var forward = mainCamera.transform.forward;
+                var right = mainCamera.transform.right;
+
+                forward.y = 0f; // On ne veut pas que le joueur saute quand on regarde en l'air
+                right.y = 0f;
+
+                forward.Normalize();
+                right.Normalize();
+
+                inputDirection = (right * _input.move.x + forward * _input.move.y).normalized;
+            }
+
+            if (inputDirection != Vector3.zero)
+            {
+                var targetRotation = Quaternion.LookRotation(inputDirection, Vector3.up);
+                var euler = targetRotation.eulerAngles;
+                euler.x = 0f;
+                euler.z = 0f;
+                targetRotation = Quaternion.Euler(euler);
+
+                var t = Time.deltaTime / 0.2f;
+                Model.Graph.rotation = Quaternion.Slerp(Model.Graph.rotation, targetRotation, t);
+            }
+
 
             // move the player
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) +
@@ -394,9 +421,9 @@ namespace FPV.Runtime
             var interactableHitPositionList = new List<Vector3>();
 
             var raycastHitArray = Physics.SphereCastAll(
-                Camera.main.transform.position,
+                mainCamera.transform.position,
                 Model.InteractRadius,
-                Camera.main.transform.forward,
+                mainCamera.transform.forward,
                 Model.InteractDistance
             );
 
@@ -431,8 +458,8 @@ namespace FPV.Runtime
                 var interactableHitPosition = interactableHitPositionList[i];
 
                 if (closestInteractable == null ||
-                    Vector3.Distance(Camera.main.transform.position, interactableHitPosition) <
-                    Vector3.Distance(Camera.main.transform.position, closestInteracableHitPosition))
+                    Vector3.Distance(mainCamera.transform.position, interactableHitPosition) <
+                    Vector3.Distance(mainCamera.transform.position, closestInteracableHitPosition))
                 {
                     // Déterminer l'interactable le plus proche
                     closestInteractable = interactable;
