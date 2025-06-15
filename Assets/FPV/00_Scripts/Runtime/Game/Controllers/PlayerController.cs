@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Audio;
 using FMODUnity;
 using Unity.Netcode;
 using Unity.Netcode.Components;
@@ -123,6 +124,12 @@ namespace FPV.Runtime
             {
                 Model.CarriedPlayer.Controller.OnPlayerThrowMeRpc(App.transform.forward, Model.ThrowForce);
                 Model.SetIsCarryingPlayerRpc(false);
+                Model.CarriedPlayer = null; // Réinitialiser la référence au joueur porté
+
+                // APPELER LE SON
+                View.PlaySoundOnPlayerThrown();
+
+                // ANIMATOR TRIGGER
                 View.SetAnimatorTriggerRpc("ThrowPlayer");
                 return;
             }
@@ -141,13 +148,8 @@ namespace FPV.Runtime
                 Model.SetIsCarryingFurbyRpc(false);
                 Model.CarriedFurby = null;
 
-                // SOUND //
-                RuntimeManager.StudioSystem.setParameterByName("ActionType", 1);
-                //si PLAYER
-                RuntimeManager.StudioSystem.setParameterByName("ActionSubject", 1);
-
-                //3. APPELER LE SON
-                View.actionEmitter.Play();
+                // APPELER LE SON
+                View.PlaySoundOnFurbyThrown();
 
                 // CALL ANIMATOR TRIGGER
                 View.SetAnimatorTriggerRpc("ThrowFurby");
@@ -179,13 +181,8 @@ namespace FPV.Runtime
                 Model.SetIsCarryingPlayerRpc(true);
                 Model.CarriedPlayer = player;
 
-                // SOUND //
-                RuntimeManager.StudioSystem.setParameterByName("ActionType", 0);
-                //si PLAYER
-                RuntimeManager.StudioSystem.setParameterByName("ActionSubject", 0);
-
-                //3. APPELER LE SON
-                View.actionEmitter.Play();
+                // APPELER LE SON
+                View.PlaySoundOnPlayerPickedUp();
 
                 // CALL ANIMATOR TRIGGER
                 View.SetAnimatorTriggerRpc("GrabPlayer");
@@ -196,14 +193,8 @@ namespace FPV.Runtime
                 Model.SetIsCarryingFurbyRpc(true);
                 Model.CarriedFurby = interactable.GetTransform().GetComponent<Furby>();
 
-                // SOUND //
-                RuntimeManager.StudioSystem.setParameterByName("ActionType", 0);
-                //si PLAYER
-                RuntimeManager.StudioSystem.setParameterByName("ActionSubject", 1);
-
-
-                //3. APPELER LE SON
-                View.actionEmitter.Play();
+                // APPELER LE SON
+                View.PlaySoundOnFurbyPickedUp();
 
                 // CALL ANIMATOR TRIGGER
                 View.SetAnimatorTriggerRpc("GrabFurby");

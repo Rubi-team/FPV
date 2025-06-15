@@ -15,12 +15,10 @@ namespace FPV.Runtime
 
         internal GroundType currentGroundType;
 
-        [Header("Audio Settings")] [SerializeField]
-        internal StudioEventEmitter footEmitter;
 
-        [SerializeField] internal StudioEventEmitter jumpEmitter;
-        [SerializeField] internal StudioEventEmitter actionEmitter;
-        [SerializeField] internal StudioEventEmitter ambienceEmitter;
+        [SerializeField] internal Transform Feet;
+        [SerializeField] internal Transform Body;
+        [SerializeField] internal Transform AboveHead;
         [SerializeField] private bool jumping;
 
         [SerializeField] private Transform headTarget;
@@ -31,10 +29,26 @@ namespace FPV.Runtime
         {
             var index = (int)currentGroundType.groundType;
             if (currentGroundType == null) index = 0; // Default to 0 if no ground type is set
-            RuntimeManager.StudioSystem.setParameterByName("Surface", index);
-            RuntimeManager.StudioSystem.setParameterByName("WalkState", Controller._input.sprint ? 1 : 0);
 
-            footEmitter.Play();
+            // switch case of index 
+            switch (index)
+            {
+                case 0:
+                    AudioManager.Instance.PlayOneShot(AudioManager.concreteFootStep, Feet.position);
+                    break;
+                case 1:
+                    AudioManager.Instance.PlayOneShot(AudioManager.carpetFootStep, Feet.position);
+                    break;
+                case 2:
+                    AudioManager.Instance.PlayOneShot(AudioManager.woodFootStep, Feet.position);
+                    break;
+                case 3:
+                    AudioManager.Instance.PlayOneShot(AudioManager.metalFootstep, Feet.position);
+                    break;
+                default:
+                    AudioManager.Instance.PlayOneShot(AudioManager.footStep, Feet.position);
+                    break;
+            }
         }
 
         private float LastJumpTime = 0f;
@@ -43,11 +57,11 @@ namespace FPV.Runtime
         {
             if (!IsOwner) return;
 
-            if (Controller._input.jump && !jumping) PlayJumpLandSoundRpc(true);
+            if (Controller._input.jump && !jumping) PlayJumpLandSound(true);
 
             if (!Model.Grounded) jumping = true;
 
-            if (jumping && Model.Grounded && Time.time - LastJumpTime > 0.2f) PlayJumpLandSoundRpc(false);
+            if (jumping && Model.Grounded && Time.time - LastJumpTime > 0.2f) PlayJumpLandSound(false);
         }
 
 
@@ -73,40 +87,29 @@ namespace FPV.Runtime
             SetAnimatorVariablesRpc();
         }
 
-        [Rpc(SendTo.Everyone)]
-        public void PlayJumpLandSoundRpc(bool isJump)
+        public void PlayJumpLandSound(bool isJump)
         {
-            if (isJump)
-            {
-                // 1. CHANGER LE TYPE D'ACTION
-                //JUMP
-                //EVENTREF = JumpLand
-                RuntimeManager.StudioSystem.setParameterByName("JumpType", 0);
-                //jumpEmitter.SetParameter("JumpType", 0);
-                jumping = true;
-                LastJumpTime = Time.time;
-                SetAnimatorTriggerRpc("IsJumping");
-            }
-            else
-            {
-                //LAND
-                //EVENTREF = Land
-                RuntimeManager.StudioSystem.setParameterByName("JumpType", 1);
-                //jumpEmitter.SetParameter("JumpType", 1);
-                jumping = false;
-                SetAnimatorTriggerRpc("IsLanding");
-            }
-
-            // 2. APPELER LE SON
-            jumpEmitter.Play();
+            AudioManager.Instance.PlayOneShot(isJump ? AudioManager.jump : AudioManager.land, Feet.position);
         }
 
-        [Rpc(SendTo.Everyone)]
-        public void PlayActionSoundRpc()
+        public void PlaySoundOnFurbyPickedUp()
         {
-            if (actionEmitter != null)
-            {
-            }
+            AudioManager.Instance.PlayOneShot(AudioManager.grabItem, Feet.position);
+        }
+
+        public void PlaySoundOnPlayerPickedUp()
+        {
+            AudioManager.Instance.PlayOneShot(AudioManager.grabPlayer, Body.position);
+        }
+
+        public void PlaySoundOnFurbyThrown()
+        {
+            AudioManager.Instance.PlayOneShot(AudioManager.throwItem, Body.position);
+        }
+
+        public void PlaySoundOnPlayerThrown()
+        {
+            AudioManager.Instance.PlayOneShot(AudioManager.throwPlayer, Body.position);
         }
 
         [Rpc(SendTo.Everyone)]

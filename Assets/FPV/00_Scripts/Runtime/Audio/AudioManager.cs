@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FMOD;
 using FMOD.Studio;
 using FMODUnity;
 using Unity.Netcode;
@@ -16,47 +17,45 @@ namespace Audio
 
         [field: Header("Player Movement")]
         [field: SerializeField]
-        public EventReference footStep { get; private set; }
+        public static EventReference footStep { get; private set; }
 
-        [field: SerializeField] public EventReference concreteFootStep { get; private set; }
-        [field: SerializeField] public EventReference carpetFootStep { get; private set; }
-        [field: SerializeField] public EventReference woodFootStep { get; private set; }
-        [field: SerializeField] public EventReference metalFootstep { get; private set; }
-
-        [field: SerializeField] public EventReference jump { get; private set; }
-        [field: SerializeField] public EventReference land { get; private set; }
+        [field: SerializeField] public static EventReference concreteFootStep { get; private set; }
+        [field: SerializeField] public static EventReference carpetFootStep { get; private set; }
+        [field: SerializeField] public static EventReference woodFootStep { get; private set; }
+        [field: SerializeField] public static EventReference metalFootstep { get; private set; }
+        [field: SerializeField] public static EventReference jump { get; private set; }
+        [field: SerializeField] public static EventReference land { get; private set; }
 
 
         [field: Header("Player Action")]
         [field: SerializeField]
-        public EventReference grabPlayer { get; private set; }
+        public static EventReference grabPlayer { get; private set; }
 
-        [field: SerializeField] public EventReference grabItem { get; private set; }
-        [field: SerializeField] public EventReference throwPlayer { get; private set; }
-        [field: SerializeField] public EventReference throwItem { get; private set; }
-        [field: SerializeField] public EventReference putDownPlayer { get; private set; }
-        [field: SerializeField] public EventReference putDownItem { get; private set; }
+        [field: SerializeField] public static EventReference grabItem { get; private set; }
+        [field: SerializeField] public static EventReference throwPlayer { get; private set; }
+        [field: SerializeField] public static EventReference throwItem { get; private set; }
+        [field: SerializeField] public static EventReference putDownPlayer { get; private set; }
+        [field: SerializeField] public static EventReference putDownItem { get; private set; }
 
-        [field: SerializeField] public EventReference takeDamage { get; private set; }
+        [field: SerializeField] public static EventReference takeDamage { get; private set; }
 
 
         [field: Header("Threat")]
         [field: SerializeField]
         public EventReference threatFootstep { get; private set; }
 
-        [field: SerializeField] public EventReference threatCharging { get; private set; }
-        [field: SerializeField] public EventReference threatHit { get; private set; }
+        [field: SerializeField] public static EventReference threatCharging { get; private set; }
+        [field: SerializeField] public static EventReference threatHit { get; private set; }
 
 
         [field: Header("Objects")]
         [field: SerializeField]
         public EventReference ferbyHit { get; private set; }
 
-        [field: SerializeField] public EventReference laserLoop { get; private set; }
-        [field: SerializeField] public EventReference laserHit { get; private set; }
-        [field: SerializeField] public EventReference doorOpen { get; private set; }
-        [field: SerializeField] public EventReference doorClose { get; private set; }
-        [field: SerializeField] public EventReference target { get; private set; }
+        [field: SerializeField] public static EventReference laserLoop { get; private set; }
+        [field: SerializeField] public static EventReference doorOpen { get; private set; }
+        [field: SerializeField] public static EventReference doorClose { get; private set; }
+        [field: SerializeField] public static EventReference target { get; private set; }
 
         public static AudioManager Instance { get; private set; }
 
@@ -66,40 +65,51 @@ namespace Audio
         }
 
         /// <summary>
-        ///     Creates a new audio instance from the given AudioModel.
+        ///     Plays a one-shot sound at the specified world position.
         /// </summary>
-        public void PlayOneShot(EventReference sound, Vector3 worldPos)
+        public void PlayOneShot(EventReference sound, Vector3 worldPos, bool hasParameters = false,
+            string parameter1Name = null, float parameter1Value = 0f, string parameter2Name = null,
+            float parameter2Value = 0f)
         {
-            PlayOneShotRpc(sound.ToString(), worldPos);
+            if (hasParameters)
+                PlayOneShotWithParametersRpc(sound.ToString(), worldPos, parameter1Name, parameter1Value,
+                    parameter2Name, parameter2Value);
+            else
+                PlayOneShotRpc(sound.ToString(), worldPos);
         }
 
         [Rpc(SendTo.Everyone)]
-        private void PlayOneShotRpc(string soundPath, Vector3 worldPos)
+        private void PlayOneShotRpc(string GUIDString, Vector3 worldPos)
         {
-            var emitterInstance = Instantiate(_emitterInstancePrefab, worldPos, Quaternion.identity);
-
-            // Get reference to your RuntimeEventEmitter
-            var emitterCustom = emitterInstance.GetComponent<StudioEventEmitter>();
-
-            // Set new event (using one of your existing event references as example)
-
-            // Play the event if needed
-            emitterCustom.Play();
-
-            // Destroy the emitter instance after the sound has played
-            Destroy(emitterInstance, 1f);
-        }
-
-        public void PlayOneShotAttached(EventReference sound, GameObject objectAttached)
-        {
-            PlayOneShotAttachedRpc(sound.ToString(), objectAttached.name);
+            var eventInstance = RuntimeManager.CreateInstance(StringToGUID(GUIDString));
+            eventInstance.set3DAttributes(RuntimeUtils.To3DAttributes(worldPos));
+            eventInstance.start();
+            eventInstance.release();
         }
 
         [Rpc(SendTo.Everyone)]
-        private void PlayOneShotAttachedRpc(string soundPath, string objectName)
+        private void PlayOneShotWithParametersRpc(string GUIDString, Vector3 worldPos, string parameter1Name,
+            float parameter1Value, string parameter2Name, float parameter2Value)
         {
-            RuntimeManager.PlayOneShotAttached(soundPath, GameObject.Find(objectName));
+            var eventInstance = RuntimeManager.CreateInstance(StringToGUID(GUIDString));
+            eventInstance.set3DAttributes(RuntimeUtils.To3DAttributes(worldPos));
+
+            if (!string.IsNullOrEmpty(parameter1Name))
+                eventInstance.setParameterByName(parameter1Name, parameter1Value);
+
+            if (!string.IsNullOrEmpty(parameter2Name))
+                eventInstance.setParameterByName(parameter2Name, parameter2Value);
+
+            eventInstance.start();
+            eventInstance.release();
         }
+
+        private static GUID StringToGUID(string eventName)
+        {
+            // Convert the string event name to a GUID
+            return GUID.Parse(eventName);
+        }
+
 
         /// <summary>
         ///     Creates a new audio instance from the given AudioModel.
