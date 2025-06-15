@@ -90,7 +90,7 @@ namespace FPV.Runtime
                 if (target != null) target.DeactivateTarget();
 
                 // Vérifie si c'est un Sonographe
-                var sonographe = hit.GetComponent<Sonographe>();
+                var sonographe = hit.GetComponentInParent<Sonographe>();
                 if (sonographe != null) sonographe.ActivateSonographe();
             }
 
