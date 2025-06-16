@@ -112,6 +112,7 @@ namespace FPV.Runtime
 
             // Transfer ownership to the picking player
             ChangeOwnershipServerRpc(interactorPlayer.NetworkObjectId);
+            GetPickedUpRpc(interactorPlayer.NetworkObjectId);
         }
 
         [Rpc(SendTo.Server)]
@@ -119,16 +120,20 @@ namespace FPV.Runtime
         {
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(newOwnerId, out var newOwnerObject))
             {
-                NetworkObject.ChangeOwnership(newOwnerObject.OwnerClientId);
+                //NetworkObject.ChangeOwnership(newOwnerObject.OwnerClientId);
                 if (!isThrown) GetComponent<NetworkObject>().TrySetParent(newOwnerObject);
                 else transform.parent = null; // Si lancé, on ne garde pas de parent
 
                 GraphToFollow = newOwnerObject.GetComponent<PlayerApplication>().Model.Graph;
             }
+        }
 
+        [Rpc(SendTo.Everyone)]
+        private void GetPickedUpRpc(ulong PickerObjectId)
+        {
             rb.isKinematic = true; // Permet au rigidbody de rester immobile
             pickedUp = true;
-            var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[newOwnerId].transform;
+            var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[PickerObjectId].transform;
             // Make me above and in front of the player
             transform.position = pickerTransform.GetComponent<PlayerApplication>().Model.Graph.position +
                                  pickerTransform.GetComponent<PlayerApplication>().Model.Graph.forward * 1f +
@@ -138,10 +143,12 @@ namespace FPV.Runtime
             RemoveSecondMaterialRpc();
         }
 
+
         private Transform GraphToFollow;
 
         private void Update()
         {
+            if (!IsServer || !pickedUp || rb == null) return;
             // Si on est picked Up, update sa position par rapport au GraphToFollow
             if (pickedUp && GraphToFollow != null && rb.isKinematic)
             {
@@ -190,17 +197,33 @@ namespace FPV.Runtime
 
         public void Throw(Vector3 direction, float force)
         {
+            if (IsOwner && !IsServer)
+                // Si c’est un client, on demande au serveur de le faire
+                ThrowServerRpc(direction, force);
+            else if (IsServer) ExecuteThrowRpc(direction, force);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void ThrowServerRpc(Vector3 direction, float force)
+        {
+            ExecuteThrowRpc(direction, force);
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void ExecuteThrowRpc(Vector3 direction, float force)
+        {
+            pickedUp = false;
+            GraphToFollow = null;
+
             if (rb != null)
             {
-                rb.isKinematic = false; // Permet au rigidbody de prendre le contrôle
-                ChangeOwnershipServerRpc(0, true);
-                rb.AddForce(direction.normalized * force + Vector3.up * 0.5f,
-                    ForceMode.Impulse); // Ajoute une impulsion
-
-                // Trail
+                rb.isKinematic = false;
+                transform.parent = null;
+                rb.AddForce(direction.normalized * force + Vector3.up * 0.5f, ForceMode.Impulse);
                 AddTrailEffectRpc();
             }
         }
+
 
         [SerializeField] private GameObject TrailEffect;
         [SerializeField] private GameObject ExplosionEffect;
