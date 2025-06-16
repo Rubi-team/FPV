@@ -158,9 +158,8 @@ namespace FPV.Runtime
             {
                 // Calcule la direction à partir de la caméra principale
                 var furby = Model.CarriedFurby; // Une référence au Furby tenu
-                var cameraTransform = mainCamera.transform; // Récupère le Transform de la caméra principale
-                var throwDirection = cameraTransform.forward; // Utilise la direction que regarde la caméra
                 var throwForce = Model.FurbyThrowForce; // Ajouter une valeur de force dans le modèle si nécessaire
+                var throwDirection = Model.CinemachineCameraTarget.transform.forward;
 
                 furby.Throw(throwDirection, throwForce);
 
