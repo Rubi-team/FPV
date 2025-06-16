@@ -52,6 +52,9 @@ namespace FPV.Runtime
                 // Ignore collisions for a short time after being thrown
                 return;
             }
+            
+            // Add explosion effect
+            AddExplosionEffectRpc();
 
             // Récupérer le premier point de contact
             var contact = collision.contacts[0];
@@ -172,6 +175,7 @@ namespace FPV.Runtime
         {
             if (rb != null)
             {
+                AddTrailEffectRpc();
                 ChangeKinematicStateRpc(false);
                 ChangeOwnershipServerRpc(0, true);
                 rb.AddForce(direction.normalized * force + Vector3.up * 0.5f,
@@ -186,6 +190,32 @@ namespace FPV.Runtime
             {
                 rb.isKinematic = isKinematic;
                 ThrownTime = Time.time; // Enregistre le temps du lancer
+            }
+        }
+        
+        [SerializeField] private GameObject TrailEffect;
+        [SerializeField] private GameObject ExplosionEffect;
+
+        [Rpc(SendTo.Everyone)]
+        private void AddTrailEffectRpc()
+        {
+            if (TrailEffect != null)
+            {
+                var trail = Instantiate(TrailEffect, transform);
+                trail.transform.SetParent(transform);
+            }
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void AddExplosionEffectRpc()
+        {
+            if (ExplosionEffect != null)
+            {
+                var explosion = Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
+                explosion.transform.SetParent(null); // Ne pas le parent à l'objet Furby
+
+                // Optionally, destroy the explosion effect after a few seconds
+                Destroy(explosion, 3f);
             }
         }
     }
