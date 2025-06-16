@@ -142,7 +142,7 @@ namespace FPV.Runtime
             }
         }
 
-        [Rpc(SendTo.Owner)]
+        [Rpc(SendTo.Everyone)]
         private void GetPickedUpRpc(ulong pickerObjectId)
         {
             rb.isKinematic = true; // Permet au rigidbody de rester immobile

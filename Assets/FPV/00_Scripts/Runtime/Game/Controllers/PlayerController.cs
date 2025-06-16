@@ -494,9 +494,9 @@ namespace FPV.Runtime
 
             var targetPosition = Model.PickerTransform.position;
             targetPosition.y += 1f;
-            App.transform.position = targetPosition;
+            Model.CinemachineCameraTarget.transform.position = targetPosition;
 
-            if (Model.RotateWithPicker) App.transform.rotation = Model.PickerTransform.rotation;
+            if (Model.RotateWithPicker) Model.Graph.transform.rotation = Model.PickerTransform.rotation;
         }
 
 
