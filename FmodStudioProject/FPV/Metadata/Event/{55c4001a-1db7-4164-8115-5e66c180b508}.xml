@@ -72,6 +72,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{c207e876-b9ba-4fed-b9a3-6301f749c856}">
+		<property name="volume">
+			<value>-5</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{169c4424-987c-4d20-afa4-0eff5934d006}</destination>
 		</relationship>
@@ -113,6 +116,9 @@
 	<object class="MixerBusFader" id="{05ce4679-f3df-4867-80b0-b93fcb45eaf4}" />
 	<object class="MixerBusFader" id="{6f04cf09-bb04-47e4-8c5e-6e1890af388a}" />
 	<object class="PluginEffect" id="{55490cb6-3a77-4056-965f-4b715b53443c}">
+		<property name="bypass">
+			<value>true</value>
+		</property>
 		<relationship name="plugin">
 			<destination>{2c43f04b-7320-4963-9cfa-399355860c26}</destination>
 		</relationship>
