@@ -112,7 +112,6 @@ namespace FPV.Runtime
 
             // Transfer ownership to the picking player
             ChangeOwnershipServerRpc(interactorPlayer.NetworkObjectId);
-            GetPickedUpRpc(interactorPlayer.NetworkObjectId);
         }
 
         [Rpc(SendTo.Server)]
@@ -126,6 +125,17 @@ namespace FPV.Runtime
 
                 GraphToFollow = newOwnerObject.GetComponent<PlayerApplication>().Model.Graph;
             }
+
+            rb.isKinematic = true; // Permet au rigidbody de rester immobile
+            pickedUp = true;
+            var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[newOwnerId].transform;
+            // Make me above and in front of the player
+            transform.position = pickerTransform.GetComponent<PlayerApplication>().Model.Graph.position +
+                                 pickerTransform.GetComponent<PlayerApplication>().Model.Graph.forward * 1f +
+                                 Vector3.up * 1f;
+
+            // Remove the second material of my mesh renderer
+            RemoveSecondMaterialRpc();
         }
 
         private Transform GraphToFollow;
@@ -140,21 +150,6 @@ namespace FPV.Runtime
                                      GraphToFollow.forward * 1f + Vector3.up * 1f;
                 transform.rotation = Quaternion.LookRotation(GraphToFollow.forward, Vector3.up);
             }
-        }
-
-        [Rpc(SendTo.Everyone)]
-        private void GetPickedUpRpc(ulong pickerObjectId)
-        {
-            rb.isKinematic = true; // Permet au rigidbody de rester immobile
-            pickedUp = true;
-            var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
-            // Make me above and in front of the player
-            transform.position = pickerTransform.GetComponent<PlayerApplication>().Model.Graph.position +
-                                 pickerTransform.GetComponent<PlayerApplication>().Model.Graph.forward * 1f +
-                                 Vector3.up * 1f;
-
-            // Remove the second material of my mesh renderer
-            RemoveSecondMaterialRpc();
         }
 
         [Rpc(SendTo.Everyone)]
