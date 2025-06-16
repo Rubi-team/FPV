@@ -24,6 +24,18 @@ namespace FPV.Runtime
         [SerializeField] private Transform headTarget;
         [SerializeField] private Animator _animator;
 
+        [Header("Emotes")] [SerializeField] private GameObject emote1;
+        [SerializeField] private GameObject emote2;
+        [SerializeField] private GameObject emote3;
+        [SerializeField] private GameObject emote4;
+        [SerializeField] private GameObject emote5;
+        [SerializeField] private GameObject emote6;
+        [SerializeField] private GameObject emote7;
+        [SerializeField] private GameObject emote8;
+        [SerializeField] private GameObject emote9;
+
+        [SerializeField] private GameObject trailEffect;
+
 
         public void AudioFootsteps()
         {
@@ -127,6 +139,43 @@ namespace FPV.Runtime
         public void SetAnimatorTriggerRpc(string triggerName)
         {
             if (_animator != null) _animator.SetTrigger(triggerName);
+        }
+
+        // Play Emote, instantiate gameobject above App.transform and destroy it after 3 seconds
+        [Rpc(SendTo.Everyone)]
+        public void PlayEmoteRpc(int emoteIndex)
+        {
+            GameObject emote = null;
+            switch (emoteIndex)
+            {
+                case 1: emote = emote1; break;
+                case 2: emote = emote2; break;
+                case 3: emote = emote3; break;
+                case 4: emote = emote4; break;
+                case 5: emote = emote5; break;
+                case 6: emote = emote6; break;
+                case 7: emote = emote7; break;
+                case 8: emote = emote8; break;
+                case 9: emote = emote9; break;
+            }
+
+            if (emote != null)
+            {
+                var instance = Instantiate(emote, AboveHead.position, Quaternion.identity);
+                instance.transform.SetParent(AboveHead);
+                Destroy(instance, 3f);
+            }
+        }
+
+        [Rpc(SendTo.Everyone)]
+        public void AddTrailEffectRpc()
+        {
+            if (trailEffect != null)
+            {
+                var instance = Instantiate(trailEffect, Body.position, Quaternion.identity);
+                instance.transform.SetParent(Body);
+                Destroy(instance, 3f);
+            }
         }
     }
 }

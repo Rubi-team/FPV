@@ -71,8 +71,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9068685570113681156}
-  - component: {fileID: 8107839339645889933}
-  - component: {fileID: 3218805441591000824}
   m_Layer: 7
   m_Name: Feet
   m_TagString: Untagged
@@ -88,126 +86,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3193463918888325633}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7806168859175675107}
+  m_Father: {fileID: 8030635414807502628}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8107839339645889933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3193463918888325633}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 906362253
-      Data2: 1246250711
-      Data3: 142038675
-      Data4: -212250703
-    Path: event:/Player/Walks/Walks
-  Event: 
-  EventPlayTrigger: 1
-  EventStopTrigger: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
---- !u!114 &3218805441591000824
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3193463918888325633}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59c3684b22f00604a97bb68037fcf4cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  directBinaural: 1
-  interpolation: 0
-  perspectiveCorrection: 0
-  distanceAttenuation: 0
-  distanceAttenuationInput: 0
-  distanceAttenuationValue: 1
-  airAbsorption: 0
-  airAbsorptionInput: 0
-  airAbsorptionLow: 1
-  airAbsorptionMid: 1
-  airAbsorptionHigh: 1
-  directivity: 0
-  directivityInput: 0
-  dipoleWeight: 0
-  dipolePower: 0
-  directivityValue: 1
-  occlusion: 0
-  occlusionInput: 0
-  occlusionType: 0
-  occlusionRadius: 1
-  occlusionSamples: 16
-  occlusionValue: 1
-  transmission: 1
-  transmissionType: 0
-  transmissionInput: 0
-  transmissionLow: 1
-  transmissionMid: 1
-  transmissionHigh: 1
-  maxTransmissionSurfaces: 1
-  directMixLevel: 1
-  reflections: 1
-  reflectionsType: 0
-  useDistanceCurveForReflections: 0
-  currentBakedSource: {fileID: 0}
-  reverbTimeLow: 0
-  reverbTimeMid: 0
-  reverbTimeHigh: 0
-  hybridReverbEQLow: 1
-  hybridReverbEQMid: 1
-  hybridReverbEQHigh: 1
-  hybridReverbDelay: 0
-  applyHRTFToReflections: 0
-  reflectionsMixLevel: 1
-  pathing: 0
-  pathingProbeBatch: {fileID: 0}
-  pathValidation: 1
-  findAlternatePaths: 1
-  pathingEQ:
-  - 1
-  - 1
-  - 1
-  pathingSH:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  applyHRTFToPathing: 0
-  pathingMixLevel: 1
 --- !u!1 &3403585810899771775
 GameObject:
   m_ObjectHideFlags: 0
@@ -217,6 +102,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6862620813077733378}
+  - component: {fileID: 3915749018987211408}
   m_Layer: 7
   m_Name: Graph
   m_TagString: Player
@@ -241,6 +127,31 @@ Transform:
   - {fileID: 6363439882048579028}
   m_Father: {fileID: 7806168859175675107}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3915749018987211408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3403585810899771775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 0
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &4128848955281466282
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,9 +334,6 @@ Transform:
   m_Children:
   - {fileID: 6862620813077733378}
   - {fileID: 7634497481752723992}
-  - {fileID: 9068685570113681156}
-  - {fileID: 5188423739624801282}
-  - {fileID: 6177152744399057012}
   m_Father: {fileID: 5833563503223366179}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3404271672488522006
@@ -488,10 +396,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6177152744399057012}
-  - component: {fileID: 8040040293287790271}
-  - component: {fileID: 7323876119362437590}
   m_Layer: 7
-  m_Name: Action
+  m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -505,126 +411,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5177079881793950466}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.956, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.956, z: 0.384}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7806168859175675107}
+  m_Father: {fileID: 8030635414807502628}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8040040293287790271
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5177079881793950466}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 414552767
-      Data2: 1292917908
-      Data3: -1026510443
-      Data4: 205783020
-    Path: event:/Player/Actions/Actions
-  Event: 
-  EventPlayTrigger: 1
-  EventStopTrigger: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
---- !u!114 &7323876119362437590
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5177079881793950466}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59c3684b22f00604a97bb68037fcf4cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  directBinaural: 1
-  interpolation: 0
-  perspectiveCorrection: 0
-  distanceAttenuation: 0
-  distanceAttenuationInput: 0
-  distanceAttenuationValue: 1
-  airAbsorption: 0
-  airAbsorptionInput: 0
-  airAbsorptionLow: 1
-  airAbsorptionMid: 1
-  airAbsorptionHigh: 1
-  directivity: 0
-  directivityInput: 0
-  dipoleWeight: 0
-  dipolePower: 0
-  directivityValue: 1
-  occlusion: 0
-  occlusionInput: 0
-  occlusionType: 0
-  occlusionRadius: 1
-  occlusionSamples: 16
-  occlusionValue: 1
-  transmission: 1
-  transmissionType: 0
-  transmissionInput: 0
-  transmissionLow: 1
-  transmissionMid: 1
-  transmissionHigh: 1
-  maxTransmissionSurfaces: 1
-  directMixLevel: 1
-  reflections: 1
-  reflectionsType: 0
-  useDistanceCurveForReflections: 0
-  currentBakedSource: {fileID: 0}
-  reverbTimeLow: 0
-  reverbTimeMid: 0
-  reverbTimeHigh: 0
-  hybridReverbEQLow: 1
-  hybridReverbEQMid: 1
-  hybridReverbEQHigh: 1
-  hybridReverbDelay: 0
-  applyHRTFToReflections: 0
-  reflectionsMixLevel: 1
-  pathing: 0
-  pathingProbeBatch: {fileID: 0}
-  pathValidation: 1
-  findAlternatePaths: 1
-  pathingEQ:
-  - 1
-  - 1
-  - 1
-  pathingSH:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  applyHRTFToPathing: 0
-  pathingMixLevel: 1
 --- !u!1 &5266180203335306528
 GameObject:
   m_ObjectHideFlags: 0
@@ -657,6 +450,8 @@ Transform:
   m_Children:
   - {fileID: 2801158214561969061}
   - {fileID: 5931992280062007426}
+  - {fileID: 9068685570113681156}
+  - {fileID: 6177152744399057012}
   m_Father: {fileID: 5833563503223366179}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8387890091188589049
@@ -672,13 +467,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  footEmitter: {fileID: 8107839339645889933}
-  jumpEmitter: {fileID: 6121944187837101025}
-  actionEmitter: {fileID: 8040040293287790271}
-  ambienceEmitter: {fileID: 57441781208074010}
+  Feet: {fileID: 9068685570113681156}
+  Body: {fileID: 6177152744399057012}
+  AboveHead: {fileID: 5931992280062007426}
   jumping: 0
   headTarget: {fileID: 6828501663584228055}
   _animator: {fileID: 7042457881817219622}
+  emote1: {fileID: 5385847565357107591, guid: ada3d3e68e3207149aaf55a0c229f8ff, type: 3}
+  emote2: {fileID: 2041774448721500918, guid: c642aaf6dacfc534aa5abc32b32bf9f3, type: 3}
+  emote3: {fileID: 6641973385418359880, guid: 80ebd36e2b51c5040b32ecbc0b128f52, type: 3}
+  emote4: {fileID: 4417802151521185909, guid: 245cf5ec4f2c0e04ea0f068d5a113be4, type: 3}
+  emote5: {fileID: 3401285633412108938, guid: 1362a379f5a8bc34facb7cff5aa1d42d, type: 3}
+  emote6: {fileID: 6610112514517688346, guid: 7fa311fa55ef75a4b8789cc4e305144a, type: 3}
+  emote7: {fileID: 6610112514517688346, guid: 5e54509c9062d6d4b8a181f2dd72562a, type: 3}
+  emote8: {fileID: 1814128765637211389, guid: 7c90807e3c3616a4cafda50c334fdb7c, type: 3}
+  emote9: {fileID: 3623665777006632867, guid: eb41d98f960d76d40b2adb733fd8f757, type: 3}
+  trailEffect: {fileID: 0}
 --- !u!1 &5733628914040531620
 GameObject:
   m_ObjectHideFlags: 0
@@ -1085,10 +889,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5931992280062007426}
-  - component: {fileID: 57441781208074010}
-  - component: {fileID: 8567003571533693482}
   m_Layer: 7
-  m_Name: Ambience
+  m_Name: AboveHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1103,125 +905,12 @@ Transform:
   m_GameObject: {fileID: 7492948351238882102}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2.306, z: 0.127}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8030635414807502628}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &57441781208074010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7492948351238882102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 153012629
-      Data2: 1220787760
-      Data3: -686225483
-      Data4: 387362886
-    Path: event:/Ambience/MainNoise
-  Event: 
-  EventPlayTrigger: 1
-  EventStopTrigger: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
---- !u!114 &8567003571533693482
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7492948351238882102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59c3684b22f00604a97bb68037fcf4cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  directBinaural: 1
-  interpolation: 0
-  perspectiveCorrection: 0
-  distanceAttenuation: 0
-  distanceAttenuationInput: 0
-  distanceAttenuationValue: 1
-  airAbsorption: 0
-  airAbsorptionInput: 0
-  airAbsorptionLow: 1
-  airAbsorptionMid: 1
-  airAbsorptionHigh: 1
-  directivity: 0
-  directivityInput: 0
-  dipoleWeight: 0
-  dipolePower: 0
-  directivityValue: 1
-  occlusion: 0
-  occlusionInput: 0
-  occlusionType: 0
-  occlusionRadius: 1
-  occlusionSamples: 16
-  occlusionValue: 1
-  transmission: 0
-  transmissionType: 0
-  transmissionInput: 0
-  transmissionLow: 1
-  transmissionMid: 1
-  transmissionHigh: 1
-  maxTransmissionSurfaces: 1
-  directMixLevel: 1
-  reflections: 0
-  reflectionsType: 0
-  useDistanceCurveForReflections: 0
-  currentBakedSource: {fileID: 0}
-  reverbTimeLow: 0
-  reverbTimeMid: 0
-  reverbTimeHigh: 0
-  hybridReverbEQLow: 1
-  hybridReverbEQMid: 1
-  hybridReverbEQHigh: 1
-  hybridReverbDelay: 0
-  applyHRTFToReflections: 0
-  reflectionsMixLevel: 1
-  pathing: 0
-  pathingProbeBatch: {fileID: 0}
-  pathValidation: 1
-  findAlternatePaths: 1
-  pathingEQ:
-  - 1
-  - 1
-  - 1
-  pathingSH:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  applyHRTFToPathing: 0
-  pathingMixLevel: 1
 --- !u!1 &7611704867418538516
 GameObject:
   m_ObjectHideFlags: 0
@@ -1316,155 +1005,18 @@ MonoBehaviour:
   jump: 0
   sprint: 0
   interact: 0
+  Emote1: 0
+  Emote2: 0
+  Emote3: 0
+  Emote4: 0
+  Emote5: 0
+  Emote6: 0
+  Emote7: 0
+  Emote8: 0
+  Emote9: 0
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1
---- !u!1 &7623652925829088719
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5188423739624801282}
-  - component: {fileID: 6121944187837101025}
-  - component: {fileID: 7339797112264900728}
-  m_Layer: 7
-  m_Name: Jump
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5188423739624801282
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7623652925829088719}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7806168859175675107}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6121944187837101025
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7623652925829088719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 2044925228
-      Data2: 1154411521
-      Data3: 1592100741
-      Data4: 365010862
-    Path: event:/Player/Actions/JumpLand
-  Event: 
-  EventPlayTrigger: 1
-  EventStopTrigger: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
---- !u!114 &7339797112264900728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7623652925829088719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59c3684b22f00604a97bb68037fcf4cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  directBinaural: 1
-  interpolation: 0
-  perspectiveCorrection: 0
-  distanceAttenuation: 0
-  distanceAttenuationInput: 0
-  distanceAttenuationValue: 1
-  airAbsorption: 0
-  airAbsorptionInput: 0
-  airAbsorptionLow: 1
-  airAbsorptionMid: 1
-  airAbsorptionHigh: 1
-  directivity: 0
-  directivityInput: 0
-  dipoleWeight: 0
-  dipolePower: 0
-  directivityValue: 1
-  occlusion: 0
-  occlusionInput: 0
-  occlusionType: 0
-  occlusionRadius: 1
-  occlusionSamples: 16
-  occlusionValue: 1
-  transmission: 1
-  transmissionType: 0
-  transmissionInput: 0
-  transmissionLow: 1
-  transmissionMid: 1
-  transmissionHigh: 1
-  maxTransmissionSurfaces: 1
-  directMixLevel: 1
-  reflections: 1
-  reflectionsType: 0
-  useDistanceCurveForReflections: 0
-  currentBakedSource: {fileID: 0}
-  reverbTimeLow: 0
-  reverbTimeMid: 0
-  reverbTimeHigh: 0
-  hybridReverbEQLow: 1
-  hybridReverbEQMid: 1
-  hybridReverbEQHigh: 1
-  hybridReverbDelay: 0
-  applyHRTFToReflections: 0
-  reflectionsMixLevel: 1
-  pathing: 0
-  pathingProbeBatch: {fileID: 0}
-  pathValidation: 1
-  findAlternatePaths: 1
-  pathingEQ:
-  - 1
-  - 1
-  - 1
-  pathingSH:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  applyHRTFToPathing: 0
-  pathingMixLevel: 1
 --- !u!1 &9169908664185417622
 GameObject:
   m_ObjectHideFlags: 0

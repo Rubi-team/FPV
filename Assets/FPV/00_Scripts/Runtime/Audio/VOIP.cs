@@ -31,7 +31,7 @@ namespace FPV.Runtime
         }
 
 
-        private async Task Init()
+        private void Init()
         {
             tap = GetComponentInChildren<VivoxParticipantTap>(true);
             audioSource = GetComponentInChildren<StudioEventEmitter>(true);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
@@ -12,7 +13,6 @@ namespace FPV.Runtime
 
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
-        [SerializeField] private float impactDirectionMultiplier = 5f; // Nouveau paramètre configuré dans l'inspecteur
 
         private bool pickedUp = false;
         private Rigidbody rb;
@@ -120,6 +120,22 @@ namespace FPV.Runtime
                 NetworkObject.ChangeOwnership(newOwnerObject.OwnerClientId);
                 if (!isThrown) GetComponent<NetworkObject>().TrySetParent(newOwnerObject);
                 else transform.parent = null; // Si lancé, on ne garde pas de parent
+
+                GraphToFollow = newOwnerObject.GetComponent<PlayerApplication>().Model.Graph;
+            }
+        }
+
+        private Transform GraphToFollow;
+
+        private void Update()
+        {
+            // Si on est picked Up, update sa position par rapport au GraphToFollow
+            if (pickedUp && GraphToFollow != null && rb.isKinematic)
+            {
+                // Update position to be above and in front of the player
+                transform.position = GraphToFollow.position +
+                                     GraphToFollow.forward * 1f + Vector3.up * 1f;
+                transform.rotation = Quaternion.LookRotation(GraphToFollow.forward, Vector3.up);
             }
         }
 
@@ -129,7 +145,25 @@ namespace FPV.Runtime
             rb.isKinematic = true; // Permet au rigidbody de rester immobile
             pickedUp = true;
             var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
-            transform.position = pickerTransform.position + Vector3.up * 0.5f; // Adjust position above the picker
+            // Make me above and in front of the player
+            transform.position = pickerTransform.GetComponent<PlayerApplication>().Model.Graph.position +
+                                 pickerTransform.GetComponent<PlayerApplication>().Model.Graph.forward * 1f +
+                                 Vector3.up * 1f;
+
+            // Remove the second material of my mesh renderer
+            RemoveSecondMaterialRpc();
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void RemoveSecondMaterialRpc()
+        {
+            var meshRenderer = GetComponentInChildren<MeshRenderer>();
+            if (meshRenderer != null && meshRenderer.materials.Length > 1)
+            {
+                var materials = new Material[1];
+                materials[0] = meshRenderer.materials[0];
+                meshRenderer.materials = materials;
+            }
         }
 
         public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()
@@ -164,6 +198,21 @@ namespace FPV.Runtime
                 ChangeOwnershipServerRpc(0, true);
                 rb.AddForce(direction.normalized * force + Vector3.up * 0.5f,
                     ForceMode.Impulse); // Ajoute une impulsion
+
+                // Trail
+                AddTrailEffectRpc();
+            }
+        }
+
+        [SerializeField] private GameObject TrailEffect;
+
+        [Rpc(SendTo.Everyone)]
+        private void AddTrailEffectRpc()
+        {
+            if (TrailEffect != null)
+            {
+                var trail = Instantiate(TrailEffect, transform);
+                trail.transform.SetParent(transform);
             }
         }
     }

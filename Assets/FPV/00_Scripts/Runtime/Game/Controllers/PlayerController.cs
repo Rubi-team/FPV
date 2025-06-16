@@ -102,7 +102,26 @@ namespace FPV.Runtime
 
             JumpAndGravity();
             Move();
+
+            HandleEmotes();
         }
+
+        private void HandleEmotes()
+        {
+            if (_input.Emote1) View.PlayEmoteRpc(1);
+            if (_input.Emote2) View.PlayEmoteRpc(2);
+            if (_input.Emote3) View.PlayEmoteRpc(3);
+            if (_input.Emote4) View.PlayEmoteRpc(4);
+            if (_input.Emote5) View.PlayEmoteRpc(5);
+            if (_input.Emote6) View.PlayEmoteRpc(6);
+            if (_input.Emote7) View.PlayEmoteRpc(7);
+            if (_input.Emote8) View.PlayEmoteRpc(8);
+            if (_input.Emote9) View.PlayEmoteRpc(9);
+
+            // Reset le state d'emotes à false
+            _input.ResetEmoteInputs();
+        }
+
 
         private void LateUpdate()
         {
@@ -271,6 +290,9 @@ namespace FPV.Runtime
 
             // Libérer immédiatement le joueur
             Model.SetIsPickedUpRpc(false);
+
+            // Add a TRail 
+            View.AddTrailEffectRpc();
         }
 
         private void Move()
