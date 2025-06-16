@@ -46,19 +46,24 @@ namespace FPV.Runtime
             switch (index)
             {
                 case 0:
-                    AudioManager.Instance.PlayOneShot(AudioManager.concreteFootStep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runConcreteFootStep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.walkConcreteFootStep, Feet.position);
                     break;
                 case 1:
-                    AudioManager.Instance.PlayOneShot(AudioManager.carpetFootStep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runCarpetFootStep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.walkCarpetFootStep, Feet.position);
                     break;
                 case 2:
-                    AudioManager.Instance.PlayOneShot(AudioManager.woodFootStep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runWoodFootStep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.walkWoodFootStep, Feet.position);
                     break;
                 case 3:
-                    AudioManager.Instance.PlayOneShot(AudioManager.metalFootstep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runMetalFootstep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.walkMetalFootstep, Feet.position);
                     break;
                 default:
-                    AudioManager.Instance.PlayOneShot(AudioManager.footStep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runConcreteFootStep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.walkConcreteFootStep, Feet.position);
                     break;
             }
         }

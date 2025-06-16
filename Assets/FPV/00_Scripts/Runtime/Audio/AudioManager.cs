@@ -19,10 +19,16 @@ namespace Audio
         [field: SerializeField]
         public static EventReference footStep { get; private set; }
 
-        [field: SerializeField] public static EventReference concreteFootStep { get; private set; }
-        [field: SerializeField] public static EventReference carpetFootStep { get; private set; }
-        [field: SerializeField] public static EventReference woodFootStep { get; private set; }
-        [field: SerializeField] public static EventReference metalFootstep { get; private set; }
+        [field: SerializeField] public static EventReference walkConcreteFootStep { get; private set; }
+        [field: SerializeField] public static EventReference walkCarpetFootStep { get; private set; }
+        [field: SerializeField] public static EventReference walkWoodFootStep { get; private set; }
+        [field: SerializeField] public static EventReference walkMetalFootstep { get; private set; }
+        
+        [field: SerializeField] public static EventReference runConcreteFootStep { get; private set; }
+        [field: SerializeField] public static EventReference runCarpetFootStep { get; private set; }
+        [field: SerializeField] public static EventReference runWoodFootStep { get; private set; }
+        [field: SerializeField] public static EventReference runMetalFootstep { get; private set; }
+        
         [field: SerializeField] public static EventReference jump { get; private set; }
         [field: SerializeField] public static EventReference land { get; private set; }
 
