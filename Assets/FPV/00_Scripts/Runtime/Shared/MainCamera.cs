@@ -13,7 +13,7 @@ namespace FPV
             {
                 if (_instance == null)
                 {
-                    _instance = FindObjectOfType<MainCamera>();
+                    _instance = FindFirstObjectByType<MainCamera>();
                     if (_instance == null)
                     {
                         var obj = new GameObject("MainCamera");
