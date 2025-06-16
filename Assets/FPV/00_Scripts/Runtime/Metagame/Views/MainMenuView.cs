@@ -2,12 +2,17 @@ using FMOD;
 using UnityEngine;
 using UnityEngine.UIElements;
 using FPV.Shared;
+using TMPro;
+using Debug = UnityEngine.Debug;
 
 namespace FPV
 {
     internal class MainMenuView : View<MetagameApplication>
     {
-        private Label titleLabel;
+        [SerializeField] private TextMeshProUGUI codeTextField;
+        [SerializeField] private GameObject canvas;
+        
+        /*private Label titleLabel;
         private TextField codeTextField;
         private Button createRelayButton;
         private Button singlePlayerButton;
@@ -74,6 +79,37 @@ namespace FPV
         private void OnClickQuit(ClickEvent evt)
         {
             Broadcast(new ApplicationQuitEvent());
+        }*/
+        
+        public void OnClickCreateRelay()
+        {
+            Broadcast(new CreateRelayEvent());
+        }
+        
+        public void OnCodeInputFieldSubmitted()
+        {
+            var input = codeTextField.text;
+            if (string.IsNullOrEmpty(input) || input.Length != 6)
+                return;
+
+            // console.Log("Broadcasting JoinRelayEvent with code: " + input);
+            Broadcast(new JoinRelayEvent(input));
+            EnableButtonsAndInputField(false);
+            
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                
+            }
+        }
+        
+        public void OnClickQuit()
+        {
+            Broadcast(new ApplicationQuitEvent());
+        }
+
+        public void OnClickCredit()
+        {
+            Debug.Log("Credits");
         }
 
         /// <summary>
@@ -82,10 +118,12 @@ namespace FPV
         /// <param name="enable"> true or false</param>
         internal void EnableButtonsAndInputField(bool enable)
         {
-            codeTextField.SetEnabled(enable);
+            canvas.SetActive(enable);
+            
+            /*codeTextField.SetEnabled(enable);
             createRelayButton.SetEnabled(enable);
             singlePlayerButton.SetEnabled(enable);
-            quitButton.SetEnabled(enable);
+            quitButton.SetEnabled(enable);*/
         }
     }
 }

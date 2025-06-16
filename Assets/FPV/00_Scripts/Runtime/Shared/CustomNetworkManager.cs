@@ -101,6 +101,7 @@ namespace FPV.Runtime.Shared
                 else
                 {
                     Debug.LogError("Failed to join relay. StartClient() aborted.");
+                    SceneManager.LoadScene("Metagame");
                 }
             }
         }
