@@ -1,3 +1,4 @@
+using System.Linq;
 using FMOD;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -86,16 +87,42 @@ namespace FPV
             Broadcast(new CreateRelayEvent());
         }
         
+        /// <summary>
+        /// PK JE DOIS FAIRE ÇA ÇA ME RENDS FOU FUCK TEXT MESH PRO
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private static string CleanJoinCode(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return "";
+
+            // Supprime les espaces, sauts de ligne, caractères invisibles
+            string cleaned = new string(input
+                .Where(c =>
+                    "6789BCDFGHJKLMNPQRTWbcdfghjklmnpqrtw".Contains(c))
+                .ToArray());
+
+            return cleaned.ToUpper(); // Optionnel, Relay est insensible à la casse
+        }
+
+        
         public void OnCodeInputFieldSubmitted()
         {
-            var input = codeTextField.text;
-            if (string.IsNullOrEmpty(input) || input.Length != 6)
-                return;
+            string input = CleanJoinCode(codeTextField.text); // Envie de se foutre en l'air
 
-            // console.Log("Broadcasting JoinRelayEvent with code: " + input);
+            if (input.Length != 6) // Jtai cap le input field comme ça tu peux pas mettre + de 6 char
+            {
+                Debug.LogWarning("Le code doit contenir entre 6 et 12 caractères valides.");
+                return;
+            }
+
             Broadcast(new JoinRelayEvent(input));
-            EnableButtonsAndInputField(false);
+
+            EnableButtonsAndInputField(false); // ça jten referais une stv
             
+            
+            // jsp ce que tu veux faire la mais jte le laisse
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 

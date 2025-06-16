@@ -38,8 +38,8 @@ namespace FPV
         {
             CustomNetworkManager.Singleton.SinglePlayerMode();
             View.EnableButtonsAndInputField(false);
-            await SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
-            await SceneManager.LoadSceneAsync("LevelArt", LoadSceneMode.Additive);
+            await SceneManager.LoadSceneAsync("Game_Main", LoadSceneMode.Additive);
+            await SceneManager.LoadSceneAsync("Game_LevelArt", LoadSceneMode.Additive);
             NetworkManager.Singleton.StartHost();
             View.Hide();
         }
