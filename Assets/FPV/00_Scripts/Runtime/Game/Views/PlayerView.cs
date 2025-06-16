@@ -46,24 +46,24 @@ namespace FPV.Runtime
             switch (index)
             {
                 case 0:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runConcreteFootStep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.walkConcreteFootStep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position);
                     break;
                 case 1:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runWoodFootStep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.walkWoodFootStep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkWoodFootStep, Feet.position);
                     break;
                 case 2:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runCarpetFootStep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.walkCarpetFootStep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkCarpetFootStep, Feet.position);
                     break;
                 case 3:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runMetalFootstep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.walkMetalFootstep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkMetalFootstep, Feet.position);
                     break;
                 default:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runConcreteFootStep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.walkConcreteFootStep, Feet.position);
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position);
                     break;
             }
         }
@@ -106,27 +106,27 @@ namespace FPV.Runtime
 
         public void PlayJumpLandSound(bool isJump)
         {
-            AudioManager.Instance.PlayOneShot(isJump ? AudioManager.jump : AudioManager.land, Feet.position);
+            AudioManager.Instance.PlayOneShot(isJump ? AudioManager.Instance.jump : AudioManager.Instance.land, Feet.position);
         }
 
         public void PlaySoundOnFurbyPickedUp()
         {
-            AudioManager.Instance.PlayOneShot(AudioManager.grabItem, Feet.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.grabItem, Feet.position);
         }
 
         public void PlaySoundOnPlayerPickedUp()
         {
-            AudioManager.Instance.PlayOneShot(AudioManager.grabPlayer, Body.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.grabPlayer, Body.position);
         }
 
         public void PlaySoundOnFurbyThrown()
         {
-            AudioManager.Instance.PlayOneShot(AudioManager.throwItem, Body.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.throwItem, Body.position);
         }
 
         public void PlaySoundOnPlayerThrown()
         {
-            AudioManager.Instance.PlayOneShot(AudioManager.throwPlayer, Body.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.throwPlayer, Body.position);
         }
 
         [Rpc(SendTo.Everyone)]

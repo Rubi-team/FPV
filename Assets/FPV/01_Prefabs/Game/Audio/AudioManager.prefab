@@ -1,0 +1,249 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6074222449621214394
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5879140892926278465}
+  - component: {fileID: 3521418949482651829}
+  - component: {fileID: 8319705952651376807}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5879140892926278465
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6074222449621214394}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3521418949482651829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6074222449621214394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1678499703
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &8319705952651376807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6074222449621214394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d2dce77a2084504b452641d0a2b08a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  _emitterInstancePrefab: {fileID: 2919685959058292271, guid: 3823b5c30c315c74ea0f810f70d19004, type: 3}
+  <footStep>k__BackingField:
+    Guid:
+      Data1: 266110533
+      Data2: 1245261325
+      Data3: 1694935953
+      Data4: -1393469737
+    Path: event:/Player/Walks/WalkConcrete
+  <walkConcreteFootStep>k__BackingField:
+    Guid:
+      Data1: 266110533
+      Data2: 1245261325
+      Data3: 1694935953
+      Data4: -1393469737
+    Path: event:/Player/Walks/WalkConcrete
+  <walkCarpetFootStep>k__BackingField:
+    Guid:
+      Data1: 1954258828
+      Data2: 1223393455
+      Data3: -16764770
+      Data4: 638534531
+    Path: event:/Player/Walks/WalkCarpet
+  <walkWoodFootStep>k__BackingField:
+    Guid:
+      Data1: -1725771442
+      Data2: 1240435726
+      Data3: -2133403770
+      Data4: -2118130334
+    Path: event:/Player/Walks/WalkWood
+  <walkMetalFootstep>k__BackingField:
+    Guid:
+      Data1: 1438908442
+      Data2: 1097080247
+      Data3: 1717441921
+      Data4: 146112705
+    Path: event:/Player/Walks/WalkMetal
+  <runConcreteFootStep>k__BackingField:
+    Guid:
+      Data1: -2065485543
+      Data2: 1185335102
+      Data3: 807077018
+      Data4: -1097180888
+    Path: event:/Player/Runs/RunConcrete
+  <runCarpetFootStep>k__BackingField:
+    Guid:
+      Data1: 495317567
+      Data2: 1097670075
+      Data3: -840255093
+      Data4: -2037159820
+    Path: event:/Player/Runs/RunCarpet
+  <runWoodFootStep>k__BackingField:
+    Guid:
+      Data1: -869768293
+      Data2: 1195462494
+      Data3: -1013356640
+      Data4: 587439367
+    Path: event:/Player/Runs/RunWood
+  <runMetalFootstep>k__BackingField:
+    Guid:
+      Data1: 566800624
+      Data2: 1214067579
+      Data3: 718656389
+      Data4: -1956791901
+    Path: event:/Player/Runs/RunMetal
+  <jump>k__BackingField:
+    Guid:
+      Data1: 1250668351
+      Data2: 1187311669
+      Data3: -1699709020
+      Data4: 935516183
+    Path: event:/Player/Actions/Jump
+  <land>k__BackingField:
+    Guid:
+      Data1: 1460533991
+      Data2: 1225605056
+      Data3: -1399880826
+      Data4: 224314962
+    Path: event:/Player/Actions/Land
+  <grabPlayer>k__BackingField:
+    Guid:
+      Data1: 1171966961
+      Data2: 1292258076
+      Data3: 911854481
+      Data4: -376823184
+    Path: event:/Player/Actions/DropPlayer
+  <grabItem>k__BackingField:
+    Guid:
+      Data1: 2019051723
+      Data2: 1176994935
+      Data3: -214721128
+      Data4: 835262614
+    Path: event:/Player/Actions/GrabObject
+  <throwPlayer>k__BackingField:
+    Guid:
+      Data1: -404758371
+      Data2: 1232934501
+      Data3: 1537951630
+      Data4: -911895856
+    Path: event:/Player/Actions/ThrowPlayer
+  <throwItem>k__BackingField:
+    Guid:
+      Data1: -1722534931
+      Data2: 1272144296
+      Data3: 1477101217
+      Data4: -357696959
+    Path: event:/Player/Actions/ThrowObject
+  <threatFootstep>k__BackingField:
+    Guid:
+      Data1: -2065485543
+      Data2: 1185335102
+      Data3: 807077018
+      Data4: -1097180888
+    Path: event:/Player/Runs/RunConcrete
+  <threatCharging>k__BackingField:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  <threatHit>k__BackingField:
+    Guid:
+      Data1: -1676640453
+      Data2: 1169706581
+      Data3: 1097689249
+      Data4: -787529124
+    Path: event:/Player/PlayerHit
+  <furbyHit>k__BackingField:
+    Guid:
+      Data1: 1502180587
+      Data2: 1149720495
+      Data3: 1711295418
+      Data4: -795947751
+    Path: event:/Objects/FurbyExplosion
+  <furbyGrab>k__BackingField:
+    Guid:
+      Data1: 792292860
+      Data2: 1278477212
+      Data3: -1039004754
+      Data4: -1380317514
+    Path: event:/Objects/FurbyGrab
+  <furbyFly>k__BackingField:
+    Guid:
+      Data1: -654500452
+      Data2: 1169912610
+      Data3: 604523659
+      Data4: -376565733
+    Path: event:/Objects/FurbyFly
+  <laserLoop>k__BackingField:
+    Guid:
+      Data1: 846847933
+      Data2: 1118820196
+      Data3: -583901025
+      Data4: 1920856577
+    Path: event:/Objects/LaserLoop
+  <doorOpen>k__BackingField:
+    Guid:
+      Data1: 1082381467
+      Data2: 1143150326
+      Data3: -1665912955
+      Data4: 1405275683
+    Path: event:/Objects/DoorOpen
+  <doorClose>k__BackingField:
+    Guid:
+      Data1: 1082381467
+      Data2: 1143150326
+      Data3: -1665912955
+      Data4: 1405275683
+    Path: event:/Objects/DoorOpen
+  <target>k__BackingField:
+    Guid:
+      Data1: -1781140662
+      Data2: 1246280651
+      Data3: 997346470
+      Data4: 2024669037
+    Path: event:/Objects/TargetHit

@@ -5,70 +5,65 @@ using FMOD.Studio;
 using FMODUnity;
 using Unity.Netcode;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Audio
 {
     public class AudioManager : NetworkBehaviour
     {
-        private static readonly Dictionary<int, EventInstance> _eventInstances = new();
-        private static int _nextID;
-
-        [SerializeField] private GameObject _emitterInstancePrefab;
-
-        [field: Header("Player Movement")]
-        [field: SerializeField]
-        public static EventReference footStep { get; private set; }
-
-        [field: SerializeField] public static EventReference walkConcreteFootStep { get; private set; }
-        [field: SerializeField] public static EventReference walkCarpetFootStep { get; private set; }
-        [field: SerializeField] public static EventReference walkWoodFootStep { get; private set; }
-        [field: SerializeField] public static EventReference walkMetalFootstep { get; private set; }
-        
-        [field: SerializeField] public static EventReference runConcreteFootStep { get; private set; }
-        [field: SerializeField] public static EventReference runCarpetFootStep { get; private set; }
-        [field: SerializeField] public static EventReference runWoodFootStep { get; private set; }
-        [field: SerializeField] public static EventReference runMetalFootstep { get; private set; }
-        
-        [field: SerializeField] public static EventReference jump { get; private set; }
-        [field: SerializeField] public static EventReference land { get; private set; }
-
-
-        [field: Header("Player Action")]
-        [field: SerializeField]
-        public static EventReference grabPlayer { get; private set; }
-
-        [field: SerializeField] public static EventReference grabItem { get; private set; }
-        [field: SerializeField] public static EventReference throwPlayer { get; private set; }
-        [field: SerializeField] public static EventReference throwItem { get; private set; }
-        [field: SerializeField] public static EventReference putDownPlayer { get; private set; }
-        [field: SerializeField] public static EventReference putDownItem { get; private set; }
-
-        [field: SerializeField] public static EventReference takeDamage { get; private set; }
-
-
-        [field: Header("Threat")]
-        [field: SerializeField]
-        public EventReference threatFootstep { get; private set; }
-
-        [field: SerializeField] public static EventReference threatCharging { get; private set; }
-        [field: SerializeField] public static EventReference threatHit { get; private set; }
-
-
-        [field: Header("Objects")]
-        [field: SerializeField]
-        public EventReference ferbyHit { get; private set; }
-
-        [field: SerializeField] public static EventReference laserLoop { get; private set; }
-        [field: SerializeField] public static EventReference doorOpen { get; private set; }
-        [field: SerializeField] public static EventReference doorClose { get; private set; }
-        [field: SerializeField] public static EventReference target { get; private set; }
-
         public static AudioManager Instance { get; private set; }
 
         private void Awake()
         {
             Instance = this;
         }
+        
+        private static readonly Dictionary<int, EventInstance> _eventInstances = new();
+        private static int _nextID;
+
+        [SerializeField] private GameObject _emitterInstancePrefab;
+
+        [field: Header("Player Movement")]
+        [field: SerializeField] public EventReference footStep { get; private set; }
+
+        [field: SerializeField] public EventReference walkConcreteFootStep { get; private set; }
+        [field: SerializeField] public EventReference walkCarpetFootStep { get; private set; }
+        [field: SerializeField] public EventReference walkWoodFootStep { get; private set; }
+        [field: SerializeField] public EventReference walkMetalFootstep { get; private set; }
+        
+        [field: SerializeField] public EventReference runConcreteFootStep { get; private set; }
+        [field: SerializeField] public EventReference runCarpetFootStep { get; private set; }
+        [field: SerializeField] public EventReference runWoodFootStep { get; private set; }
+        [field: SerializeField] public EventReference runMetalFootstep { get; private set; }
+        
+        [field: SerializeField] public EventReference jump { get; private set; }
+        [field: SerializeField] public EventReference land { get; private set; }
+
+
+        [field: Header("Player Action")]
+        [field: SerializeField] public EventReference grabPlayer { get; private set; }
+        [field: SerializeField] public EventReference grabItem { get; private set; }
+        [field: SerializeField] public EventReference throwPlayer { get; private set; }
+        [field: SerializeField] public EventReference throwItem { get; private set; }
+
+        public EventReference takeDamage { get; private set; }
+
+
+        [field: Header("Threat")]
+        [field: SerializeField] public EventReference threatFootstep { get; private set; }
+        [field: SerializeField] public  EventReference threatCharging { get; private set; }
+        [field: SerializeField] public  EventReference threatHit { get; private set; }
+
+
+        [field: Header("Objects")]
+        [field: SerializeField] public EventReference furbyHit { get; private set; }
+        [field: SerializeField] public EventReference furbyGrab { get; private set; }
+        [field: SerializeField] public EventReference furbyFly { get; private set; }
+
+        [field: SerializeField] public EventReference laserLoop { get; private set; }
+        [field: SerializeField] public EventReference doorOpen { get; private set; }
+        [field: SerializeField] public EventReference doorClose { get; private set; }
+        [field: SerializeField] public EventReference target { get; private set; }
 
         /// <summary>
         ///     Plays a one-shot sound at the specified world position.
