@@ -50,7 +50,7 @@ namespace FPV.Runtime
                 mateVOIPObject.SetActive(true);
 
                 // Demande le nom au serveur
-                GetPlayerAuthIDRpc();
+                //GetPlayerAuthIDRpc();
             }
         }
 
@@ -65,7 +65,7 @@ namespace FPV.Runtime
         {
             this.participantName = participantName;
 
-            TrySetupTap();
+            //TrySetupTap();
         }
 
 
@@ -84,7 +84,7 @@ namespace FPV.Runtime
         {
             // If not connected to a vivox channel, return TODO
 
-            if (!tap.IsRunning) TrySetupTap();
+            //if (!tap.IsRunning) TrySetupTap();
 
 
             if (!isOwner)

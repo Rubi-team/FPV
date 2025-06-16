@@ -8,18 +8,16 @@ namespace FPV.Runtime
 {
     public class Furby : NetworkBehaviour, IInteractable
     {
-        [Header("Push Settings")]
-        [SerializeField] private float explosionRadius = 5f;
+        [Header("Push Settings")] [SerializeField]
+        private float explosionRadius = 5f;
+
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
 
-        [SerializeField] private GameObject TrailEffect;
-        [SerializeField] private GameObject ExplosionEffect;
-
-        private bool pickedUp = false;
+        // Synchroniser l'état picked up sur le réseau
+        private NetworkVariable<bool> pickedUp = new NetworkVariable<bool>(false);
         private Rigidbody rb;
         private bool hasExploded = false;
-        private Transform GraphToFollow;
 
         private void Awake()
         {
@@ -35,93 +33,155 @@ namespace FPV.Runtime
 
         public void Init()
         {
-            if (IsServer)
-            {
-                if (!NetworkObject.IsSpawned)
-                    NetworkObject.Spawn();
-            }
-            else if (IsClient && !IsServer)
+            if (!IsHost)
             {
                 Destroy(gameObject);
+                return;
             }
+
+            if (!NetworkObject.IsSpawned) NetworkObject.Spawn();
         }
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (!IsServer || hasExploded || rb == null || rb.isKinematic || !pickedUp) return;
+            // Permettre la détection même si ce n'est pas le serveur mais que l'objet est owned
+            if (hasExploded || rb == null || rb.isKinematic || pickedUp.Value) return;
+            
+            // Si on n'est pas le serveur, envoyer la collision au serveur
+            if (!IsServer)
+            {
+                var contact = collision.contacts[0];
+                var impactDirection = (contact.point - transform.position).normalized;
+                impactDirection.y += 1.0f;
+                impactDirection = impactDirection.normalized;
+                var adjustedImpactPosition = contact.point + contact.normal * -0.5f;
+                
+                HandleCollisionServerRpc(adjustedImpactPosition, impactDirection);
+                return;
+            }
 
-            var contact = collision.contacts[0];
-            var impactDirection = (contact.point - transform.position).normalized;
-            impactDirection.y += 1.0f;
-            impactDirection = impactDirection.normalized;
-            var adjustedImpactPosition = contact.point + contact.normal * -0.5f;
+            // Code original pour le serveur
+            var contactServer = collision.contacts[0];
+            var impactDirectionServer = (contactServer.point - transform.position).normalized;
+            impactDirectionServer.y += 1.0f;
+            impactDirectionServer = impactDirectionServer.normalized;
+            var adjustedImpactPositionServer = contactServer.point + contactServer.normal * -0.5f;
 
-            Explode(adjustedImpactPosition, impactDirection);
+            ExplodeServerRpc(adjustedImpactPositionServer, impactDirectionServer);
         }
 
-        private void Explode(Vector3 explosionPosition, Vector3 direction)
+        [ServerRpc(RequireOwnership = false)]
+        private void HandleCollisionServerRpc(Vector3 explosionPosition, Vector3 direction)
+        {
+            if (hasExploded) return;
+            ExplodeServerRpc(explosionPosition, direction);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void ExplodeServerRpc(Vector3 explosionPosition, Vector3 direction)
         {
             if (hasExploded) return;
             hasExploded = true;
 
+            // SphereCast pour détecter les objets à proximité
             var hits = Physics.OverlapSphere(explosionPosition, explosionRadius, affectedLayers);
+
             foreach (var hit in hits)
             {
+                // Vérifie si c'est un joueur
                 var player = hit.GetComponent<PlayerApplication>();
                 if (player != null)
                 {
-                    float force = Mathf.Lerp(explosionForce, 0,
+                    // Appliquer la direction calculée avec une composante verticale
+                    var force = Mathf.Lerp(explosionForce, 0,
                         Vector3.Distance(explosionPosition, hit.transform.position) / explosionRadius);
                     player.Controller.OnPlayerThrowMeRpc(direction, force, true);
                 }
 
+                // Vérifie si c'est une cible
                 var target = hit.GetComponent<Target>();
                 if (target != null) target.DeactivateTarget();
 
+                // Vérifie si c'est un Sonographe
                 var sonographe = hit.GetComponentInParent<Sonographe>();
                 if (sonographe != null) sonographe.ActivateSonographe();
             }
 
-            AddExplosionEffectClientRpc();
+            // Ajouter un effet d'explosion visuel
+            AddExplosionEffectRpc();
+
+            // Détruire ou désactiver le Furby après impact
             NetworkObject.Despawn(true);
         }
 
         public void Interact(IInteractable.InteractAction interactAction, Transform interactorTransform)
         {
+            Debug.Log($"Furby interacted with action: {interactAction}");
             if (interactAction != IInteractable.InteractAction.Primary) return;
-            var player = interactorTransform.GetComponentInParent<PlayerApplication>();
-            if (player == null) return;
+            Debug.Log("Furby picked up");
 
-            HandlePickup(player.NetworkObjectId);
+            var interactorPlayer = interactorTransform.GetComponentInParent<PlayerApplication>();
+            if (interactorPlayer == null) return;
+
+            // Transfer ownership to the picking player
+            ChangeOwnershipServerRpc(interactorPlayer.NetworkObjectId);
+            GetPickedUpRpc(interactorPlayer.NetworkObjectId);
         }
 
-        private void HandlePickup(ulong playerId)
+        [Rpc(SendTo.Server)]
+        private void ChangeOwnershipServerRpc(ulong newOwnerId = 0, bool isThrown = false)
         {
-            if (!IsServer) return;
-            pickedUp = true;
-
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerId, out var playerObject))
+            if (newOwnerId == 0)
             {
-                GraphToFollow = playerObject.GetComponent<PlayerApplication>().Model.Graph;
-                rb.isKinematic = true;
-
-                UpdatePickupPositionClientRpc(playerId);
-                RemoveSecondMaterialClientRpc();
+                // Si lancé, transférer l'ownership au serveur pour la physique
+                NetworkObject.ChangeOwnership(NetworkManager.ServerClientId);
+                transform.parent = null;
+                GraphToFollow = null;
+                
+                // Mettre à jour l'état picked up
+                pickedUp.Value = false;
+            }
+            else if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(newOwnerId, out var newOwnerObject))
+            {
+                NetworkObject.ChangeOwnership(newOwnerObject.OwnerClientId);
+                if (!isThrown) 
+                {
+                    GetComponent<NetworkObject>().TrySetParent(newOwnerObject);
+                    GraphToFollow = newOwnerObject.GetComponent<PlayerApplication>().Model.Graph;
+                }
             }
         }
 
-        [ClientRpc]
-        private void UpdatePickupPositionClientRpc(ulong pickerId)
+        private Transform GraphToFollow;
+
+        private void Update()
         {
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(pickerId, out var obj))
+            // Si on est picked Up, update sa position par rapport au GraphToFollow
+            if (pickedUp.Value && GraphToFollow != null && rb.isKinematic)
             {
-                var pickerTransform = obj.transform.GetComponent<PlayerApplication>().Model.Graph;
-                transform.position = pickerTransform.position + pickerTransform.forward * 1f + Vector3.up * 1f;
+                // Update position to be above and in front of the player
+                transform.position = GraphToFollow.position +
+                                     GraphToFollow.forward * 1f + Vector3.up * 1f;
+                transform.rotation = Quaternion.LookRotation(GraphToFollow.forward, Vector3.up);
             }
         }
 
-        [ClientRpc]
-        private void RemoveSecondMaterialClientRpc()
+        [Rpc(SendTo.Everyone)]
+        private void GetPickedUpRpc(ulong pickerObjectId)
+        {
+            rb.isKinematic = true;
+            pickedUp.Value = true; // Utiliser NetworkVariable
+            
+            var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
+            transform.position = pickerTransform.GetComponent<PlayerApplication>().Model.Graph.position +
+                                 pickerTransform.GetComponent<PlayerApplication>().Model.Graph.forward * 1f +
+                                 Vector3.up * 1f;
+
+            RemoveSecondMaterialRpc();
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void RemoveSecondMaterialRpc()
         {
             var meshRenderer = GetComponentInChildren<MeshRenderer>();
             if (meshRenderer != null && meshRenderer.materials.Length > 1)
@@ -129,66 +189,6 @@ namespace FPV.Runtime
                 var materials = new Material[1];
                 materials[0] = meshRenderer.materials[0];
                 meshRenderer.materials = materials;
-            }
-        }
-
-        public void Throw(Vector3 direction, float force)
-        {
-            if (IsOwner && !IsServer)
-                RequestThrowServerRpc(direction, force);
-            else if (IsServer)
-                ApplyThrow(direction, force);
-        }
-
-        [ServerRpc]
-        private void RequestThrowServerRpc(Vector3 direction, float force)
-        {
-            ApplyThrow(direction, force);
-        }
-
-        private void ApplyThrow(Vector3 direction, float force)
-        {
-            pickedUp = false;
-            GraphToFollow = null;
-
-            if (rb != null)
-            {
-                rb.isKinematic = false;
-                transform.parent = null;
-                rb.AddForce(direction.normalized * force + Vector3.up * 0.5f, ForceMode.Impulse);
-                AddTrailEffectClientRpc();
-            }
-        }
-
-        [ClientRpc]
-        private void AddTrailEffectClientRpc()
-        {
-            if (TrailEffect != null)
-            {
-                var trail = Instantiate(TrailEffect, transform);
-                trail.transform.SetParent(transform);
-            }
-        }
-
-        [ClientRpc]
-        private void AddExplosionEffectClientRpc()
-        {
-            if (ExplosionEffect != null)
-            {
-                var explosion = Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
-                explosion.transform.SetParent(null);
-                Destroy(explosion, 3f);
-            }
-        }
-
-        private void Update()
-        {
-            if (!IsServer || !pickedUp || rb == null) return;
-
-            if (GraphToFollow != null && rb.isKinematic)
-            {
-                transform.position = GraphToFollow.position + GraphToFollow.forward * 1f + Vector3.up * 1f;
-                transform.rotation = Quaternion.LookRotation(GraphToFollow.forward, Vector3.up);
             }
         }
 
@@ -214,6 +214,52 @@ namespace FPV.Runtime
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, explosionRadius);
+        }
+
+        public void Throw(Vector3 direction, float force)
+        {
+            if (rb != null)
+            {
+                // D'abord changer l'ownership et l'état
+                ChangeOwnershipServerRpc(0, true);
+                
+                // Puis appliquer la physique
+                ThrowPhysicsServerRpc(direction, force);
+                
+                // Trail effect
+                AddTrailEffectRpc();
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void ThrowPhysicsServerRpc(Vector3 direction, float force)
+        {
+            rb.isKinematic = false;
+            rb.AddForce(direction.normalized * force + Vector3.up * 0.5f, ForceMode.Impulse);
+        }
+
+        [SerializeField] private GameObject TrailEffect;
+        [SerializeField] private GameObject ExplosionEffect;
+
+        [Rpc(SendTo.Everyone)]
+        private void AddTrailEffectRpc()
+        {
+            if (TrailEffect != null)
+            {
+                var trail = Instantiate(TrailEffect, transform);
+                trail.transform.SetParent(transform);
+            }
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void AddExplosionEffectRpc()
+        {
+            if (ExplosionEffect != null)
+            {
+                var explosion = Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
+                explosion.transform.SetParent(null);
+                Destroy(explosion, 3f);
+            }
         }
     }
 }
