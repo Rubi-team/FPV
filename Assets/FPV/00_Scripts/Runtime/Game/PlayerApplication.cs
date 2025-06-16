@@ -63,6 +63,11 @@ namespace FPV.Runtime
 
             // Join Vivox channel
             VivoxManager.Instance.VivoxInit();
+
+            if (NetworkManager.LocalClientId == 1)
+            {
+                Model.Mesh.material = Model.Player2Material;
+            }
         }
 
         // Change spawn 
