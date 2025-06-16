@@ -74,7 +74,7 @@ namespace FPV.Runtime
         {
             if (!IsOwner) return;
 
-            if (Controller._input.jump && !jumping) PlayJumpLandSound(true);
+            if (Controller._input.jump && !jumping && Time.time - LastJumpTime > 0.2f) PlayJumpLandSound(true);
 
             if (!Model.Grounded) jumping = true;
 
@@ -107,6 +107,8 @@ namespace FPV.Runtime
         public void PlayJumpLandSound(bool isJump)
         {
             AudioManager.Instance.PlayOneShot(isJump ? AudioManager.Instance.jump : AudioManager.Instance.land, Feet.position);
+            jumping = false;
+            LastJumpTime = Time.time;
         }
 
         public void PlaySoundOnFurbyPickedUp()
