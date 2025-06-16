@@ -50,12 +50,12 @@ namespace FPV.Runtime
                     else AudioManager.Instance.PlayOneShot(AudioManager.walkConcreteFootStep, Feet.position);
                     break;
                 case 1:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runCarpetFootStep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.walkCarpetFootStep, Feet.position);
-                    break;
-                case 2:
                     if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runWoodFootStep, Feet.position);
                     else AudioManager.Instance.PlayOneShot(AudioManager.walkWoodFootStep, Feet.position);
+                    break;
+                case 2:
+                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runCarpetFootStep, Feet.position);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.walkCarpetFootStep, Feet.position);
                     break;
                 case 3:
                     if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.runMetalFootstep, Feet.position);
