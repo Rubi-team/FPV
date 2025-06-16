@@ -94,6 +94,9 @@ namespace FPV.Runtime
                 if (sonographe != null) sonographe.ActivateSonographe();
             }
 
+            // Ajouter un effet d'explosion visuel
+            AddExplosionEffectRpc();
+
             // Détruire ou désactiver le Furby après impact
             NetworkObject.Despawn(true);
         }
@@ -139,7 +142,7 @@ namespace FPV.Runtime
             }
         }
 
-        [Rpc(SendTo.Owner)]
+        [Rpc(SendTo.Everyone)]
         private void GetPickedUpRpc(ulong pickerObjectId)
         {
             rb.isKinematic = true; // Permet au rigidbody de rester immobile
@@ -205,6 +208,7 @@ namespace FPV.Runtime
         }
 
         [SerializeField] private GameObject TrailEffect;
+        [SerializeField] private GameObject ExplosionEffect;
 
         [Rpc(SendTo.Everyone)]
         private void AddTrailEffectRpc()
@@ -213,6 +217,19 @@ namespace FPV.Runtime
             {
                 var trail = Instantiate(TrailEffect, transform);
                 trail.transform.SetParent(transform);
+            }
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void AddExplosionEffectRpc()
+        {
+            if (ExplosionEffect != null)
+            {
+                var explosion = Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
+                explosion.transform.SetParent(null); // Ne pas le parent à l'objet Furby
+
+                // Optionally, destroy the explosion effect after a few seconds
+                Destroy(explosion, 3f);
             }
         }
     }

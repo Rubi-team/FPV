@@ -141,7 +141,8 @@ namespace FPV.Runtime
             // Gestion de l'interaction avec un joueur porté
             if (Model.b_IsCarryingPlayer.Value)
             {
-                Model.CarriedPlayer.Controller.OnPlayerThrowMeRpc(App.transform.forward, Model.ThrowForce);
+                Model.CarriedPlayer.Controller.OnPlayerThrowMeRpc(Model.CinemachineCameraTarget.transform.forward,
+                    Model.ThrowForce);
                 Model.SetIsCarryingPlayerRpc(false);
                 Model.CarriedPlayer = null; // Réinitialiser la référence au joueur porté
 
@@ -496,7 +497,7 @@ namespace FPV.Runtime
             targetPosition.y += 1f;
             App.transform.position = targetPosition;
 
-            if (Model.RotateWithPicker) App.transform.rotation = Model.PickerTransform.rotation;
+            if (Model.RotateWithPicker) Model.Graph.transform.rotation = Model.PickerTransform.rotation;
         }
 
 
