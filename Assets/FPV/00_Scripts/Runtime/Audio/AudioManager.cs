@@ -76,8 +76,11 @@ namespace Audio
                     parameter2Name, parameter2Value);
             else
                 PlayOneShotRpc(sound.ToString(), worldPos);
-            
-            Menace.Instance.DetectThreatServerRpc(playerID, audioDistance);
+
+            if (Menace.Instance)
+            {
+                Menace.Instance.DetectThreatServerRpc(playerID, audioDistance);
+            }
         }
 
         [Rpc(SendTo.Everyone)]

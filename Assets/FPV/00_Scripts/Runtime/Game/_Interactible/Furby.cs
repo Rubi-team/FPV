@@ -46,11 +46,11 @@ namespace FPV.Runtime
         
         private float ThrownTime = 0f;
 
-        private void OnCollisionEnter(Collision collision)
+        private void OnCollisionStay(Collision collision)
         {
             if (!IsServer || hasExploded || rb == null || rb.isKinematic || !pickedUp) return;
             
-            if (ThrownTime > 0f && Time.time - ThrownTime < 0.2f)
+            if (ThrownTime > 0f && Time.time - ThrownTime < 0.1f)
             {
                 // Ignore collisions for a short time after being thrown
                 return;
