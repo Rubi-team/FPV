@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Audio;
+using FMODUnity;
 using UnityEngine;
 
 namespace FPV.Runtime
@@ -44,6 +45,8 @@ namespace FPV.Runtime
 
         private RaycastHit[] raycastHits = new RaycastHit[1];
         private List<LineRenderer> lineRenderers = new();
+
+        [SerializeField] private StudioEventEmitter emitter;
         
         // ✅ Dictionnaire pour tracker les coroutines actives par joueur
         private Dictionary<GameObject, Coroutine> activeSlowDowns = new();
@@ -215,8 +218,10 @@ namespace FPV.Runtime
             if (!requiresTwoDeactivations)
             {
                 isActive = false;
+                emitter.Stop();
                 return;
             }
+            
 
             if (Time.time - lastDeactivationAttemptTime > 1f)
                 deactivationAttempts = 0;
@@ -226,12 +231,16 @@ namespace FPV.Runtime
 
             if (deactivationAttempts >= 2)
                 isActive = false;
+            
+            emitter.Stop();
         }
 
         public void ReactivateLaser()
         {
             isActive = true;
             deactivationAttempts = 0;
+            
+            emitter.Play();
         }
 
         // ✅ Nettoyer les références quand l'objet est détruit

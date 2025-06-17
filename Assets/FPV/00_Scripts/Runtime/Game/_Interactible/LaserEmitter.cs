@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Audio;
+using FMODUnity;
 using UnityEngine;
 
 namespace FPV.Runtime
@@ -28,6 +30,8 @@ namespace FPV.Runtime
 
         private float lastCheckTime;
         private RaycastHit[] hits = new RaycastHit[1];
+
+        [SerializeField] private StudioEventEmitter emitter;
 
         // ✅ Dictionnaire pour tracker les coroutines actives par joueur
         private Dictionary<GameObject, Coroutine> activeSlowDowns = new();
@@ -114,6 +118,10 @@ namespace FPV.Runtime
 
             // Marquer le joueur comme étant sous l'effet du slow
             player.isSlowDownActive = true;
+            
+            //Sons
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.laserHit, playerObject.transform.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position);
 
             // Sauvegarder les vitesses originales
             var originalSpeed = player.MoveSpeed;
@@ -147,9 +155,10 @@ namespace FPV.Runtime
             if (!requiresTwoDeactivations)
             {
                 IsActive = false;
+                emitter.Stop();
                 return;
             }
-
+            
             if (Time.time - lastDeactivationAttemptTime > 1f)
                 deactivationAttempts = 0;
 
@@ -158,12 +167,16 @@ namespace FPV.Runtime
 
             if (deactivationAttempts >= 2)
                 IsActive = false;
+            
+            emitter.Stop();
         }
 
         public void ReactivateLaser()
         {
             IsActive = true;
             deactivationAttempts = 0;
+            
+            emitter.Play();
         }
 
         // ✅ Nettoyer les références quand l'objet est détruit

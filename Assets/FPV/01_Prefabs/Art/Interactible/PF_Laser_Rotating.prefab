@@ -30,8 +30,72 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4370947858607576610}
+  - {fileID: 5246366056238656221}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8048829036179112259
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5246366056238656221}
+  - component: {fileID: 1877090397887696930}
+  m_Layer: 0
+  m_Name: AudioEmitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5246366056238656221
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8048829036179112259}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7794811048307866782}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1877090397887696930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8048829036179112259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 846847933
+      Data2: 1118820196
+      Data3: -583901025
+      Data4: 1920856577
+    Path: event:/Objects/LaserLoop
+  Event: 
+  EventPlayTrigger: 1
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 1
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 8
 --- !u!1001 &2331054704807432030
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -124,8 +188,10 @@ MonoBehaviour:
     m_Bits: 128
   checkInterval: 0.1
   debugDraw: 0
+  requiresTwoDeactivations: 0
   slowDownFactor: 2
   slowDownDuration: 3
+  emitter: {fileID: 1877090397887696930}
 --- !u!4 &7193579936813103377 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4867594264077661775, guid: 3f13bedc6bfb5bc4a8ce826bf545edd8, type: 3}
@@ -228,8 +294,10 @@ MonoBehaviour:
     m_Bits: 128
   checkInterval: 0.1
   debugDraw: 0
+  requiresTwoDeactivations: 0
   slowDownFactor: 2
   slowDownDuration: 3
+  emitter: {fileID: 0}
 --- !u!1001 &6207888974434568638
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -460,8 +528,10 @@ MonoBehaviour:
     m_Bits: 128
   checkInterval: 0.1
   debugDraw: 0
+  requiresTwoDeactivations: 0
   slowDownFactor: 2
   slowDownDuration: 3
+  emitter: {fileID: 0}
 --- !u!1001 &9195013081440337422
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -554,8 +624,10 @@ MonoBehaviour:
     m_Bits: 128
   checkInterval: 0.1
   debugDraw: 0
+  requiresTwoDeactivations: 0
   slowDownFactor: 2
   slowDownDuration: 3
+  emitter: {fileID: 0}
 --- !u!120 &6517738419461697356 stripped
 LineRenderer:
   m_CorrespondingSourceObject: {fileID: 2731599343981957442, guid: 3f13bedc6bfb5bc4a8ce826bf545edd8, type: 3}

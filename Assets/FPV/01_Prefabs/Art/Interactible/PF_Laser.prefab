@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3307926574658299809}
   - component: {fileID: 4368880736274997285}
+  - component: {fileID: 8499099244878217771}
   m_Layer: 0
   m_Name: PF_Laser
   m_TagString: Untagged
@@ -32,7 +33,6 @@ Transform:
   m_Children:
   - {fileID: 2295417537557979212}
   - {fileID: 1785836150128105719}
-  - {fileID: 2348805501781079754}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4368880736274997285
@@ -67,46 +67,15 @@ MonoBehaviour:
   debugDrawRay: 1
   slowDownFactor: 2
   slowDownDuration: 3
+  emitter: {fileID: 8499099244878217771}
   isActive: 1
---- !u!1 &3993086464610858951
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2348805501781079754}
-  - component: {fileID: 5641652532595667592}
-  m_Layer: 0
-  m_Name: AudioEmitter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2348805501781079754
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3993086464610858951}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 3.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3307926574658299809}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5641652532595667592
+--- !u!114 &8499099244878217771
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3993086464610858951}
+  m_GameObject: {fileID: 3940779571487996851}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
