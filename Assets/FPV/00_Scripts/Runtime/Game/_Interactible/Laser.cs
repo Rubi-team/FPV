@@ -159,9 +159,6 @@ namespace FPV.Runtime
         {
             if (player == null || playerObject == null)
             {
-                AudioManager.Instance.PlayOneShot(AudioManager.Instance.laserHit, playerObject.transform.position);
-                AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position);
-                
                 // ✅ Nettoyer le dictionnaire si l'objet n'existe plus
                 if (playerObject != null)
                     activeSlowDowns.Remove(playerObject);
@@ -177,6 +174,10 @@ namespace FPV.Runtime
 
             // ✅ Marquer le joueur comme étant sous l'effet du slow AVANT de modifier les vitesses
             player.isSlowDownActive = true;
+            
+            //Sons
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.laserHit, playerObject.transform.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position);
 
             // Sauvegarder les vitesses originales
             var originalSpeed = player.MoveSpeed;

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3307926574658299809}
   - component: {fileID: 4368880736274997285}
-  - component: {fileID: 8083907941770630704}
   m_Layer: 0
   m_Name: PF_Laser
   m_TagString: Untagged
@@ -33,6 +32,7 @@ Transform:
   m_Children:
   - {fileID: 2295417537557979212}
   - {fileID: 1785836150128105719}
+  - {fileID: 2348805501781079754}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4368880736274997285
@@ -68,13 +68,45 @@ MonoBehaviour:
   slowDownFactor: 2
   slowDownDuration: 3
   isActive: 1
---- !u!114 &8083907941770630704
+--- !u!1 &3993086464610858951
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2348805501781079754}
+  - component: {fileID: 5641652532595667592}
+  m_Layer: 0
+  m_Name: AudioEmitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2348805501781079754
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3993086464610858951}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 3.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3307926574658299809}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5641652532595667592
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3940779571487996851}
+  m_GameObject: {fileID: 3993086464610858951}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
@@ -89,7 +121,7 @@ MonoBehaviour:
       Data4: 1920856577
     Path: event:/Objects/LaserLoop
   Event: 
-  EventPlayTrigger: 0
+  EventPlayTrigger: 1
   EventStopTrigger: 0
   AllowFadeout: 1
   TriggerOnce: 0
@@ -97,8 +129,8 @@ MonoBehaviour:
   NonRigidbodyVelocity: 0
   Params: []
   OverrideAttenuation: 1
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 8
+  OverrideMinDistance: 4
+  OverrideMaxDistance: 7
 --- !u!1001 &8254429079187136328
 PrefabInstance:
   m_ObjectHideFlags: 0
