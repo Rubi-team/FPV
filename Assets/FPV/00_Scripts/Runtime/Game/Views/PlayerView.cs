@@ -311,6 +311,7 @@ namespace FPV.Runtime
         
         private IEnumerator AlarmPostProcessPulse(float duration, float pulseDuration)
         {
+            if (Menace.Instance == null) yield break;
             var volume = Menace.Instance.AlarmeVolume;
             if (volume == null) yield break;
 
