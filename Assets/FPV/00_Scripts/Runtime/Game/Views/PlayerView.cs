@@ -39,6 +39,12 @@ namespace FPV.Runtime
 
         public void AudioFootsteps()
         {
+            if (currentGroundType == null)
+            {
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                return;
+            }
+            
             var index = (int)currentGroundType.groundType;
             if (currentGroundType == null) index = 0; // Default to 0 if no ground type is set
 
