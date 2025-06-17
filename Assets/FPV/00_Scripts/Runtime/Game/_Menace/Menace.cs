@@ -57,8 +57,13 @@ public class Menace : NetworkBehaviour
         _lastTarget = null;
 
         Instance = this;
+    }
 
-        if (!IsServer)
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (!NetworkManager.Singleton.IsHost)
         {
             _navMeshAgent.enabled = false; // Disable NavMeshAgent on non-server instances
             MenaceListener.enabled = false; // Disable MenaceListener on non-server instances
