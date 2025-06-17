@@ -39,43 +39,48 @@ namespace FPV.Runtime
 
         public void AudioFootsteps()
         {
+            if (!App.IsOwner) return;
+
             if (currentGroundType == null)
             {
                 AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
                 return;
             }
-            
+
             var index = (int)currentGroundType.groundType;
             if (currentGroundType == null) index = 0; // Default to 0 if no ground type is set
 
             // if controller input move is zero we return 
             if (Controller._input.move == Vector2.zero)
-            {
                 // If the player is not moving, we don't play any footsteps sound
                 return;
-            }
 
             // switch case of index 
             switch (index)
             {
                 case 0:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                    if (Controller._input.sprint)
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position);
                     break;
                 case 1:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position);
+                    if (Controller._input.sprint)
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkWoodFootStep, Feet.position);
                     break;
                 case 2:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position);
+                    if (Controller._input.sprint)
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkCarpetFootStep, Feet.position);
                     break;
                 case 3:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position);
+                    if (Controller._input.sprint)
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkMetalFootstep, Feet.position);
                     break;
                 default:
-                    if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                    if (Controller._input.sprint)
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position);
                     break;
             }
@@ -119,14 +124,12 @@ namespace FPV.Runtime
 
         public void PlayJumpLandSound(bool isJump)
         {
-            AudioManager.Instance.PlayOneShot(isJump ? AudioManager.Instance.jump : AudioManager.Instance.land, Feet.position);
+            AudioManager.Instance.PlayOneShot(isJump ? AudioManager.Instance.jump : AudioManager.Instance.land,
+                Feet.position);
             jumping = false;
             LastJumpTime = Time.time;
-            
-            if (isJump)
-            {
-                SetAnimatorTriggerRpc("IsJumping");
-            }
+
+            if (isJump) SetAnimatorTriggerRpc("IsJumping");
         }
 
         public void PlaySoundOnFurbyPickedUp()
