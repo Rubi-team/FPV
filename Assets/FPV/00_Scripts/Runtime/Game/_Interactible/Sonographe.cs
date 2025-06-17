@@ -109,15 +109,18 @@ namespace FPV
 
                     if (door.GetComponent<Door>()._attempts > 0 && door.GetComponent<Door>()._requiresTwoAttempts)
                     {
+                        Debug.Log(door.GetComponent<Door>()._attempts);
                         SonoSoundRpc();
                     }
                     else if (!door.GetComponent<Door>()._requiresTwoAttempts)
                     {
+                        Debug.Log("not 2 attemps");
                         SonoSoundRpc();
                     }
                     else
                     {
-                        WaitForDoorOpen(door.GetComponent<Door>());
+                        Debug.Log("coroutine");
+                        StartCoroutine(WaitForDoorOpen(door.GetComponent<Door>()));
                     }
                 }
                 

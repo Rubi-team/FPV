@@ -51,7 +51,7 @@ namespace FPV.Runtime
 
             if (_requiresTwoAttempts)
             {
-                if (Time.time - _lastAttemptTime > 3f)
+                if (Time.time - _lastAttemptTime > 2f)
                     // Réinitialiser les tentatives si plus de 3 seconde s'est écoulée depuis la dernière tentative
                     _attempts = 0;
 
