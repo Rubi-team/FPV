@@ -90,7 +90,7 @@ namespace FPV.Runtime
 
         private void Update()
         {
-            if (!IsOwner) return;
+            if (!App.IsOwner) return;
 
             if (Controller._input.jump && !jumping && Time.time - LastJumpTime > 0.2f) PlayJumpLandSound(true);
 
@@ -102,7 +102,7 @@ namespace FPV.Runtime
 
         private void FixedUpdate()
         {
-            if (!IsOwner) return;
+            if (!App.IsOwner) return;
 
             // Créer un layerMask qui ignore le layer Player
             var playerLayer = LayerMask.NameToLayer("Player");
@@ -119,54 +119,76 @@ namespace FPV.Runtime
             // Faire le raycast avec les bonnes variables
             if (Physics.Raycast(ray, out hit, distance, layerMask)) headTarget.position = hit.point;
 
-            SetAnimatorVariablesRpc();
+            SetAnimatorVariables();
         }
 
         public void PlayJumpLandSound(bool isJump)
         {
+            if (!App.IsOwner) return;
             AudioManager.Instance.PlayOneShot(isJump ? AudioManager.Instance.jump : AudioManager.Instance.land, Feet.position, NetworkManager.Singleton.LocalClientId, 10);
             jumping = false;
             LastJumpTime = Time.time;
 
-            if (isJump) SetAnimatorTriggerRpc("IsJumping");
+            if (isJump) SetAnimatorTrigger("IsJumping");
         }
 
         public void PlaySoundOnFurbyPickedUp()
         {
+            if (!App.IsOwner) return;
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.grabItem, Feet.position, NetworkManager.Singleton.LocalClientId, 8);
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.furbyGrab, Feet.position, NetworkManager.Singleton.LocalClientId, 10);
         }
 
         public void PlaySoundOnPlayerPickedUp()
         {
+            if (!App.IsOwner) return;
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.grabPlayer, Body.position, NetworkManager.Singleton.LocalClientId, 8);
         }
 
         public void PlaySoundOnFurbyThrown()
         {
+            if (!App.IsOwner) return;
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.throwItem, Body.position, NetworkManager.Singleton.LocalClientId, 8);
         }
 
         public void PlaySoundOnPlayerThrown()
         {
+            if (!App.IsOwner) return;
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.throwPlayer, Body.position, NetworkManager.Singleton.LocalClientId, 10);
         }
-
-        [Rpc(SendTo.Everyone)]
-        public void SetAnimatorVariablesRpc()
+        
+        public void SetAnimatorVariables()
         {
+            if (!App.IsOwner) return;
+            
             if (_animator != null)
             {
                 _animator.SetFloat("Speed", Controller._controller.velocity.magnitude);
                 _animator.SetBool("IsSprinting", Controller._input.sprint);
                 _animator.SetBool("IsGrounded", Model.Grounded);
+                SetAnimatorBoolRpc("IsGrounded", Model.Grounded);
+                SetAnimatorBoolRpc("IsSprinting", Controller._input.sprint);
             }
         }
-
-        [Rpc(SendTo.Everyone)]
-        public void SetAnimatorTriggerRpc(string triggerName)
+        
+        public void SetAnimatorTrigger(string triggerName)
         {
+            if (!App.IsOwner) return;
+            
             if (_animator != null) _animator.SetTrigger(triggerName);
+        }
+        
+        [Rpc(SendTo.NotMe)]
+        public void SetAnimatorBoolRpc(string boolName, bool value)
+        {
+            if (_animator != null) _animator.SetBool(boolName, value);
+        }
+        
+        [Rpc(SendTo.NotMe)]
+        private void SetAnimatorTriggerRpc(string triggerName)
+        {
+            if (_animator != null) 
+                _animator.SetTrigger(triggerName);
         }
 
         // Play Emote, instantiate gameobject above App.transform and destroy it after 3 seconds

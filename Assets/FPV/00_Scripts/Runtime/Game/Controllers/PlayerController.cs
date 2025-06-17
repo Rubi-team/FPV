@@ -150,7 +150,7 @@ namespace FPV.Runtime
                 View.PlaySoundOnPlayerThrown();
 
                 // ANIMATOR TRIGGER
-                View.SetAnimatorTriggerRpc("ThrowPlayer");
+                View.SetAnimatorTrigger("ThrowPlayer");
                 return;
             }
 
@@ -171,7 +171,7 @@ namespace FPV.Runtime
                 View.PlaySoundOnFurbyThrown();
 
                 // CALL ANIMATOR TRIGGER
-                View.SetAnimatorTriggerRpc("ThrowFurby");
+                View.SetAnimatorTrigger("ThrowFurby");
                 return;
             }
 
@@ -204,7 +204,7 @@ namespace FPV.Runtime
                 View.PlaySoundOnPlayerPickedUp();
 
                 // CALL ANIMATOR TRIGGER
-                View.SetAnimatorTriggerRpc("GrabPlayer");
+                View.SetAnimatorTrigger("GrabPlayer");
             }
             else
             {
@@ -216,7 +216,7 @@ namespace FPV.Runtime
                 View.PlaySoundOnFurbyPickedUp();
 
                 // CALL ANIMATOR TRIGGER
-                View.SetAnimatorTriggerRpc("GrabFurby");
+                View.SetAnimatorTrigger("GrabFurby");
             }
         }
 

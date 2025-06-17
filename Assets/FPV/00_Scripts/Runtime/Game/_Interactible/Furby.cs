@@ -148,6 +148,7 @@ namespace FPV.Runtime
             pickedUp = true;
             var pickerTransform = NetworkManager.Singleton.SpawnManager.SpawnedObjects[pickerObjectId].transform;
             transform.position = pickerTransform.position + Vector3.up * 0.5f; // Adjust position above the picker
+            transform.position = pickerTransform.GetComponent<PlayerApplication>().View.Body.position;
         }
 
         public Dictionary<IInteractable.InteractAction, string> GetInteractTextDictionary()

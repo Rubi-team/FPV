@@ -385,7 +385,8 @@ public class Menace : NetworkBehaviour
         }
         else
         {
-            Debug.Log($"Player is too far: {distanceToPlayer} units.");
+            // Player too far
+            return;
         }
     }
 
