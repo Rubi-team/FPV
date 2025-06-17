@@ -17,26 +17,26 @@
 	<object class="MixerBusEffectChain" id="{84d43573-9af1-4a1b-a06c-24e7532679a9}">
 		<relationship name="effects">
 			<destination>{2a2077c5-4dc5-44cc-8cc6-ef59817f7fdd}</destination>
-			<destination>{a97d3d22-1eb9-4b53-bc0f-82f69c3eef73}</destination>
+			<destination>{4e91ab54-403a-4ffb-852d-f15faa5d494a}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{0cb80c42-8203-4739-94bd-eacd0ed24962}" />
 	<object class="MixerBusFader" id="{2a2077c5-4dc5-44cc-8cc6-ef59817f7fdd}" />
-	<object class="PluginEffect" id="{a97d3d22-1eb9-4b53-bc0f-82f69c3eef73}">
+	<object class="PluginEffect" id="{4e91ab54-403a-4ffb-852d-f15faa5d494a}">
 		<relationship name="plugin">
-			<destination>{f0100172-8bbf-4aa4-94ac-8b4d4351fe26}</destination>
+			<destination>{c552c300-a186-4a16-bb60-7eb4ebd58505}</destination>
 		</relationship>
 	</object>
-	<object class="Plugin" id="{f0100172-8bbf-4aa4-94ac-8b4d4351fe26}">
+	<object class="Plugin" id="{c552c300-a186-4a16-bb60-7eb4ebd58505}">
 		<property name="identifier">
 			<value>Steam Audio Reverb</value>
 		</property>
 		<relationship name="pluginParameters">
-			<destination>{14ce90d5-edc8-4994-92d2-e0950cd3e1cb}</destination>
-			<destination>{4348d5cf-4f94-4957-b04d-6d5c3f6f4014}</destination>
+			<destination>{b1a9bf6e-a912-47ad-b90a-327de4c7dedc}</destination>
+			<destination>{996fcfeb-e8ae-4aa1-8bd2-056ec9c396d6}</destination>
 		</relationship>
 	</object>
-	<object class="BoolPluginParameter" id="{14ce90d5-edc8-4994-92d2-e0950cd3e1cb}">
+	<object class="BoolPluginParameter" id="{b1a9bf6e-a912-47ad-b90a-327de4c7dedc}">
 		<property name="name">
 			<value>Binaural</value>
 		</property>
@@ -44,12 +44,12 @@
 			<value>true</value>
 		</property>
 	</object>
-	<object class="IntPluginParameter" id="{4348d5cf-4f94-4957-b04d-6d5c3f6f4014}">
+	<object class="IntPluginParameter" id="{996fcfeb-e8ae-4aa1-8bd2-056ec9c396d6}">
 		<property name="name">
 			<value>OutputFormat</value>
 		</property>
 		<property name="value">
-			<value>1</value>
+			<value>0</value>
 		</property>
 		<property name="minimumValue">
 			<value>0</value>
