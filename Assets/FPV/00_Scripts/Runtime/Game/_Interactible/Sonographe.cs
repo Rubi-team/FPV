@@ -33,12 +33,6 @@ namespace FPV
             CustomNetworkManager.Singleton.OnServerPrepareGame += Init;
         }
 
-        public override void OnNetworkSpawn()
-        {
-            base.OnNetworkSpawn();
-            if (!IsServer) enabled = false;
-        }
-
         public void Init()
         {
             netObject = GetComponent<NetworkObject>();
@@ -71,21 +65,23 @@ namespace FPV
             for (var i = 0; i < numColliders; i++)
             {
                 var voip = hitColliders[i].GetComponent<PlayerApplication>();
-                if (voip != null && voip.CurrentLoudness > 0.05f)
+                if (voip != null && voip.CurrentLoudness > 0.1f)
                 {
-                    ActivateSonographe();
+                    ActivateSonographeServerRpc();
                     break; // On sort de la boucle dès qu'on trouve un joueur qui fait du bruit
                 }
             }
         }
 
-        public void ActivateSonographe()
+        [Rpc(SendTo.Server)]
+        public void ActivateSonographeServerRpc()
         {
             // Vérifie si le cooldown est terminé avant d'activer
             if (Time.time - lastActivationTime < activationCooldown) return;
 
             lastActivationTime = Time.time; // Met à jour le temps de la dernière activation
             ActivateClientRpc();
+            ActivateServerRpc(); // Appelle le serveur pour activer les portes
         }
 
         /// <summary>
@@ -94,8 +90,16 @@ namespace FPV
         [ClientRpc]
         private void ActivateClientRpc()
         {
-            Debug.LogWarning("Sonographe activated!");
             StartCoroutine(ExecuteActivationSequence());
+        }
+        
+        [Rpc(SendTo.Server)]
+        private void ActivateServerRpc()
+        {
+            if (doorsToActivate != null)
+                foreach (var door in doorsToActivate)
+                    if (door != null)
+                        door.GetComponent<Door>().TriggerDoorServerRpc();
         }
 
         /// <summary>
@@ -113,11 +117,6 @@ namespace FPV
                 foreach (var laserEmitter in laserEmittersToDeactivate)
                     if (laserEmitter != null)
                         laserEmitter.DeactivateLaser();
-
-            if (doorsToActivate != null)
-                foreach (var door in doorsToActivate)
-                    if (door != null)
-                        door.GetComponent<Door>().TriggerDoor();
 
             // Attends un temps donné avant de réactiver les lasers
             yield return new WaitForSeconds(activationDuration);

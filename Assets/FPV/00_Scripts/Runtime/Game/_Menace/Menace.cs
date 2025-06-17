@@ -1,5 +1,6 @@
 using System;
 using FPV;
+using FPV.Runtime;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
@@ -314,8 +315,26 @@ public class Menace : NetworkBehaviour
         _animator.SetBool("IsDashing", false);
     }
 
-    private void OnNavMeshAgentCollision(Collision other)
+    private void OnCollisionEnter(Collision other)
     {
+        // Direction of bump is a normalized vector from the Menace to the other object
+        if (!IsServer || !_isCharging || !_hasExecutedCharge) return;
+        if (other.gameObject.TryGetComponent<PlayerApplication>(out var player))
+        {
+            // Calculate the direction and force to apply
+            var direction = (other.transform.position - transform.position).normalized;
+            var force =chargeSpeed / 2; // Adjust force multiplier as needed
+
+            // Apply the force to the player
+            player.Controller.OnPlayerThrowMeRpc(direction, force, true);
+
+            // End the charge after hitting a player
+            EndCharge();
+        }
+        
+        
+        
+        
         
     }
 

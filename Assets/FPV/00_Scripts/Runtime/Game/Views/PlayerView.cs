@@ -42,9 +42,18 @@ namespace FPV.Runtime
             var index = (int)currentGroundType.groundType;
             if (currentGroundType == null) index = 0; // Default to 0 if no ground type is set
 
+            // if controller input move is zero we return 
+            if (Controller._input.move == Vector2.zero)
+            {
+                // If the player is not moving, we don't play any footsteps sound
+                return;
+            }
+            
             // switch case of index 
             switch (index)
             {
+                
+                
                 case 0:
                     if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position);

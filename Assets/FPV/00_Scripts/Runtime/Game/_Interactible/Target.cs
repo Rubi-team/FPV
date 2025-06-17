@@ -66,7 +66,7 @@ namespace FPV.Runtime
         {
             isTargetActive.Value = false;
             DeactivateLasersClientRpc();
-            ActivateObjectsClientRpc();
+            ActivateObjectsServerRpc();
             onTargetDeactivated?.Invoke();
         }
 
@@ -105,13 +105,13 @@ namespace FPV.Runtime
                         laserEmitter.ReactivateLaser();
         }
 
-        [ClientRpc]
-        private void ActivateObjectsClientRpc()
+        [Rpc(SendTo.Server)]
+        private void ActivateObjectsServerRpc()
         {
             if (objectsToActivate != null)
                 foreach (var obj in objectsToActivate)
                     if (obj != null && NetworkManager.Singleton.IsHost)
-                        GetComponent<Door>().TriggerDoor();
+                        GetComponent<Door>().TriggerDoorServerRpc();
         }
 
         private void OnDrawGizmosSelected()

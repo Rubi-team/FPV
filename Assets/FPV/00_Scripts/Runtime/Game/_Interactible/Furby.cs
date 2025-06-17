@@ -102,7 +102,7 @@ namespace FPV.Runtime
 
                 // Vérifie si c'est un Sonographe
                 var sonographe = hit.GetComponent<Sonographe>();
-                if (sonographe != null) sonographe.ActivateSonographe();
+                if (sonographe != null) sonographe.ActivateSonographeServerRpc();
             }
 
             // Détruire ou désactiver le Furby après impact
