@@ -127,10 +127,16 @@ namespace FPV
         // A Coroutine that play the sound if before 3 seconds after it triggers the door, it opens
         private IEnumerator WaitForDoorOpen(Door door)
         {
-            yield return new WaitForSeconds(3f);
-            if (door._isDoorOpen)
+            // Loop for 3 seconds, if during those 3 seconds the door opens, play the sound and // stop the coroutine
+            float startTime = Time.time;
+            while (Time.time - startTime < 3f)
             {
-                SonoSoundRpc();
+                if (door._isDoorOpen)
+                {
+                    SonoSoundRpc();
+                    yield break; // Stop the coroutine if the door opens
+                }
+                yield return null; // Wait for the next frame
             }
         }
         
