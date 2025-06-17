@@ -34,6 +34,9 @@ public class Menace : NetworkBehaviour
     [SerializeField] private float chargeSpeed = 5f;
     [SerializeField] private float chargeMaxDistance = 10f;
     [SerializeField] private float chargeCooldown = 10f;
+    
+    [Header("Animator")]
+    [SerializeField] private Animator _animator;
 
 
     private bool _isCharging = false;
@@ -85,6 +88,11 @@ public class Menace : NetworkBehaviour
                 HandleChasing();
                 break;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        _animator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
     }
 
     private void HandleRoaming()
@@ -270,6 +278,7 @@ public class Menace : NetworkBehaviour
 
     private void ExecuteCharge()
     {
+        _animator.SetBool("IsDashing", true);
         var directionToTarget = (_lastTarget.position - transform.position).normalized;
 
         // Utiliser un Raycast pour détecter le premier obstacle dans la direction
@@ -301,6 +310,13 @@ public class Menace : NetworkBehaviour
         _lastChargeTime = Time.time;
         _navMeshAgent.speed = 3.5f;
         _lastTarget = null;
+        
+        _animator.SetBool("IsDashing", false);
+    }
+
+    private void OnNavMeshAgentCollision(Collision other)
+    {
+        
     }
 
     [ServerRpc(RequireOwnership = false)]

@@ -113,7 +113,7 @@ namespace FPV
 
             if (input.Length != 6) // Jtai cap le input field comme ça tu peux pas mettre + de 6 char
             {
-                Debug.LogWarning("Le code doit contenir entre 6 et 12 caractères valides.");
+                Debug.LogWarning("Le code doit contenir 6 caractères valides.");
                 return;
             }
 
