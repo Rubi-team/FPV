@@ -196,6 +196,15 @@ public class Menace : NetworkBehaviour
 
     private void HandleGoingTo()
     {
+        if (_navMeshAgent.remainingDistance > 25)
+        {
+            _navMeshAgent.speed = 3.5f + _navMeshAgent.remainingDistance / 10;
+        }
+        else
+        {
+            _navMeshAgent.speed = 3.5f;
+        }
+        
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
             // Une fois arrivé à destination, retourner au mode Roaming
             _currentState = MenaceState.Patrolling;
