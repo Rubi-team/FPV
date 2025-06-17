@@ -46,11 +46,21 @@ namespace FPV.Runtime
             {
                 if (!IsActive)
                 {
-                    lineRenderer.enabled = false;
+                    if (lineRenderer != null)
+                    {
+                        lineRenderer.enabled = false;
+                    }
+                    {
+                        lineRenderer.enabled = false;
+                    }
                     return;
                 }
 
-                lineRenderer.enabled = true;
+                if (lineRenderer != null && !lineRenderer.enabled)
+                {
+                    // Si le laser est actif, on l'active
+                    lineRenderer.enabled = true;
+                }
                 lastCheckTime = Time.time;
                 UpdateLaser();
             }
