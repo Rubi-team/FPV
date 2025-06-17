@@ -6,7 +6,8 @@ namespace FPV.Runtime
 {
     public class LaserEmitter : MonoBehaviour
     {
-        [Header("Laser Settings")] public LineRenderer lineRenderer;
+        [Header("Laser Settings")] 
+        public LineRenderer lineRenderer;
         public float maxDistance = 100f;
         public LayerMask obstacleLayers;
         public LayerMask detectionLayers;
@@ -16,18 +17,21 @@ namespace FPV.Runtime
         [Header("Activation Settings")]
         [Tooltip("Indique si le laser nécessite deux désactivations pour être complètement désactivé.")]
         [SerializeField]
-        private bool requiresTwoDeactivations = false; // Besoin des doubles désactivations
+        private bool requiresTwoDeactivations = false;
 
-        private int deactivationAttempts = 0; // Compteur des désactivations
-        private float lastDeactivationAttemptTime = -Mathf.Infinity; // Dernier essai de désactivation
+        private int deactivationAttempts = 0;
+        private float lastDeactivationAttemptTime = -Mathf.Infinity;
 
-        [Header("Slow Down Settings")] public float slowDownFactor = 2.0f; // Divides the movement speed by this factor
-        public float slowDownDuration = 3.0f; // Duration of the slow down effect
+        [Header("Slow Down Settings")] 
+        public float slowDownFactor = 2.0f;
+        public float slowDownDuration = 3.0f;
 
         private float lastCheckTime;
         private RaycastHit[] hits = new RaycastHit[1];
 
-        private Dictionary<GameObject, float> cooldowns = new(); // Keeps track of cooldowns for each player
+        // ✅ Dictionnaire pour tracker les coroutines actives par joueur
+        private Dictionary<GameObject, Coroutine> activeSlowDowns = new();
+        private Dictionary<GameObject, float> cooldowns = new();
 
         public bool IsActive { get; private set; } = true;
 
@@ -76,65 +80,103 @@ namespace FPV.Runtime
 
         private void HandlePlayerHit(GameObject playerObject, PlayerModel player)
         {
-            if (!cooldowns.ContainsKey(playerObject) || Time.time >= cooldowns[playerObject])
-                StartCoroutine(ApplySlowDown(player, playerObject));
+            // ✅ Vérifier si une coroutine de slow est déjà active pour ce joueur
+            if (activeSlowDowns.ContainsKey(playerObject) && activeSlowDowns[playerObject] != null)
+                return;
+
+            // ✅ Vérifier le cooldown
+            if (cooldowns.ContainsKey(playerObject) && Time.time < cooldowns[playerObject])
+                return;
+
+            // ✅ Démarrer et tracker la coroutine
+            var slowCoroutine = StartCoroutine(ApplySlowDown(player, playerObject));
+            activeSlowDowns[playerObject] = slowCoroutine;
 
             // ALARME RPC TODO
         }
 
         private IEnumerator ApplySlowDown(PlayerModel player, GameObject playerObject)
         {
-            if (player == null || playerObject == null || player.isSlowDownActive)
+            if (player == null || playerObject == null)
+            {
+                // ✅ Nettoyer le dictionnaire si l'objet n'existe plus
+                if (playerObject != null)
+                    activeSlowDowns.Remove(playerObject);
                 yield break;
+            }
 
-            // Apply the slow down effect
+            // ✅ Double vérification pour éviter les conflits
+            if (player.isSlowDownActive)
+            {
+                activeSlowDowns.Remove(playerObject);
+                yield break;
+            }
+
+            // Marquer le joueur comme étant sous l'effet du slow
+            player.isSlowDownActive = true;
+
+            // Sauvegarder les vitesses originales
             var originalSpeed = player.MoveSpeed;
             var originalSprintSpeed = player.SprintSpeed;
 
+            // Appliquer le ralentissement
             player.MoveSpeed /= slowDownFactor;
             player.SprintSpeed /= slowDownFactor;
 
-            // Set cooldown for this player
+            // Définir le cooldown
             cooldowns[playerObject] = Time.time + slowDownDuration + checkInterval;
 
-            // Wait for the duration
+            // Attendre la durée du ralentissement
             yield return new WaitForSeconds(slowDownDuration);
 
-            // Reset the speed to its original value
-            player.MoveSpeed = originalSpeed;
-            player.SprintSpeed = originalSprintSpeed;
-            player.isSlowDownActive = false; // Reset the slow down state
+            // ✅ Restaurer les vitesses si le joueur existe encore
+            if (player != null)
+            {
+                player.MoveSpeed = originalSpeed;
+                player.SprintSpeed = originalSprintSpeed;
+                player.isSlowDownActive = false;
+            }
+
+            // ✅ Nettoyer le dictionnaire des coroutines actives
+            if (playerObject != null)
+                activeSlowDowns.Remove(playerObject);
         }
 
-        /// <summary>
-        /// Méthode pour désactiver le laser.
-        /// </summary>
         public void DeactivateLaser()
         {
             if (!requiresTwoDeactivations)
             {
-                IsActive = false; // Désactivation immédiate si une seule désactivation est nécessaire.
+                IsActive = false;
                 return;
             }
 
             if (Time.time - lastDeactivationAttemptTime > 1f)
-                // Si plus de 1 seconde s'est écoulée depuis le dernier essai, réinitialiser le compteur
                 deactivationAttempts = 0;
 
             deactivationAttempts++;
-            lastDeactivationAttemptTime = Time.time; // Met à jour le temps du dernier essai de désactivation
+            lastDeactivationAttemptTime = Time.time;
 
             if (deactivationAttempts >= 2)
-                IsActive = false; // Désactivation après deux tentatives.
+                IsActive = false;
         }
 
-        /// <summary>
-        /// Méthode pour réactiver le laser.
-        /// </summary>
         public void ReactivateLaser()
         {
             IsActive = true;
-            deactivationAttempts = 0; // Réinitialise le compteur de désactivation.
+            deactivationAttempts = 0;
+        }
+
+        // ✅ Nettoyer les références quand l'objet est détruit
+        private void OnDestroy()
+        {
+            // Arrêter toutes les coroutines actives
+            foreach (var kvp in activeSlowDowns)
+            {
+                if (kvp.Value != null)
+                    StopCoroutine(kvp.Value);
+            }
+            activeSlowDowns.Clear();
+            cooldowns.Clear();
         }
     }
 }

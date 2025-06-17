@@ -1,11 +1,12 @@
 ﻿using System;
+using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace FPV.Runtime
 {
-    [RequireComponent(typeof(Animation))]
-    public class Door : MonoBehaviour
+    [RequireComponent(typeof(Animation), typeof(NetworkObject))]
+    public class Door : NetworkBehaviour
     {
         private Animation _animation; // Référence au composant Animation
         private bool _isDoorOpen = false;
@@ -21,20 +22,36 @@ namespace FPV.Runtime
 
         private void Awake()
         {
+            CustomNetworkManager.Singleton.OnServerPrepareGame += Init;
+        }
+
+        public void Init()
+        {
+            var netObject = GetComponent<NetworkObject>();
+
+            if (!IsHost)
+            {
+                Debug.LogError("Door must be spawned on the server.");
+                Destroy(gameObject);
+                return;
+            }
+
+            if (!netObject.IsSpawned) netObject.Spawn();
             _animation = GetComponent<Animation>();
         }
 
         /// <summary>
         /// Méthode publique pour déclencher l'ouverture de la porte.
         /// </summary>
-        public void TriggerDoor()
+        [Rpc(SendTo.Server)]
+        public void TriggerDoorServerRpc()
         {
             if (_isDoorOpen) return;
 
             if (_requiresTwoAttempts)
             {
-                if (Time.time - _lastAttemptTime > 1f)
-                    // Réinitialiser les tentatives si plus de 1 seconde s'est écoulée depuis la dernière tentative
+                if (Time.time - _lastAttemptTime > 3f)
+                    // Réinitialiser les tentatives si plus de 3 seconde s'est écoulée depuis la dernière tentative
                     _attempts = 0;
 
                 _attempts++;
@@ -43,30 +60,21 @@ namespace FPV.Runtime
                 if (_attempts < 2) return;
             }
 
-            OpenDoor();
+            OpenDoorRpc();
         }
 
         /// <summary>
         /// Méthode pour gérer l'ouverture de la porte.
         /// </summary>
-        private void OpenDoor()
+        [Rpc(SendTo.Everyone)]
+        private void OpenDoorRpc()
         {
-            if (NetworkManager.Singleton.IsHost)
-            {
-                _isDoorOpen = true;
-                PlayAnimationOnClientsRpc();
-                Debug.Log("La porte s'est ouverte !");
-            }
+            _isDoorOpen = true;
+            var doorAnimation = GetComponent<Animation>();
+            if (doorAnimation != null)
+                doorAnimation.Play();
+            Debug.Log("La porte s'est ouverte !");
         }
-
-        /// <summary>
-        /// RPC pour jouer l'animation sur tous les clients.
-        /// </summary>
-        [ClientRpc]
-        private void PlayAnimationOnClientsRpc()
-        {
-            if (_animation != null)
-                _animation.Play(); // Remplacez par le nom de l'animation si nécessaire (ex. "DoorOpen")
-        }
+        
     }
 }
