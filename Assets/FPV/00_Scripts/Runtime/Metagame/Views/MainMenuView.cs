@@ -1,5 +1,8 @@
+using System;
+using System.Collections;
 using System.Linq;
 using FMOD;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.UIElements;
 using FPV.Shared;
@@ -12,6 +15,9 @@ namespace FPV
     {
         [SerializeField] private TextMeshProUGUI codeTextField;
         [SerializeField] private GameObject canvas;
+
+        [SerializeField] private GameObject credits, buttons;
+        [field: SerializeField] public EventReference buttonSFX { get; private set; }
         
         /*private Label titleLabel;
         private TextField codeTextField;
@@ -81,9 +87,16 @@ namespace FPV
         {
             Broadcast(new ApplicationQuitEvent());
         }*/
-        
+
+        private void Start()
+        {
+            buttons.SetActive(true);
+            credits.SetActive(false);
+        }
+
         public void OnClickCreateRelay()
         {
+            RuntimeManager.PlayOneShot(buttonSFX);
             Broadcast(new CreateRelayEvent());
         }
         
@@ -116,6 +129,8 @@ namespace FPV
                 Debug.LogWarning("Le code doit contenir 6 caractères valides.");
                 return;
             }
+            
+            RuntimeManager.PlayOneShot(buttonSFX);
 
             Broadcast(new JoinRelayEvent(input));
 
@@ -131,12 +146,26 @@ namespace FPV
         
         public void OnClickQuit()
         {
+            RuntimeManager.PlayOneShot(buttonSFX);
+            
             Broadcast(new ApplicationQuitEvent());
         }
 
         public void OnClickCredit()
         {
-            Debug.Log("Credits");
+            RuntimeManager.PlayOneShot(buttonSFX);
+            
+            buttons.SetActive(false);
+            credits.SetActive(true);
+
+            StartCoroutine(CreditsCD());
+        }
+
+        private IEnumerator CreditsCD()
+        {
+            yield return new WaitForSeconds(5f);
+            buttons.SetActive(true);
+            credits.SetActive(false);
         }
 
         /// <summary>
