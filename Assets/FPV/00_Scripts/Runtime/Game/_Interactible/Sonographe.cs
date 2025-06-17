@@ -115,12 +115,23 @@ namespace FPV
                     {
                         SonoSoundRpc();
                     }
-                    else return;
+                    else
+                    {
+                        WaitForDoorOpen(door.GetComponent<Door>());
+                    }
                 }
-                    
                 
             }
-                
+        }
+        
+        // A Coroutine that play the sound if before 3 seconds after it triggers the door, it opens
+        private IEnumerator WaitForDoorOpen(Door door)
+        {
+            yield return new WaitForSeconds(3f);
+            if (door._isDoorOpen)
+            {
+                SonoSoundRpc();
+            }
         }
         
         /// <summary>

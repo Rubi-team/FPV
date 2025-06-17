@@ -10,7 +10,7 @@ namespace FPV.Runtime
     public class Door : NetworkBehaviour
     {
         private Animation _animation; // Référence au composant Animation
-        private bool _isDoorOpen = false;
+        internal bool _isDoorOpen = false;
 
         [Tooltip("Indique si la porte s'ouvre automatiquement lorsqu'elle est déclenchée")] [SerializeField]
         public bool AutoOpenWhenStaffIsRecover = false;
