@@ -168,6 +168,7 @@ namespace FPV.Runtime
                 _animator.SetBool("IsGrounded", Model.Grounded);
                 SetAnimatorBoolRpc("IsGrounded", Model.Grounded);
                 SetAnimatorBoolRpc("IsSprinting", Controller._input.sprint);
+                SetAnimatorFloatRpc("Speed", Controller._controller.velocity.magnitude);
             }
         }
         
@@ -182,6 +183,12 @@ namespace FPV.Runtime
         public void SetAnimatorBoolRpc(string boolName, bool value)
         {
             if (_animator != null) _animator.SetBool(boolName, value);
+        }
+        
+        [Rpc(SendTo.NotMe)]
+        public void SetAnimatorFloatRpc(string floatName, float value)
+        {
+            if (_animator != null) _animator.SetFloat(floatName, value);
         }
         
         [Rpc(SendTo.NotMe)]

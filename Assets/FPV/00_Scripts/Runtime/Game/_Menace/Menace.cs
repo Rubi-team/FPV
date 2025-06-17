@@ -357,8 +357,19 @@ public class Menace : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void DetectThreatServerRpc(ulong playerNetObjectId, int maxDistance)
     {
+        NetworkObject networkObject = null;
         // Trouver l'objet Player à partir de son playerNetObjectId
-        var networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[playerNetObjectId];
+        try
+        {
+            networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[playerNetObjectId];
+        }
+#pragma warning disable CS0168 // Variable is declared but never used
+        catch (Exception _)
+#pragma warning restore CS0168 // Variable is declared but never used
+        {
+            return;
+        }
+        
         if (networkObject == null || !networkObject.TryGetComponent(out Transform playerTransform))
         {
             Debug.LogWarning("Player object not found or does not have a Transform component.");
@@ -412,7 +423,7 @@ public class Menace : NetworkBehaviour
             if (currentGroundType == null)
             {
                 AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position,
-                    NetworkManager.Singleton.LocalClientId, -10);
+                    99, -10);
                 return;
             }
 
