@@ -66,8 +66,14 @@ namespace FPV.Runtime
 
             if (NetworkManager.LocalClientId == 1)
             {
-                Model.Mesh.material = Model.Player2Material;
+                ChangeSkinRpc();
             }
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void ChangeSkinRpc()
+        {
+            Model.Mesh.material = Model.Player2Material;
         }
 
         // Change spawn 
