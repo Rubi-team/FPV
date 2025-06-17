@@ -109,6 +109,11 @@ namespace FPV.Runtime
             AudioManager.Instance.PlayOneShot(isJump ? AudioManager.Instance.jump : AudioManager.Instance.land, Feet.position);
             jumping = false;
             LastJumpTime = Time.time;
+            
+            if (isJump)
+            {
+                SetAnimatorTriggerRpc("IsJumping");
+            }
         }
 
         public void PlaySoundOnFurbyPickedUp()
