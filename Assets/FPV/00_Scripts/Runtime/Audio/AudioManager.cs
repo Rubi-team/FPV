@@ -79,6 +79,7 @@ namespace Audio
 
             if (Menace.Instance)
             {
+                if (playerID == 99) return;
                 Menace.Instance.DetectThreatServerRpc(playerID, audioDistance);
             }
         }
