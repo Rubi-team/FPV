@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Audio;
+using FMODUnity;
 using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
@@ -13,6 +15,7 @@ namespace FPV.Runtime
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
         [SerializeField] private float impactDirectionMultiplier = 5f; // Nouveau paramètre configuré dans l'inspecteur
+        [SerializeField] private StudioEventEmitter throwEmitter;
 
         private bool pickedUp = false;
         private Rigidbody rb;
@@ -180,6 +183,8 @@ namespace FPV.Runtime
                 ChangeOwnershipServerRpc(0, true);
                 rb.AddForce(direction.normalized * force + Vector3.up * 0.5f,
                     ForceMode.Impulse); // Ajoute une impulsion
+                
+                throwEmitter.Play();
             }
         }
 
@@ -213,6 +218,8 @@ namespace FPV.Runtime
             {
                 var explosion = Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
                 explosion.transform.SetParent(null); // Ne pas le parent à l'objet Furby
+                
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.furbyHit, transform.position);
 
                 // Optionally, destroy the explosion effect after a few seconds
                 Destroy(explosion, 3f);

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Audio;
 using UnityEngine;
 
 namespace FPV.Runtime
@@ -158,6 +159,9 @@ namespace FPV.Runtime
         {
             if (player == null || playerObject == null)
             {
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.laserHit, playerObject.transform.position);
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position);
+                
                 // ✅ Nettoyer le dictionnaire si l'objet n'existe plus
                 if (playerObject != null)
                     activeSlowDowns.Remove(playerObject);

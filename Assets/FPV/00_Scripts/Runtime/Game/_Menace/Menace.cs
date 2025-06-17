@@ -1,4 +1,5 @@
 using System;
+using Audio;
 using FPV;
 using FPV.Runtime;
 using Unity.Netcode;
@@ -38,6 +39,9 @@ public class Menace : NetworkBehaviour
     
     [Header("Animator")]
     [SerializeField] private Animator _animator;
+    [SerializeField] private Transform Feet;
+    [SerializeField] private LayerMask groundLayer;
+    internal GroundType currentGroundType;
 
 
     private bool _isCharging = false;
@@ -281,6 +285,7 @@ public class Menace : NetworkBehaviour
     {
         _animator.SetBool("IsDashing", true);
         var directionToTarget = (_lastTarget.position - transform.position).normalized;
+        AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatCharging, Feet.position);
 
         // Utiliser un Raycast pour détecter le premier obstacle dans la direction
         RaycastHit hit;
@@ -327,15 +332,11 @@ public class Menace : NetworkBehaviour
 
             // Apply the force to the player
             player.Controller.OnPlayerThrowMeRpc(direction, force, true);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatHit, Feet.position);
 
             // End the charge after hitting a player
             EndCharge();
         }
-        
-        
-        
-        
-        
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -375,4 +376,56 @@ public class Menace : NetworkBehaviour
             Debug.Log($"Player is too far: {distanceToPlayer} units.");
         }
     }
+
+    private void GetGroundType()
+    {
+        var hit = Physics.OverlapSphere(Feet.position, 1, groundLayer,
+            QueryTriggerInteraction.Ignore);
+
+        if (hit[0].gameObject.TryGetComponent<GroundType>(out var groundType))
+            currentGroundType = groundType;
+        else
+            currentGroundType = null;
+    }
+    
+    public void AudioFootsteps()
+        {
+            GetGroundType();
+            
+            if (currentGroundType == null)
+            {
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                return;
+            }
+            
+            var index = (int)currentGroundType.groundType;
+            if (currentGroundType == null) index = 0; // Default to 0 if no ground type is set
+
+            // if controller input move is zero we return 
+            if (_navMeshAgent.velocity.magnitude == 0)
+            {
+                // If the player is not moving, we don't play any footsteps sound
+                return;
+            }
+
+            // switch case of index 
+            switch (index)
+            {
+                case 0:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                    break;
+                case 1:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position);
+                    break;
+                case 2:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position);
+                    break;
+                case 3:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position);
+                    break;
+                default:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                    break;
+            }
+        }
 }

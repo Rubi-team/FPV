@@ -46,11 +46,8 @@ namespace Audio
         [field: SerializeField] public EventReference throwPlayer { get; private set; }
         [field: SerializeField] public EventReference throwItem { get; private set; }
 
-        public EventReference takeDamage { get; private set; }
-
 
         [field: Header("Threat")]
-        [field: SerializeField] public EventReference threatFootstep { get; private set; }
         [field: SerializeField] public  EventReference threatCharging { get; private set; }
         [field: SerializeField] public  EventReference threatHit { get; private set; }
 
@@ -61,9 +58,11 @@ namespace Audio
         [field: SerializeField] public EventReference furbyFly { get; private set; }
 
         [field: SerializeField] public EventReference laserLoop { get; private set; }
+        [field: SerializeField] public EventReference laserHit { get; private set; }
         [field: SerializeField] public EventReference doorOpen { get; private set; }
         [field: SerializeField] public EventReference doorClose { get; private set; }
         [field: SerializeField] public EventReference target { get; private set; }
+        [field: SerializeField] public EventReference siren { get; private set; }
 
         /// <summary>
         ///     Plays a one-shot sound at the specified world position.

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Audio;
 using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
@@ -68,6 +69,8 @@ namespace FPV.Runtime
             DeactivateLasersClientRpc();
             ActivateObjectsServerRpc();
             onTargetDeactivated?.Invoke();
+            
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position);
         }
 
         private void OnTargetStateChanged(bool previousValue, bool newValue)

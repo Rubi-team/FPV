@@ -1,4 +1,5 @@
 ﻿using System;
+using Audio;
 using FPV.Runtime.Shared;
 using Unity.Netcode;
 using UnityEngine;
@@ -73,6 +74,9 @@ namespace FPV.Runtime
             var doorAnimation = GetComponent<Animation>();
             if (doorAnimation != null)
                 doorAnimation.Play();
+            
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.doorOpen, transform.position);
+            
             Debug.Log("La porte s'est ouverte !");
         }
         

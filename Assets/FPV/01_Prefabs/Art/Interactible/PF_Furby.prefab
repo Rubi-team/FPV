@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -4469765757716355811}
   - component: {fileID: 5309055916130538483}
   - component: {fileID: 8928460760236192685}
+  - component: {fileID: 7668666474878026355}
   m_Layer: 9
   m_Name: PF_Furby
   m_TagString: Untagged
@@ -81,6 +82,8 @@ MonoBehaviour:
   affectedLayers:
     serializedVersion: 2
     m_Bits: 4294967295
+  impactDirectionMultiplier: 5
+  throwEmitter: {fileID: 7668666474878026355}
   TrailEffect: {fileID: 6519705361943665256, guid: 57ba226e4aec21543a227ebfabd05d79, type: 3}
   ExplosionEffect: {fileID: 2691080340663803283, guid: a02434aa9809834489cfdbfab55d43f2, type: 3}
 --- !u!135 &8052625823876810710
@@ -184,6 +187,37 @@ MonoBehaviour:
   UseRigidBodyForMotion: 0
   AutoUpdateKinematicState: 1
   AutoSetKinematicOnDespawn: 1
+--- !u!114 &7668666474878026355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5931527281999849377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -654500452
+      Data2: 1169912610
+      Data3: 604523659
+      Data4: -376565733
+    Path: event:/Objects/FurbyFly
+  Event: 
+  EventPlayTrigger: 0
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 1
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 10
 --- !u!1001 &3478995626300121017
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -132,6 +132,7 @@ namespace FPV.Runtime
         public void PlaySoundOnFurbyPickedUp()
         {
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.grabItem, Feet.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.furbyGrab, Feet.position);
         }
 
         public void PlaySoundOnPlayerPickedUp()
