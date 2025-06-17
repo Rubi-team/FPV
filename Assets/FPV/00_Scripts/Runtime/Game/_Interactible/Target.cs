@@ -65,12 +65,24 @@ namespace FPV.Runtime
 
         public void DeactivateTarget()
         {
-            isTargetActive.Value = false;
+            ChangeTargetStateServerRpc(false);
             DeactivateLasersClientRpc();
             ActivateObjectsServerRpc();
             onTargetDeactivated?.Invoke();
-            
+
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void ChangeTargetStateServerRpc(bool newState)
+        {
+            if (isTargetActive.Value == newState) return;
+            isTargetActive.Value = newState;
+            // Met à jour l'état de la cible
+            isActive = newState;
+
+            // TODO add visual feedback for target state change
+            OnTargetStateChanged(!newState, newState);
         }
 
         private void OnTargetStateChanged(bool previousValue, bool newValue)
