@@ -92,6 +92,8 @@ namespace Audio
         private void PlayOneShotWithParametersRpc(string GUIDString, Vector3 worldPos, string parameter1Name,
             float parameter1Value, string parameter2Name, float parameter2Value)
         {
+            Debug.Log(worldPos);
+            
             var eventInstance = RuntimeManager.CreateInstance(StringToGUID(GUIDString));
             eventInstance.set3DAttributes(RuntimeUtils.To3DAttributes(worldPos));
 

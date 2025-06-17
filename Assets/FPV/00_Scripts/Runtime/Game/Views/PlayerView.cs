@@ -54,12 +54,10 @@ namespace FPV.Runtime
                 // If the player is not moving, we don't play any footsteps sound
                 return;
             }
-            
+
             // switch case of index 
             switch (index)
             {
-                
-                
                 case 0:
                     if (Controller._input.sprint) AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position);
