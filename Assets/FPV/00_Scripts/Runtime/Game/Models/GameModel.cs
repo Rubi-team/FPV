@@ -48,11 +48,25 @@ namespace FPV.Runtime
         {
             if (CustomNetworkManager.Singleton.IsHost)
             {
-                var menaceSpawn = FindFirstObjectByType<MenaceStart>().transform.position;
-                matchDataSynchronizer = Instantiate(matchDataSnchronizerPrefab);
-                matchDataSynchronizer.GetComponent<NetworkObject>().Spawn();
-                Menace = Instantiate(m_MenacePrefab, menaceSpawn, Quaternion.identity);
-                Menace.GetComponent<NetworkObject>().Spawn();
+                SpawnMenace();
+            }
+        }
+
+        private void SpawnMenace()
+        {
+            var menaceSpawn = FindFirstObjectByType<MenaceStart>().transform.position;
+            matchDataSynchronizer = Instantiate(matchDataSnchronizerPrefab);
+            matchDataSynchronizer.GetComponent<NetworkObject>().Spawn();
+            Menace = Instantiate(m_MenacePrefab, menaceSpawn, Quaternion.identity);
+            Menace.GetComponent<NetworkObject>().Spawn();
+        }
+
+        private void Update()
+        {
+            if (!NetworkManager.Singleton.IsHost || Menace != null) return;
+            if (Menace.Instance == null)
+            {
+                SpawnMenace();
             }
         }
     }
