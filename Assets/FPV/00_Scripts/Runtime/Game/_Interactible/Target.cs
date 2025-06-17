@@ -69,14 +69,9 @@ namespace FPV.Runtime
             DeactivateLasersClientRpc();
             ActivateObjectsServerRpc();
             onTargetDeactivated?.Invoke();
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position);
-=======
-            
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position, NetworkManager.Singleton.LocalClientId, 5);
->>>>>>> Stashed changes
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position,
+                NetworkManager.Singleton.LocalClientId, 5);
         }
 
         [Rpc(SendTo.Server)]
@@ -89,10 +84,9 @@ namespace FPV.Runtime
 
             // TODO add visual feedback for target state change
             OnTargetStateChanged(!newState, newState);
-=======
-            
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position, NetworkManager.Singleton.LocalClientId, 5);
->>>>>>> Stashed changes
+
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position,
+                NetworkManager.Singleton.LocalClientId, 5);
         }
 
         private void OnTargetStateChanged(bool previousValue, bool newValue)
