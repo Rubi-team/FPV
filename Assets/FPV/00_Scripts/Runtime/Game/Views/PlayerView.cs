@@ -60,27 +60,27 @@ namespace FPV.Runtime
             {
                 case 0:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 12);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 15);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 5);
                     break;
                 case 1:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 30);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkWoodFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 15);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 20);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkWoodFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 10);
                     break;
                 case 2:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 12);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 15);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkCarpetFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 5);
                     break;
                 case 3:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position, NetworkManager.Singleton.LocalClientId, 12);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position, NetworkManager.Singleton.LocalClientId, 15);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkMetalFootstep, Feet.position, NetworkManager.Singleton.LocalClientId, 5);
                     break;
                 default:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 12);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 15);
                     else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 5);
                     break;
             }
