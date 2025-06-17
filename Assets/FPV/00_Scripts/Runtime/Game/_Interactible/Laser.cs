@@ -48,7 +48,7 @@ namespace FPV.Runtime
         private List<LineRenderer> lineRenderers = new();
 
         [SerializeField] private StudioEventEmitter emitter;
-        
+
         // ✅ Dictionnaire pour tracker les coroutines actives par joueur
         private Dictionary<GameObject, Coroutine> activeSlowDowns = new();
         private Dictionary<GameObject, float> cooldowns = new();
@@ -170,18 +170,17 @@ namespace FPV.Runtime
             }
 
             // ✅ Double vérification pour éviter les conflits
-            if (player.isSlowDownActive)
-            {
-                activeSlowDowns.Remove(playerObject);
-                yield break;
-            }
+            if (player.isSlowDownActive) yield return null;
 
             // ✅ Marquer le joueur comme étant sous l'effet du slow AVANT de modifier les vitesses
             player.isSlowDownActive = true;
-            
+
             //Sons
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.laserHit, playerObject.transform.position, NetworkManager.Singleton.LocalClientId, 10000);
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position, NetworkManager.Singleton.LocalClientId, 10000);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.laserHit, playerObject.transform.position,
+                NetworkManager.Singleton.LocalClientId, 10000);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position,
+                NetworkManager.Singleton.LocalClientId, 10000);
+
 
             // Sauvegarder les vitesses originales
             var originalSpeed = player.MoveSpeed;
@@ -222,7 +221,7 @@ namespace FPV.Runtime
                 emitter.Stop();
                 return;
             }
-            
+
 
             if (Time.time - lastDeactivationAttemptTime > 1f)
                 deactivationAttempts = 0;
@@ -232,7 +231,7 @@ namespace FPV.Runtime
 
             if (deactivationAttempts >= 2)
                 isActive = false;
-            
+
             emitter.Stop();
         }
 
@@ -240,7 +239,7 @@ namespace FPV.Runtime
         {
             isActive = true;
             deactivationAttempts = 0;
-            
+
             emitter.Play();
         }
 
@@ -249,10 +248,8 @@ namespace FPV.Runtime
         {
             // Arrêter toutes les coroutines actives
             foreach (var kvp in activeSlowDowns)
-            {
                 if (kvp.Value != null)
                     StopCoroutine(kvp.Value);
-            }
             activeSlowDowns.Clear();
             cooldowns.Clear();
         }
