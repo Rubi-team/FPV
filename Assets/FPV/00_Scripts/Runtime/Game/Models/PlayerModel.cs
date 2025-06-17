@@ -77,6 +77,9 @@ namespace FPV.Runtime
         public Furby CarriedFurby;
         public bool isSlowDownActive = false;
         [SerializeField] public Material Player2Material;
+        
+        // a reference to playerview
+        internal PlayerView View => App.View;
 
         public override void OnNetworkSpawn()
         {

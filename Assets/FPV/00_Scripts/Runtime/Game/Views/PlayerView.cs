@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using Audio;
 using FMODUnity;
 using FPV.Runtime;
 using Unity.Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace FPV.Runtime
 {
@@ -236,6 +238,49 @@ namespace FPV.Runtime
         }
 
         [SerializeField] private GameObject SlowPostProcess;
+        
+        
+        internal void EnablePostProcessSlow()
+        {
+            if (!App.IsOwner) return;
+
+            if (SlowPostProcess != null)
+            {
+                SlowPostProcess.SetActive(true);
+                StartCoroutine(FadePostProcessWeight(SlowPostProcess, 0f, 1f, 0.2f));
+                Invoke(nameof(DisablePostProcessSlow), 5f);
+            }
+        }
+
+        private void DisablePostProcessSlow()
+        {
+            if (!App.IsOwner) return;
+
+            if (SlowPostProcess != null)
+            {
+                StartCoroutine(FadePostProcessWeight(SlowPostProcess, 1f, 0f, 1f));
+            }
+        }
+
+        private IEnumerator FadePostProcessWeight(GameObject obj, float from, float to, float duration)
+        {
+            var volume = obj.GetComponent<Volume>();
+            if (volume == null) yield break;
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                volume.weight = Mathf.Lerp(from, to, t);
+                yield return null;
+            }
+
+            volume.weight = to;
+
+            if (to == 0f)
+                obj.SetActive(false);
+        }
 
     }
 }
