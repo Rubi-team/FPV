@@ -36,9 +36,8 @@ public class Menace : NetworkBehaviour
     [SerializeField] private float chargeSpeed = 5f;
     [SerializeField] private float chargeMaxDistance = 10f;
     [SerializeField] private float chargeCooldown = 10f;
-    
-    [Header("Animator")]
-    [SerializeField] private Animator _animator;
+
+    [Header("Animator")] [SerializeField] private Animator _animator;
     [SerializeField] private Transform Feet;
     [SerializeField] private LayerMask groundLayer;
     internal GroundType currentGroundType;
@@ -316,7 +315,7 @@ public class Menace : NetworkBehaviour
         _lastChargeTime = Time.time;
         _navMeshAgent.speed = 3.5f;
         _lastTarget = null;
-        
+
         _animator.SetBool("IsDashing", false);
     }
 
@@ -328,7 +327,7 @@ public class Menace : NetworkBehaviour
         {
             // Calculate the direction and force to apply
             var direction = (other.transform.position - transform.position).normalized;
-            var force =chargeSpeed / 2; // Adjust force multiplier as needed
+            var force = chargeSpeed / 2; // Adjust force multiplier as needed
 
             // Apply the force to the player
             player.Controller.OnPlayerThrowMeRpc(direction, force, true);
@@ -361,14 +360,11 @@ public class Menace : NetworkBehaviour
             if (Physics.Raycast(origin, directionToPlayer, out var hitInfo, distanceToPlayer))
             {
                 if (hitInfo.transform == playerTransform)
-                {
                     // Le joueur est visible et non obstrué
                     SetGoingTo(playerTransform.position);
-                }
                 else
-                {
                     // Joueur obstrué par un obstacle
-                }
+                    SetGoingTo(playerTransform.position);
             }
         }
         else
@@ -387,45 +383,43 @@ public class Menace : NetworkBehaviour
         else
             currentGroundType = null;
     }
-    
+
     public void AudioFootsteps()
+    {
+        GetGroundType();
+
+        if (currentGroundType == null)
         {
-            GetGroundType();
-            
-            if (currentGroundType == null)
-            {
-                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
-                return;
-            }
-            
-            var index = (int)currentGroundType.groundType;
-            if (currentGroundType == null) index = 0; // Default to 0 if no ground type is set
-
-            // if controller input move is zero we return 
-            if (_navMeshAgent.velocity.magnitude == 0)
-            {
-                // If the player is not moving, we don't play any footsteps sound
-                return;
-            }
-
-            // switch case of index 
-            switch (index)
-            {
-                case 0:
-                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
-                    break;
-                case 1:
-                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position);
-                    break;
-                case 2:
-                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position);
-                    break;
-                case 3:
-                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position);
-                    break;
-                default:
-                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
-                    break;
-            }
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+            return;
         }
+
+        var index = (int)currentGroundType.groundType;
+        if (currentGroundType == null) index = 0; // Default to 0 if no ground type is set
+
+        // if controller input move is zero we return 
+        if (_navMeshAgent.velocity.magnitude == 0)
+            // If the player is not moving, we don't play any footsteps sound
+            return;
+
+        // switch case of index 
+        switch (index)
+        {
+            case 0:
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                break;
+            case 1:
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position);
+                break;
+            case 2:
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position);
+                break;
+            case 3:
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position);
+                break;
+            default:
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                break;
+        }
+    }
 }

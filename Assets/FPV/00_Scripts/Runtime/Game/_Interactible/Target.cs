@@ -77,7 +77,6 @@ namespace FPV.Runtime
         private void ChangeTargetStateServerRpc(bool newState)
         {
             if (isTargetActive.Value == newState) return;
-
             isTargetActive.Value = newState;
             // Met à jour l'état de la cible
             isActive = newState;

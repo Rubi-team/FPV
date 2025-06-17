@@ -42,9 +42,10 @@ namespace FPV
                     {
                         // Vérifie s'il y a une ligne de vue
                         var distanceToTarget = Vector3.Distance(transform.position, hit.transform.position);
-                        var origin = transform.position + Vector3.up * 1f;
+                        // Commence le raycast 2 unités devant la menace
+                        var origin = transform.position + transform.forward * 2f + Vector3.up * 1f;
 
-                        if (!Physics.Raycast(origin, directionToTarget, out var hitInfo, distanceToTarget,
+                        if (!Physics.Raycast(origin, directionToTarget, out var hitInfo, distanceToTarget - 2f,
                                 obstructionMask))
                         {
                             detectedPlayer = hit.transform;
