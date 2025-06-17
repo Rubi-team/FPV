@@ -37,8 +37,7 @@ namespace FPV.Runtime
         [SerializeField] private GameObject emote9;
 
         [SerializeField] private GameObject trailEffect;
-
-        [SerializeField] private StudioEventEmitter stressEmitter, heartEmitter;
+        
         private float stressValue;
         private float distanceToMenace;
 
