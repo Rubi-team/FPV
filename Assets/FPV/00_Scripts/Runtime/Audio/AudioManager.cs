@@ -60,7 +60,7 @@ namespace Audio
         [field: SerializeField] public EventReference laserLoop { get; private set; }
         [field: SerializeField] public EventReference laserHit { get; private set; }
         [field: SerializeField] public EventReference doorOpen { get; private set; }
-        [field: SerializeField] public EventReference doorClose { get; private set; }
+        [field: SerializeField] public EventReference sonoWorked { get; private set; }
         [field: SerializeField] public EventReference target { get; private set; }
         [field: SerializeField] public EventReference siren { get; private set; }
 

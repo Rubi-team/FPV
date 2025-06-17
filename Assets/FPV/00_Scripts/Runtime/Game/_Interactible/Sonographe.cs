@@ -1,4 +1,5 @@
 using System.Collections;
+using Audio;
 using FPV.Runtime;
 using FPV.Runtime.Shared;
 using Unity.Netcode;
@@ -80,6 +81,9 @@ namespace FPV
             if (Time.time - lastActivationTime < activationCooldown) return;
 
             lastActivationTime = Time.time; // Met à jour le temps de la dernière activation
+
+            SonoAnimationRpc();
+
             ActivateClientRpc();
             ActivateServerRpc(); // Appelle le serveur pour activer les portes
         }
@@ -87,7 +91,7 @@ namespace FPV
         /// <summary>
         /// RPC déclenchée sur tous les clients pour des effets visuels ou sonores.
         /// </summary>
-        [ClientRpc]
+        [Rpc(SendTo.Everyone)]
         private void ActivateClientRpc()
         {
             StartCoroutine(ExecuteActivationSequence());
@@ -97,9 +101,43 @@ namespace FPV
         private void ActivateServerRpc()
         {
             if (doorsToActivate != null)
+            {
                 foreach (var door in doorsToActivate)
+                {
                     if (door != null)
                         door.GetComponent<Door>().TriggerDoorServerRpc();
+
+                    if (door.GetComponent<Door>()._attempts > 0 && door.GetComponent<Door>()._requiresTwoAttempts)
+                    {
+                        SonoSoundRpc();
+                    }
+                    else if (!door.GetComponent<Door>()._requiresTwoAttempts)
+                    {
+                        SonoSoundRpc();
+                    }
+                    else return;
+                }
+                    
+                
+            }
+                
+        }
+        
+        /// <summary>
+        /// Méthode pour gérer l'ouverture de la porte.
+        /// </summary>
+        [Rpc(SendTo.Everyone)]
+        private void SonoAnimationRpc()
+        {
+            var sonoAnimation = GetComponentInChildren<Animation>();
+            if (sonoAnimation != null)
+                sonoAnimation.Play();
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void SonoSoundRpc()
+        {
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.sonoWorked, transform.position, NetworkManager.Singleton.LocalClientId, 3);
         }
 
         /// <summary>
@@ -109,14 +147,22 @@ namespace FPV
         {
             // Désactive les lasers et active les portes
             if (lasersToDeactivate != null)
+            {
+                SonoSoundRpc();
                 foreach (var laser in lasersToDeactivate)
                     if (laser != null)
                         laser.DeactivateLaser();
+            }
+
 
             if (laserEmittersToDeactivate != null)
+            {
+                SonoSoundRpc();
                 foreach (var laserEmitter in laserEmittersToDeactivate)
                     if (laserEmitter != null)
                         laserEmitter.DeactivateLaser();
+            }
+                
 
             // Attends un temps donné avant de réactiver les lasers
             yield return new WaitForSeconds(activationDuration);

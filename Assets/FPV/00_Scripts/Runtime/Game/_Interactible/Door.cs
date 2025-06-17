@@ -16,9 +16,9 @@ namespace FPV.Runtime
         public bool AutoOpenWhenStaffIsRecover = false;
 
         [Tooltip("Indique si la porte nécessite deux tentatives pour s'ouvrir")] [SerializeField]
-        private bool _requiresTwoAttempts = false;
+        internal bool _requiresTwoAttempts = false;
 
-        private int _attempts = 0; // Compteur des tentatives
+        internal int _attempts = 0; // Compteur des tentatives
         private float _lastAttemptTime = -Mathf.Infinity; // Temps de la dernière tentative
 
         private void Awake()
