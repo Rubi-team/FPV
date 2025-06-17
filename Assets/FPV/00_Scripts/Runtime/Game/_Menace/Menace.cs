@@ -5,6 +5,7 @@ using FPV.Runtime;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
 
 public enum MenaceState
 {
@@ -18,6 +19,8 @@ public class Menace : NetworkBehaviour
 {
     private MenaceListener MenaceListener;
     private NavMeshAgent _navMeshAgent;
+    
+    [SerializeField] public Volume AlarmeVolume;
 
     [SerializeField] private MenaceState _currentState;
 
@@ -196,18 +199,22 @@ public class Menace : NetworkBehaviour
 
     private void HandleGoingTo()
     {
-        if (_navMeshAgent.remainingDistance > 25)
+        if (!_navMeshAgent.pathPending && _navMeshAgent.hasPath && _navMeshAgent.remainingDistance < Mathf.Infinity)
         {
-            _navMeshAgent.speed = 3.5f + _navMeshAgent.remainingDistance / 10;
+            if (_navMeshAgent.remainingDistance > 25)
+            {
+                _navMeshAgent.speed = 3.5f + _navMeshAgent.remainingDistance / 10;
+            }
+            else
+            {
+                _navMeshAgent.speed = 3.5f;
+            }
+
+            if (_navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
+            {
+                _currentState = MenaceState.Patrolling;
+            }
         }
-        else
-        {
-            _navMeshAgent.speed = 3.5f;
-        }
-        
-        if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
-            // Une fois arrivé à destination, retourner au mode Roaming
-            _currentState = MenaceState.Patrolling;
 
         // Vérifier si un joueur est détecté
         if (MenaceListener.detectedPlayer != null)
@@ -216,6 +223,7 @@ public class Menace : NetworkBehaviour
             _lastTarget = MenaceListener.detectedPlayer;
         }
     }
+
 
     private void HandleChasing()
     {

@@ -5,6 +5,7 @@ using FMODUnity;
 using Unity.Netcode;
 using Unity.Services.Matchmaker.Models;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace FPV.Runtime
 {
@@ -156,8 +157,7 @@ namespace FPV.Runtime
             // ✅ Démarrer et tracker la coroutine
             var slowCoroutine = StartCoroutine(ApplySlowDown(player, playerObject));
             activeSlowDowns[playerObject] = slowCoroutine;
-
-            // ALARME SERVER RPC TODO
+            
         }
 
         private IEnumerator ApplySlowDown(PlayerModel player, GameObject playerObject)
@@ -181,6 +181,9 @@ namespace FPV.Runtime
                 NetworkManager.Singleton.LocalClientId, 10000);
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position,
                 NetworkManager.Singleton.LocalClientId, 10000);
+            
+            // Appeler l'effet de post-process pour l'alarme
+            player.View.CallAlarmPostProcessPulseRpc(8.4f, 1.8f);
 
 
             // Sauvegarder les vitesses originales
@@ -212,6 +215,9 @@ namespace FPV.Runtime
             if (playerObject != null)
                 activeSlowDowns.Remove(playerObject);
         }
+        
+        
+
 
         /// <summary>
         /// Méthode pour désactiver le laser.

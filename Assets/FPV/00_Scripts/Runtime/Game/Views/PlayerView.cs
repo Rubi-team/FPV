@@ -302,6 +302,47 @@ namespace FPV.Runtime
             if (to == 0f)
                 obj.SetActive(false);
         }
+        
+        [Rpc(SendTo.Everyone)]
+        public void CallAlarmPostProcessPulseRpc(float duration, float pulseDuration)
+        {
+            StartCoroutine(AlarmPostProcessPulse(duration, pulseDuration));
+        }
+        
+        
+        private IEnumerator AlarmPostProcessPulse(float duration, float pulseDuration)
+        {
+            var volume = Menace.Instance.AlarmeVolume;
+            if (volume == null) yield break;
+
+            float timer = 0f;
+            while (timer < duration)
+            {
+                float halfPulse = pulseDuration / 2f;
+
+                // Fade in
+                float t = 0f;
+                while (t < halfPulse)
+                {
+                    t += Time.deltaTime;
+                    volume.weight = Mathf.Lerp(0f, 1f, t / halfPulse);
+                    yield return null;
+                }
+
+                // Fade out
+                t = 0f;
+                while (t < halfPulse)
+                {
+                    t += Time.deltaTime;
+                    volume.weight = Mathf.Lerp(1f, 0f, t / halfPulse);
+                    yield return null;
+                }
+
+                timer += pulseDuration;
+            }
+
+            volume.weight = 0f; // assure que l'effet est désactivé à la fin
+        }
 
     }
 }
