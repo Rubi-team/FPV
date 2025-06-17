@@ -63,7 +63,8 @@ namespace Audio
         [field: SerializeField] public EventReference sonoWorked { get; private set; }
         [field: SerializeField] public EventReference target { get; private set; }
         [field: SerializeField] public EventReference siren { get; private set; }
-
+        
+        [field: SerializeField] public EventReference keyCollect { get; private set; }
         /// <summary>
         ///     Plays a one-shot sound at the specified world position.
         /// </summary>
