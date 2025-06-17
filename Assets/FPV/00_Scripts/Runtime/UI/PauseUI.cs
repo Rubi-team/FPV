@@ -1,6 +1,7 @@
 using System;
 using FMOD.Studio;
 using FMODUnity;
+using FPV;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,24 +12,21 @@ public class PauseUI : MonoBehaviour
     [SerializeField] private Slider masterVolumeSlider, chatVolumeSlider, sfxVolumeSlider, ambienceVolumeSlider, sensitivitySlider;
     private float sensitivity;
     private Bus masterBus, chatBus, sfxBus, ambienceBus;
+    public bool pauseMenuActive;
+    
+    public static PauseUI Instance { get; private set; }
 
     private void Awake()
     {
+        Instance = this;
         SetupBus();
     }
 
-    private void EnableUI()
+    public void ChangeUI(bool state)
     {
-        parentGObj.SetActive(true);
+        parentGObj.SetActive(state);
         
         // Désactiver les inputs
-        
-    }
-
-    private void DisableUI()
-    {
-        parentGObj.SetActive(false);
-        
         // Ré-activer les inputs
         
     }
