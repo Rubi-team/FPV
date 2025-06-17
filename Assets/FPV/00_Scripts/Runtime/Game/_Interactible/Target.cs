@@ -70,6 +70,7 @@ namespace FPV.Runtime
             ActivateObjectsServerRpc();
             onTargetDeactivated?.Invoke();
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position);
 =======
@@ -88,6 +89,10 @@ namespace FPV.Runtime
 
             // TODO add visual feedback for target state change
             OnTargetStateChanged(!newState, newState);
+=======
+            
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position, NetworkManager.Singleton.LocalClientId, 5);
+>>>>>>> Stashed changes
         }
 
         private void OnTargetStateChanged(bool previousValue, bool newValue)
