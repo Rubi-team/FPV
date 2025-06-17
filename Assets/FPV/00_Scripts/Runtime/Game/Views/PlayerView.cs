@@ -37,6 +37,9 @@ namespace FPV.Runtime
         [SerializeField] private GameObject emote9;
 
         [SerializeField] private GameObject trailEffect;
+        
+        private float stressValue;
+        private float distanceToMenace;
 
 
         public void AudioFootsteps()
@@ -120,6 +123,23 @@ namespace FPV.Runtime
 
             // Faire le raycast avec les bonnes variables
             if (Physics.Raycast(ray, out hit, distance, layerMask)) headTarget.position = hit.point;
+            
+            //Menace & Stress
+            if (Menace.Instance)
+            {
+                //CALCULER STRESS VALUE
+                distanceToMenace = Vector3.Distance(App.transform.position, Menace.Instance.transform.position);
+                if (distanceToMenace < 25)
+                {
+                    stressValue = 1 - (distanceToMenace / 25);
+                }
+                else if (stressValue != 0)
+                {
+                    stressValue = 0;
+                }
+
+                RuntimeManager.StudioSystem.setParameterByName("Stress", stressValue);
+            }
 
             SetAnimatorVariables();
         }
