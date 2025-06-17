@@ -69,8 +69,13 @@ namespace FPV.Runtime
             DeactivateLasersClientRpc();
             ActivateObjectsServerRpc();
             onTargetDeactivated?.Invoke();
+<<<<<<< Updated upstream
 
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position);
+=======
+            
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.target, transform.position, NetworkManager.Singleton.LocalClientId, 5);
+>>>>>>> Stashed changes
         }
 
         [Rpc(SendTo.Server)]

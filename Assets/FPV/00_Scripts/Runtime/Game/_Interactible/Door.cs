@@ -75,7 +75,7 @@ namespace FPV.Runtime
             if (doorAnimation != null)
                 doorAnimation.Play();
             
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.doorOpen, transform.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.doorOpen, transform.position, NetworkManager.Singleton.LocalClientId, 15);
             
             Debug.Log("La porte s'est ouverte !");
         }

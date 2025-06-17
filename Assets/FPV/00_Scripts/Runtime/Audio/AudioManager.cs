@@ -67,7 +67,7 @@ namespace Audio
         /// <summary>
         ///     Plays a one-shot sound at the specified world position.
         /// </summary>
-        public void PlayOneShot(EventReference sound, Vector3 worldPos, bool hasParameters = false,
+        public void PlayOneShot(EventReference sound, Vector3 worldPos, ulong playerID, int audioDistance, bool hasParameters = false,
             string parameter1Name = null, float parameter1Value = 0f, string parameter2Name = null,
             float parameter2Value = 0f)
         {
@@ -76,6 +76,8 @@ namespace Audio
                     parameter2Name, parameter2Value);
             else
                 PlayOneShotRpc(sound.ToString(), worldPos);
+            
+            Menace.Instance.DetectThreatServerRpc(playerID, audioDistance);
         }
 
         [Rpc(SendTo.Everyone)]

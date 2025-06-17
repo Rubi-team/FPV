@@ -43,7 +43,7 @@ namespace FPV.Runtime
 
             if (currentGroundType == null)
             {
-                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 5);
                 return;
             }
 
@@ -60,28 +60,28 @@ namespace FPV.Runtime
             {
                 case 0:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 12);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 5);
                     break;
                 case 1:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkWoodFootStep, Feet.position);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 30);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkWoodFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 15);
                     break;
                 case 2:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkCarpetFootStep, Feet.position);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 12);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkCarpetFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 5);
                     break;
                 case 3:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkMetalFootstep, Feet.position);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position, NetworkManager.Singleton.LocalClientId, 12);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkMetalFootstep, Feet.position, NetworkManager.Singleton.LocalClientId, 5);
                     break;
                 default:
                     if (Controller._input.sprint)
-                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
-                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position);
+                        AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 12);
+                    else AudioManager.Instance.PlayOneShot(AudioManager.Instance.walkConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, 5);
                     break;
             }
         }
@@ -124,8 +124,7 @@ namespace FPV.Runtime
 
         public void PlayJumpLandSound(bool isJump)
         {
-            AudioManager.Instance.PlayOneShot(isJump ? AudioManager.Instance.jump : AudioManager.Instance.land,
-                Feet.position);
+            AudioManager.Instance.PlayOneShot(isJump ? AudioManager.Instance.jump : AudioManager.Instance.land, Feet.position, NetworkManager.Singleton.LocalClientId, 10);
             jumping = false;
             LastJumpTime = Time.time;
 
@@ -134,23 +133,23 @@ namespace FPV.Runtime
 
         public void PlaySoundOnFurbyPickedUp()
         {
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.grabItem, Feet.position);
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.furbyGrab, Feet.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.grabItem, Feet.position, NetworkManager.Singleton.LocalClientId, 8);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.furbyGrab, Feet.position, NetworkManager.Singleton.LocalClientId, 10);
         }
 
         public void PlaySoundOnPlayerPickedUp()
         {
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.grabPlayer, Body.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.grabPlayer, Body.position, NetworkManager.Singleton.LocalClientId, 8);
         }
 
         public void PlaySoundOnFurbyThrown()
         {
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.throwItem, Body.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.throwItem, Body.position, NetworkManager.Singleton.LocalClientId, 8);
         }
 
         public void PlaySoundOnPlayerThrown()
         {
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.throwPlayer, Body.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.throwPlayer, Body.position, NetworkManager.Singleton.LocalClientId, 10);
         }
 
         [Rpc(SendTo.Everyone)]

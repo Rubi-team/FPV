@@ -219,7 +219,7 @@ namespace FPV.Runtime
                 var explosion = Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
                 explosion.transform.SetParent(null); // Ne pas le parent à l'objet Furby
                 
-                AudioManager.Instance.PlayOneShot(AudioManager.Instance.furbyHit, transform.position);
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.furbyHit, transform.position, NetworkManager.Singleton.LocalClientId, 15);
 
                 // Optionally, destroy the explosion effect after a few seconds
                 Destroy(explosion, 3f);

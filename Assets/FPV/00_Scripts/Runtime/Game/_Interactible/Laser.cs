@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Audio;
 using FMODUnity;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace FPV.Runtime
@@ -179,8 +180,8 @@ namespace FPV.Runtime
             player.isSlowDownActive = true;
             
             //Sons
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.laserHit, playerObject.transform.position);
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.laserHit, playerObject.transform.position, NetworkManager.Singleton.LocalClientId, 10000);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position, NetworkManager.Singleton.LocalClientId, 10000);
 
             // Sauvegarder les vitesses originales
             var originalSpeed = player.MoveSpeed;

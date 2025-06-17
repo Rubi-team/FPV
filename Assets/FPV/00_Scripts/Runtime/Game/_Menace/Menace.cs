@@ -284,7 +284,7 @@ public class Menace : NetworkBehaviour
     {
         _animator.SetBool("IsDashing", true);
         var directionToTarget = (_lastTarget.position - transform.position).normalized;
-        AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatCharging, Feet.position);
+        AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatCharging, Feet.position, NetworkManager.Singleton.LocalClientId, -10);
 
         // Utiliser un Raycast pour détecter le premier obstacle dans la direction
         RaycastHit hit;
@@ -331,7 +331,7 @@ public class Menace : NetworkBehaviour
 
             // Apply the force to the player
             player.Controller.OnPlayerThrowMeRpc(direction, force, true);
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatHit, Feet.position);
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatHit, Feet.position, NetworkManager.Singleton.LocalClientId, -10);
 
             // End the charge after hitting a player
             EndCharge();
@@ -390,8 +390,48 @@ public class Menace : NetworkBehaviour
 
         if (currentGroundType == null)
         {
+<<<<<<< Updated upstream
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position);
             return;
+=======
+            GetGroundType();
+            
+            if (currentGroundType == null)
+            {
+                AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, -10);
+                return;
+            }
+            
+            var index = (int)currentGroundType.groundType;
+            if (currentGroundType == null) index = 0; // Default to 0 if no ground type is set
+
+            // if controller input move is zero we return 
+            if (_navMeshAgent.velocity.magnitude == 0)
+            {
+                // If the player is not moving, we don't play any footsteps sound
+                return;
+            }
+
+            // switch case of index 
+            switch (index)
+            {
+                case 0:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, -10);
+                    break;
+                case 1:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runWoodFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, -10);
+                    break;
+                case 2:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runCarpetFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, -10);
+                    break;
+                case 3:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runMetalFootstep, Feet.position, NetworkManager.Singleton.LocalClientId, -10);
+                    break;
+                default:
+                    AudioManager.Instance.PlayOneShot(AudioManager.Instance.runConcreteFootStep, Feet.position, NetworkManager.Singleton.LocalClientId, -10);
+                    break;
+            }
+>>>>>>> Stashed changes
         }
 
         var index = (int)currentGroundType.groundType;
