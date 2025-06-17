@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Audio;
 using FMODUnity;
 using Unity.Netcode;
+using Unity.Services.Matchmaker.Models;
 using UnityEngine;
 
 namespace FPV.Runtime
@@ -189,6 +190,7 @@ namespace FPV.Runtime
             // Appliquer le ralentissement
             player.MoveSpeed /= slowDownFactor;
             player.SprintSpeed /= slowDownFactor;
+            player.View.EnablePostProcessSlow();
 
             // Définir le cooldown pour ce joueur
             cooldowns[playerObject] = Time.time + slowDownDuration + checkInterval;
@@ -203,6 +205,7 @@ namespace FPV.Runtime
                 player.MoveSpeed = originalSpeed;
                 player.SprintSpeed = originalSprintSpeed;
                 player.isSlowDownActive = false;
+                
             }
 
             // ✅ Nettoyer le dictionnaire des coroutines actives

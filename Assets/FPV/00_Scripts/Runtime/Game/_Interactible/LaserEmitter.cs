@@ -131,6 +131,7 @@ namespace FPV.Runtime
             // Appliquer le ralentissement
             player.MoveSpeed /= slowDownFactor;
             player.SprintSpeed /= slowDownFactor;
+            player.View.EnablePostProcessSlow();
 
             // Définir le cooldown
             cooldowns[playerObject] = Time.time + slowDownDuration + checkInterval;
