@@ -133,6 +133,8 @@ namespace FPV.Runtime
             //Sons
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.laserHit, playerObject.transform.position, NetworkManager.Singleton.LocalClientId, 10000);
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.siren, transform.position, NetworkManager.Singleton.LocalClientId, 10000);
+            
+            player.View.CallAlarmPostProcessPulseRpc(6.6f, 1.8f);
 
             // Sauvegarder les vitesses originales
             var originalSpeed = player.MoveSpeed;

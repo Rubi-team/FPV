@@ -183,7 +183,7 @@ namespace FPV.Runtime
                 NetworkManager.Singleton.LocalClientId, 10000);
             
             // Appeler l'effet de post-process pour l'alarme
-            player.View.CallAlarmPostProcessPulseRpc(8.4f, 1.8f);
+            player.View.CallAlarmPostProcessPulseRpc(6.6f, 1.8f);
 
 
             // Sauvegarder les vitesses originales
