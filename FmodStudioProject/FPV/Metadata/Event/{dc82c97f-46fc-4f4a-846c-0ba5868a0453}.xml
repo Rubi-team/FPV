@@ -5,7 +5,7 @@
 			<value>ButtonUI</value>
 		</property>
 		<property name="outputFormat">
-			<value>0</value>
+			<value>1</value>
 		</property>
 		<relationship name="folder">
 			<destination>{9cb52f2a-8778-498f-a30d-5d0135084316}</destination>
@@ -56,7 +56,7 @@
 			<destination>{7a42a419-6b38-455d-875f-f587f46b2a11}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{d9bfb2e3-c85b-404c-8fdf-16f506e8639e}</destination>
+			<destination>{74a1a36f-86b1-4c3e-a469-dc6efc4dcdc2}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{e6024ffb-cdb1-4b9b-a19e-ad5f5fc52e4c}" />
@@ -72,6 +72,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{648f84c8-f19f-4960-8444-8bb120bce476}">
+		<property name="volume">
+			<value>-40</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{b52b1574-dde6-481e-992b-c65b1364837b}</destination>
 		</relationship>
@@ -82,7 +85,11 @@
 			<destination>{8fe532e4-4bd1-4fca-a103-9b54144436c8}</destination>
 		</relationship>
 	</object>
-	<object class="MultiSound" id="{988bb608-8a13-48d6-9582-8c7ba47b8dfb}" />
+	<object class="MultiSound" id="{988bb608-8a13-48d6-9582-8c7ba47b8dfb}">
+		<relationship name="sounds">
+			<destination>{f8806073-f411-4446-a0c5-cd41fa397ee8}</destination>
+		</relationship>
+	</object>
 	<object class="MixerBusEffectChain" id="{68cb0c5c-580a-4f28-b498-e6f58bd5c0e1}">
 		<relationship name="effects">
 			<destination>{69ec49b6-a7ed-4161-b791-2f81d6249f8a}</destination>
@@ -95,6 +102,11 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{87358715-99de-4fd6-8ec3-1fee15eec6c7}" />
+	<object class="SingleSound" id="{f8806073-f411-4446-a0c5-cd41fa397ee8}">
+		<relationship name="audioFile">
+			<destination>{0766b1be-0c99-409e-9808-81d15c9b01c3}</destination>
+		</relationship>
+	</object>
 	<object class="MixerBusFader" id="{69ec49b6-a7ed-4161-b791-2f81d6249f8a}" />
 	<object class="MixerBusFader" id="{d3894c58-707a-4428-bf8e-3ab4f69bdf44}" />
 </objects>
