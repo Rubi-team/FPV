@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Data.Common;
 using Audio;
 using FPV.Runtime;
 using FPV.Runtime.Shared;
@@ -104,26 +105,27 @@ namespace FPV
             {
                 foreach (var door in doorsToActivate)
                 {
-                    if (door != null)
-                        door.GetComponent<Door>().TriggerDoorServerRpc();
+                    if (door == null) continue;
 
-                    if (door.GetComponent<Door>()._attempts > 0 && door.GetComponent<Door>()._requiresTwoAttempts)
+                    Door doorComponent = door.GetComponent<Door>();
+                    if (doorComponent == null)
                     {
-                        Debug.Log(door.GetComponent<Door>()._attempts);
-                        SonoSoundRpc();
+                        Debug.LogError("Door component not found on the GameObject.");
+                        continue;
                     }
-                    else if (!door.GetComponent<Door>()._requiresTwoAttempts)
+
+                    if (doorComponent._isDoorOpen)
                     {
-                        Debug.Log("not 2 attemps");
-                        SonoSoundRpc();
+                        Debug.Log("Door already open, skipping.");
+                        continue;
                     }
-                    else
-                    {
-                        Debug.Log("coroutine");
-                        StartCoroutine(WaitForDoorOpen(door.GetComponent<Door>()));
-                    }
+
+                    doorComponent.TriggerDoorServerRpc();
+
+                    // Attendre qu'elle s'ouvre dans les 3 secondes pour jouer le son
+                    StartCoroutine(WaitForDoorOpen(doorComponent));
                 }
-                
+
             }
         }
         
