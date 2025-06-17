@@ -14,7 +14,6 @@ namespace FPV.Runtime
 
         [SerializeField] private float explosionForce = 10f;
         [SerializeField] private LayerMask affectedLayers;
-        [SerializeField] private float impactDirectionMultiplier = 5f; // Nouveau paramètre configuré dans l'inspecteur
         [SerializeField] private StudioEventEmitter throwEmitter;
 
         private bool pickedUp = false;

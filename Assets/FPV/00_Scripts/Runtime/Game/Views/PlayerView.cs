@@ -234,5 +234,8 @@ namespace FPV.Runtime
                 Destroy(instance, 3f);
             }
         }
+
+        [SerializeField] private GameObject SlowPostProcess;
+
     }
 }

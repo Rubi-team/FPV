@@ -138,6 +138,7 @@ namespace FPV
             {
                 if (door._isDoorOpen)
                 {
+                    Debug.Log("Door : " + door.name + " opened, playing sound.", door.gameObject);
                     SonoSoundRpc();
                     yield break; // Stop the coroutine if the door opens
                 }
@@ -168,7 +169,7 @@ namespace FPV
         private IEnumerator ExecuteActivationSequence()
         {
             // Désactive les lasers et active les portes
-            if (lasersToDeactivate != null)
+            if (lasersToDeactivate != null && lasersToDeactivate.Length > 0)
             {
                 SonoSoundRpc();
                 foreach (var laser in lasersToDeactivate)
@@ -177,7 +178,7 @@ namespace FPV
             }
 
 
-            if (laserEmittersToDeactivate != null)
+            if (laserEmittersToDeactivate != null && laserEmittersToDeactivate.Length > 0)
             {
                 SonoSoundRpc();
                 foreach (var laserEmitter in laserEmittersToDeactivate)
