@@ -57,8 +57,7 @@ namespace FPV
             {
                 if (detectedPlayer != null)
                     lastKnownPosition = detectedPlayer.position;
-
-                detectedPlayer = null;
+                
 
                 if (showDebug)
                 {
@@ -85,7 +84,6 @@ namespace FPV
             }
             else
             {
-                detectedPlayer = null;
                 if (showDebug) Debug.Log($"[LOUDNESS] Bruit insuffisant: {player.CurrentLoudness:F2}");
             }
         }

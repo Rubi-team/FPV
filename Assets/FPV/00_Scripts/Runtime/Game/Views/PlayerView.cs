@@ -350,6 +350,19 @@ namespace FPV.Runtime
 
             volume.weight = 0f; // assure que l'effet est désactivé à la fin
         }
+        
+        [SerializeField] private GameObject VFXDead;
+
+        [Rpc(SendTo.Everyone)]
+        public void PlayDeadVFXRpc()
+        {
+            if (VFXDead != null)
+            {
+                var instance = Instantiate(VFXDead, Body.position, Quaternion.identity);
+                instance.transform.SetParent(Body);
+                Destroy(instance, 5f);
+            }
+        }
 
     }
 }

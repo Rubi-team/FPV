@@ -32,8 +32,8 @@ public class KeyKing : NetworkBehaviour
     {
         if (other.TryGetComponent<PlayerApplication>(out var playerApp))
         {
-            //modifier le bool clé pour que le jeu puisse par la suite ouvrir la porte du roi.
-            Debug.Log($"{other.name}");
+            NetworkManager.SpawnManager.PlayerObjects[0].GetComponent<PlayerApplication>().OnPlayerHasKeyRpc();
+            NetworkManager.SpawnManager.PlayerObjects[1].GetComponent<PlayerApplication>().OnPlayerHasKeyRpc();
             
             //détruire l'objet avec les feedbacks
             KeySoundRpc();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Audio;
 using FPV.Runtime.Shared;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -19,6 +20,8 @@ namespace FPV.Runtime
 
         public bool HasTakenAHit = false; 
         public bool IsDead = false;
+        
+        public bool hasKey = false;
 
         protected override void Awake()
         {
@@ -78,6 +81,13 @@ namespace FPV.Runtime
         [Rpc(SendTo.Owner)]
         public void OnPLayerHitRpc()
         {
+            if (!IsOwner) return;
+            if (HasTakenAHit && IsDead) return;
+            
+            AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatHit, View.Body.position,
+                NetworkManager.Singleton.LocalClientId, -10);
+            
+            Debug.LogWarning("Player hit detected.");
             if (!HasTakenAHit)
             {
                 HasTakenAHit = true;
@@ -88,24 +98,51 @@ namespace FPV.Runtime
                 IsDead = true;
                 Controller._input.enabled = false;
                 // If we are playerid 0, look for player object of player 1 and vice versa
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(NetworkManager.LocalClientId == 0 ? 1UL : 0UL, out var playerObject))
+                if (NetworkManager.Singleton.SpawnManager.PlayerObjects[0].NetworkObjectId == NetworkObjectId)
                 {
+                    var playerObject = NetworkManager.Singleton.SpawnManager.PlayerObjects[1];
+                    if (playerObject == null) return;
                     var player = playerObject.GetComponent<PlayerApplication>();
                     if (player != null)
                     {
                         _cinemachineCamera.GetComponent<CinemachineCamera>().Follow =
                             player.Model.CinemachineCameraTarget.transform;
+                        player.Model.Mesh.enabled = false; // Disable the other player's mesh
+                        OnDeathRpc();
+                    }
+                }
+                else
+                {
+                    var playerObject = NetworkManager.Singleton.SpawnManager.PlayerObjects[0];
+                    if (playerObject == null) return;
+                    var player = playerObject.GetComponent<PlayerApplication>();
+                    if (player != null)
+                    {
+                        _cinemachineCamera.GetComponent<CinemachineCamera>().Follow =
+                            player.Model.CinemachineCameraTarget.transform;
+                        player.Model.Mesh.enabled = false; // Disable the other player's mesh
                         OnDeathRpc();
                     }
                 }
             }
         }
 
+
+
         [Rpc(SendTo.Everyone)]
         private void OnDeathRpc()
         {
+            Debug.LogWarning("Player has died.");
             View.SetAnimatorBoolRpc("IsDead", true);
             View.SetAnimatorBool("IsDead", true);
+        }
+        
+        [Rpc(SendTo.Owner)]
+        public void OnPlayerHasKeyRpc()
+        {
+            if (!IsOwner) return;
+            hasKey = true;
+            Debug.Log("Player has the key now.");
         }
         
         [Rpc(SendTo.Everyone)]

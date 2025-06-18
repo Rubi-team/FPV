@@ -46,7 +46,7 @@ public class Menace : NetworkBehaviour
     internal GroundType currentGroundType;
 
 
-    private bool _isCharging = false;
+    internal NetworkVariable<bool> IsCharging = new();
     private bool _hasExecutedCharge = false;
     
     private float _stateEnteredTime;
@@ -75,6 +75,7 @@ public class Menace : NetworkBehaviour
         {
             _navMeshAgent.enabled = false; // Disable NavMeshAgent on non-server instances
             MenaceListener.enabled = false; // Disable MenaceListener on non-server instances
+            this.enabled = false; // Disable this script on non-server instances
             return;
         }
     }
@@ -243,7 +244,7 @@ public class Menace : NetworkBehaviour
         if (_lastTarget == MenaceListener.detectedPlayer)
             Charge();
 
-        if (_isCharging && !_hasExecutedCharge && Time.time - _lastChargeTime >= chargeWarmupTime)
+        if (IsCharging.Value && !_hasExecutedCharge && Time.time - _lastChargeTime >= chargeWarmupTime)
         {
             Debug.Log("Executing charge");
             ExecuteCharge();
@@ -287,7 +288,7 @@ public class Menace : NetworkBehaviour
     private void Charge()
     {
         // Vérifier le cooldown et si déjà en charge
-        if (Time.time - _lastChargeTime < chargeCooldown || _isCharging)
+        if (Time.time - _lastChargeTime < chargeCooldown || IsCharging.Value)
             return;
 
         // Vérifier si on a une cible
@@ -301,7 +302,7 @@ public class Menace : NetworkBehaviour
     {
         _navMeshAgent.ResetPath();
 
-        _isCharging = true;
+        IsCharging.Value = true;
         _hasExecutedCharge = false;
         _lastChargeTime = Time.time;
 
@@ -310,6 +311,7 @@ public class Menace : NetworkBehaviour
 
     private void ExecuteCharge()
     {
+        GetComponent<Rigidbody>().isKinematic = false; // Ensure the Rigidbody is not kinematic
         _animator.SetBool("IsDashing", true);
         var directionToTarget = (_lastTarget.position - transform.position).normalized;
         AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatCharging, Feet.position,
@@ -340,28 +342,30 @@ public class Menace : NetworkBehaviour
 
     private void EndCharge()
     {
-        _isCharging = false;
+        GetComponent<Rigidbody>().isKinematic = true; // Ensure the Rigidbody is not kinematic
+        IsCharging.Value = false;
         _lastChargeTime = Time.time;
         _navMeshAgent.speed = 3.5f;
         _lastTarget = null;
+        _hasExecutedCharge = false;
 
         _animator.SetBool("IsDashing", false);
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        // Direction of bump is a normalized vector from the Menace to the other object
-        if (!IsServer || !_isCharging || !_hasExecutedCharge) return;
+        if (!IsServer || !IsCharging.Value || !_hasExecutedCharge) return;
         if (other.gameObject.TryGetComponent<PlayerApplication>(out var player))
         {
+            
+            if (player.IsDead) return; // Ignore if player is dead
+            
             // Calculate the direction and force to apply
             var direction = (other.transform.position - transform.position).normalized;
             var force = chargeSpeed / 2; // Adjust force multiplier as needed
 
             // Apply the force to the player
             player.Controller.OnPlayerThrowMeRpc(direction, force, true);
-            AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatHit, Feet.position,
-                NetworkManager.Singleton.LocalClientId, -10);
             
             player.OnPLayerHitRpc();
 
@@ -383,7 +387,7 @@ public class Menace : NetworkBehaviour
         catch (Exception _)
 #pragma warning restore CS0168 // Variable is declared but never used
         {
-            return;
+            networkObject = NetworkManager.Singleton.SpawnManager.PlayerObjects[0];
         }
         
         if (networkObject == null || !networkObject.TryGetComponent(out Transform playerTransform))
