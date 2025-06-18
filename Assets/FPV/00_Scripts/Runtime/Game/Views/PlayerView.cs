@@ -201,6 +201,13 @@ namespace FPV.Runtime
             if (_animator != null) _animator.SetTrigger(triggerName);
         }
         
+        public void SetAnimatorBool(string boolName, bool value)
+        {
+            if (!App.IsOwner) return;
+            
+            if (_animator != null) _animator.SetBool(boolName, value);
+        }
+        
         [Rpc(SendTo.NotMe)]
         public void SetAnimatorBoolRpc(string boolName, bool value)
         {

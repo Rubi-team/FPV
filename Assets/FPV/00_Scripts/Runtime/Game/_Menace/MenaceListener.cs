@@ -78,7 +78,7 @@ namespace FPV
 
         if (detectedPlayer != null && hit.TryGetComponent<PlayerApplication>(out var player))
         {
-            if (player.CurrentLoudness > 0.2f)
+            if (player.CurrentLoudness > 0.09f)
             {
                 detectedPlayer = player.transform;
                 if (showDebug) Debug.Log($"[LOUDNESS] Joueur détecté par bruit: {player.CurrentLoudness:F2}");

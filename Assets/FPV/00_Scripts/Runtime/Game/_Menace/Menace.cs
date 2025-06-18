@@ -377,6 +377,8 @@ public class Menace : NetworkBehaviour
             player.Controller.OnPlayerThrowMeRpc(direction, force, true);
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatHit, Feet.position,
                 NetworkManager.Singleton.LocalClientId, -10);
+            
+            player.OnPLayerHitRpc();
 
             // End the charge after hitting a player
             EndCharge();

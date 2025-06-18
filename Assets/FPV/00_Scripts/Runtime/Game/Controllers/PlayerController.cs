@@ -89,6 +89,7 @@ namespace FPV.Runtime
         private void Update()
         {
             if (!App.IsOwner) return;
+            if (App.IsDead) return;
 
             GroundedCheck();
 

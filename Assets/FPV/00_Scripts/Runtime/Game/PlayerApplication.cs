@@ -14,6 +14,11 @@ namespace FPV.Runtime
     {
         [SerializeField] public float CurrentLoudness = 0f;
         [SerializeField] private MyVOIP _Voip;
+        
+        private GameObject _cinemachineCamera;
+
+        public bool HasTakenAHit = false; 
+        public bool IsDead = false;
 
         protected override void Awake()
         {
@@ -49,8 +54,8 @@ namespace FPV.Runtime
 
             // If the player is the owner, we need to enable the input and set the camera
 
-            var cinemachineCam = Instantiate(Model.CinemachineCameraFollow, View.transform);
-            cinemachineCam.GetComponent<CinemachineCamera>().Follow = Model.CinemachineCameraTarget.transform;
+             _cinemachineCamera = Instantiate(Model.CinemachineCameraFollow, View.transform);
+             _cinemachineCamera.GetComponent<CinemachineCamera>().Follow = Model.CinemachineCameraTarget.transform;
 
             if (Controller._playerInput != null)
             {
@@ -68,6 +73,39 @@ namespace FPV.Runtime
             {
                 ChangeSkinRpc();
             }
+        }
+
+        [Rpc(SendTo.Owner)]
+        public void OnPLayerHitRpc()
+        {
+            if (!HasTakenAHit)
+            {
+                HasTakenAHit = true;
+            }
+            else
+            {
+                // If the player has already taken a hit, we set IsDead to true
+                IsDead = true;
+                Controller._input.enabled = false;
+                // If we are playerid 0, look for player object of player 1 and vice versa
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(NetworkManager.LocalClientId == 0 ? 1UL : 0UL, out var playerObject))
+                {
+                    var player = playerObject.GetComponent<PlayerApplication>();
+                    if (player != null)
+                    {
+                        _cinemachineCamera.GetComponent<CinemachineCamera>().Follow =
+                            player.Model.CinemachineCameraTarget.transform;
+                        OnDeathRpc();
+                    }
+                }
+            }
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void OnDeathRpc()
+        {
+            View.SetAnimatorBoolRpc("IsDead", true);
+            View.SetAnimatorBool("IsDead", true);
         }
         
         [Rpc(SendTo.Everyone)]
