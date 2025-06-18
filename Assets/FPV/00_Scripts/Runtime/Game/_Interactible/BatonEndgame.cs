@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using FPV.Runtime;
+using Unity.Netcode;
 using UnityEngine;
 
 public class BatonEndgame : MonoBehaviour
@@ -17,6 +18,7 @@ public class BatonEndgame : MonoBehaviour
         }
     }
 
+    [Rpc(SendTo.Everyone)]
     private IEnumerator ResetToMainMenu()
     {
         yield return new WaitForSeconds(10f);
