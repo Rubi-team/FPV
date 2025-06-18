@@ -51,14 +51,13 @@ public class Menace : NetworkBehaviour
     
     private float _stateEnteredTime;
     private MenaceState _previousState;
-    private const float MinStateDuration = 1f;
     
     private float _goingToStartTime;
-    private const float GoingToTimeout = 15f;
+    private const float GoingToTimeout = 10f;
     
     private float _lastMovedTime;
     private Vector3 _lastPosition;
-    private const float TeleportIfIdleDuration = 10f;
+    private const float TeleportIfIdleDuration = 12f;
 
 
 

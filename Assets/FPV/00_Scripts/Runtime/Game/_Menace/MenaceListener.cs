@@ -14,6 +14,11 @@ namespace FPV
 
         [Header("Detected Player")] public Transform detectedPlayer;
         public Vector3 lastKnownPosition;
+        
+        private Transform previousDetectedPlayer = null;
+        private float samePlayerTimer = 0f;
+        private const float detectionTimeout = 15f;
+
 
         [Header("Debug")] public bool showDebug = true;
 
@@ -25,7 +30,36 @@ namespace FPV
         private void Update()
         {
             DetectPlayers();
+
+            if (detectedPlayer != null)
+            {
+                if (detectedPlayer == previousDetectedPlayer)
+                {
+                    samePlayerTimer += Time.deltaTime;
+                    if (samePlayerTimer >= detectionTimeout)
+                    {
+                        if (showDebug)
+                            Debug.Log($"[TIMEOUT] Le même joueur a été détecté pendant {detectionTimeout} secondes. Réinitialisation.");
+
+                        detectedPlayer = null;
+                        lastKnownPosition = Vector3.zero;
+                        samePlayerTimer = 0f;
+                        previousDetectedPlayer = null;
+                    }
+                }
+                else
+                {
+                    previousDetectedPlayer = detectedPlayer;
+                    samePlayerTimer = 0f;
+                }
+            }
+            else
+            {
+                previousDetectedPlayer = null;
+                samePlayerTimer = 0f;
+            }
         }
+
 
 
         private void DetectPlayers()
