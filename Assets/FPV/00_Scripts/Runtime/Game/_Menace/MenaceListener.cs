@@ -28,70 +28,101 @@ namespace FPV
 
 
         private void DetectPlayers()
+{
+    var hits = Physics.OverlapSphere(transform.position, detectionRadius, detectionMask);
+
+    foreach (var hit in hits)
+    {
+        if (!hit.CompareTag("Player")) continue;
+
+        var directionToTarget = (hit.transform.position - transform.position).normalized;
+        var angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
+
+        if (angleToTarget < fieldOfViewAngle / 2f)
         {
-            var hits = Physics.OverlapSphere(transform.position, detectionRadius, detectionMask);
+            var distanceToTarget = Vector3.Distance(transform.position, hit.transform.position);
+            var origin = transform.position + transform.forward * 2f + Vector3.up * 1f;
 
-            foreach (var hit in hits)
-                if (hit.CompareTag("Player"))
+            if (!Physics.Raycast(origin, directionToTarget, out var hitInfo, distanceToTarget - 2f, obstructionMask))
+            {
+                detectedPlayer = hit.transform;
+
+                if (showDebug)
                 {
-                    var directionToTarget = (hit.transform.position - transform.position).normalized;
-
-                    // Vérifie si l'angle est dans le champ de vision
-                    var angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
-                    if (angleToTarget < fieldOfViewAngle / 2f)
-                    {
-                        // Vérifie s'il y a une ligne de vue
-                        var distanceToTarget = Vector3.Distance(transform.position, hit.transform.position);
-                        // Commence le raycast 2 unités devant la menace
-                        var origin = transform.position + transform.forward * 2f + Vector3.up * 1f;
-
-                        if (!Physics.Raycast(origin, directionToTarget, out var hitInfo, distanceToTarget - 2f,
-                                obstructionMask))
-                        {
-                            detectedPlayer = hit.transform;
-                        }
-                        else
-                        {
-                            // Sauvegarde la dernière position connue seulement si on avait déjà un joueur détecté
-                            if (detectedPlayer != null) lastKnownPosition = detectedPlayer.position;
-                            detectedPlayer = null;
-                        }
-
-                        if (showDebug) Debug.DrawLine(origin, hit.transform.position, Color.red);
-                    }
-                    else
-                    {
-                        if (showDebug) Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
-                    }
-
-                    // Si jamais la Loudness du joueur est supérieure à 0.5, on le considère comme détecté
-                    if (detectedPlayer != null && hit.TryGetComponent<PlayerApplication>(out var player))
-                    {
-                        if (player.CurrentLoudness > 0.2f)
-                            lastKnownPosition = hit.transform.position;
-                        else
-                            detectedPlayer =
-                                null; // Si la Loudness est trop basse, on ne le considère pas comme détecté
-                    }
+                    Debug.DrawLine(origin, hit.transform.position, Color.green); // ligne de détection réussie
+                    Debug.Log($"[DETECTION] Player détecté sans obstruction: {hit.transform.name}", hit.transform);
                 }
+            }
+            else
+            {
+                if (detectedPlayer != null)
+                    lastKnownPosition = detectedPlayer.position;
+
+                detectedPlayer = null;
+
+                if (showDebug)
+                {
+                    Debug.DrawLine(origin, hitInfo.point, Color.red); // ligne bloquée
+                    Debug.Log($"[RAYCAST BLOCKED] Obstruction détectée: {hitInfo.collider.name}", hitInfo.collider);
+                }
+            }
         }
+        else
+        {
+            if (showDebug)
+            {
+                Debug.DrawLine(transform.position, hit.transform.position, Color.yellow); // hors champ de vision
+                Debug.Log($"[FOV] {hit.transform.name} est hors champ de vision ({angleToTarget:F1}°)", hit.transform);
+            }
+        }
+
+        if (detectedPlayer != null && hit.TryGetComponent<PlayerApplication>(out var player))
+        {
+            if (player.CurrentLoudness > 0.2f)
+            {
+                detectedPlayer = player.transform;
+                if (showDebug) Debug.Log($"[LOUDNESS] Joueur détecté par bruit: {player.CurrentLoudness:F2}");
+            }
+            else
+            {
+                detectedPlayer = null;
+                if (showDebug) Debug.Log($"[LOUDNESS] Bruit insuffisant: {player.CurrentLoudness:F2}");
+            }
+        }
+    }
+}
+
 
 
         private void OnDrawGizmosSelected()
         {
+            // Sphère de détection
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(transform.position, detectionRadius);
 
-            if (Application.isPlaying && showDebug)
-            {
-                var leftLimit = Quaternion.Euler(0, -fieldOfViewAngle / 2f, 0) * transform.forward;
-                var rightLimit = Quaternion.Euler(0, fieldOfViewAngle / 2f, 0) * transform.forward;
+            // Affichage du champ de vision (en cône)
+            var origin = transform.position + Vector3.up * 1f;
 
-                Gizmos.color = Color.blue;
-                var origin = transform.position + Vector3.up * 1f;
-                Gizmos.DrawRay(origin, leftLimit * detectionRadius);
-                Gizmos.DrawRay(origin, rightLimit * detectionRadius);
+            var leftLimit = Quaternion.Euler(0, -fieldOfViewAngle / 2f, 0) * transform.forward;
+            var rightLimit = Quaternion.Euler(0, fieldOfViewAngle / 2f, 0) * transform.forward;
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawRay(origin, leftLimit * detectionRadius);
+            Gizmos.DrawRay(origin, rightLimit * detectionRadius);
+
+            // Arc de cercle du champ de vision
+            Gizmos.color = new Color(0, 0.5f, 1f, 0.2f); // bleu semi-transparent
+            int segments = 30;
+            float angleStep = fieldOfViewAngle / segments;
+            Vector3 prevPoint = origin + (Quaternion.Euler(0, -fieldOfViewAngle / 2f, 0) * transform.forward) * detectionRadius;
+            for (int i = 1; i <= segments; i++)
+            {
+                float angle = -fieldOfViewAngle / 2f + angleStep * i;
+                Vector3 nextPoint = origin + (Quaternion.Euler(0, angle, 0) * transform.forward) * detectionRadius;
+                Gizmos.DrawLine(prevPoint, nextPoint);
+                prevPoint = nextPoint;
             }
         }
+
     }
 }
