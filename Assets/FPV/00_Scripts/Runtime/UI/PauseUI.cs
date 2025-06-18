@@ -28,6 +28,7 @@ public class PauseUI : MonoBehaviour
         ChangeVolume(1); // Initialize chat volume
         ChangeVolume(2); // Initialize SFX volume
         ChangeVolume(3); // Initialize ambience volume
+        ChangeVolume(4); // Initialize sensitivity
     }
 
     public void ChangeUI(bool state)
