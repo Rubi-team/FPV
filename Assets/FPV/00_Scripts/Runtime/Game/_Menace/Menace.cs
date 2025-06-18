@@ -106,21 +106,6 @@ public class Menace : NetworkBehaviour
                 break;
         }
     }
-    
-    private void SetState(MenaceState newState)
-    {
-        if (_currentState == newState)
-            return;
-
-        if (Time.time - _stateEnteredTime < MinStateDuration)
-            return;
-
-        _previousState = _currentState;
-        _currentState = newState;
-        _stateEnteredTime = Time.time;
-        
-    }
-
 
     private void FixedUpdate()
     {
@@ -171,7 +156,7 @@ public class Menace : NetworkBehaviour
         if (MenaceListener.detectedPlayer != _lastTarget)
         {
             // Si un joueur est détecté, changer d'état
-            SetState(MenaceState.Chasing);
+            _currentState = MenaceState.Chasing;
             _lastTarget = MenaceListener.detectedPlayer;
         }
     }
@@ -213,7 +198,7 @@ public class Menace : NetworkBehaviour
         // Vérifier si un joueur est détecté
         if (MenaceListener.detectedPlayer != null)
         {
-            SetState(MenaceState.Chasing);
+            _currentState = MenaceState.Chasing;
             _lastTarget = MenaceListener.detectedPlayer;
         }
     }
@@ -222,9 +207,9 @@ public class Menace : NetworkBehaviour
     {
         if (!_navMeshAgent.pathPending && _navMeshAgent.hasPath && _navMeshAgent.remainingDistance < Mathf.Infinity)
         {
-            if (_navMeshAgent.remainingDistance > 10)
+            if (_navMeshAgent.remainingDistance > 20)
             {
-                _navMeshAgent.speed = 3.5f + _navMeshAgent.remainingDistance;
+                _navMeshAgent.speed = 3.5f + _navMeshAgent.remainingDistance / 2;
             }
             else
             {
@@ -233,14 +218,14 @@ public class Menace : NetworkBehaviour
 
             if (_navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
             {
-                SetState(MenaceState.Patrolling);
+                _currentState = MenaceState.Patrolling;
             }
         }
 
         // Vérifier si un joueur est détecté
         if (MenaceListener.detectedPlayer != null)
         {
-            SetState(MenaceState.Chasing);
+            _currentState = MenaceState.Chasing;
             _lastTarget = MenaceListener.detectedPlayer;
         }
     }
@@ -251,7 +236,7 @@ public class Menace : NetworkBehaviour
         if (_lastTarget == null)
         {
             Debug.Log("No target found in chasing state");
-            SetState(MenaceState.Patrolling);
+            _currentState = MenaceState.Patrolling;
             return;
         }
 
@@ -270,7 +255,7 @@ public class Menace : NetworkBehaviour
             _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
         {
             EndCharge();
-            SetState(MenaceState.Patrolling);
+            _currentState = MenaceState.Patrolling;
         }
     }
 
@@ -295,7 +280,7 @@ public class Menace : NetworkBehaviour
 
     public void SetGoingTo(Vector3 destination)
     {
-        SetState(MenaceState.GoingTo);
+        _currentState = MenaceState.GoingTo;
         _navMeshAgent.SetDestination(destination);
     }
 
