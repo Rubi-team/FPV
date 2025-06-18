@@ -5,6 +5,7 @@ using FPV.Runtime;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.PlayerLoop;
 using UnityEngine.Rendering;
 
 public enum MenaceState
@@ -142,6 +143,7 @@ public class Menace : NetworkBehaviour
     private void FixedUpdate()
     {
         _animator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+        
     }
 
     private void HandleRoaming()
@@ -459,10 +461,41 @@ public class Menace : NetworkBehaviour
         }
         else
         {
-            // Player too far
+            // Trop loin : téléporter la menace à un des waypoints spéciaux si la distance est supérieure à 100
+            if (distanceToPlayer > 100)
+            {
+                // Trouver tous les waypoints spéciaux (à toi de leur attribuer un tag ou une catégorie identifiable)
+                var specialWaypoints = GameObject.FindGameObjectsWithTag("MenaceTP");
+                if (specialWaypoints.Length > 0)
+                {
+                    // Trouver celui le plus proche du joueur
+                    GameObject closest = null;
+                    float closestDist = float.MaxValue;
+                    foreach (var wp in specialWaypoints)
+                    {
+                        float dist = Vector3.Distance(playerTransform.position, wp.transform.position);
+                        if (dist < closestDist)
+                        {
+                            closest = wp;
+                            closestDist = dist;
+                        }
+                    }
+
+                    if (closest != null)
+                    {
+                        Debug.Log("Menace trop loin, téléportée à un waypoint spécial.");
+                        _navMeshAgent.Warp(closest.transform.position);
+                        SetGoingTo(playerTransform.position);
+                    }
+                }
+            }
+
             return;
         }
+
     }
+    
+    
 
     private void GetGroundType()
     {
