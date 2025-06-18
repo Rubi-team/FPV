@@ -7,6 +7,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using Unity.Netcode;
 using Unity.Netcode.Components;
+using Unity.Services.Vivox;
 using UnityEngine.InputSystem.Composites;
 
 namespace FPV.Runtime
@@ -19,7 +20,7 @@ namespace FPV.Runtime
         private GameObject _cinemachineCamera;
 
         public bool HasTakenAHit = false; 
-        public bool IsDead = false;
+        public NetworkVariable<bool> IsDead = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         
         public bool hasKey = false;
 
@@ -82,7 +83,7 @@ namespace FPV.Runtime
         public void OnPLayerHitRpc()
         {
             if (!IsOwner) return;
-            if (HasTakenAHit && IsDead) return;
+            if (HasTakenAHit && IsDead.Value) return;
             
             AudioManager.Instance.PlayOneShot(AudioManager.Instance.threatHit, View.Body.position,
                 NetworkManager.Singleton.LocalClientId, -10);
@@ -95,7 +96,7 @@ namespace FPV.Runtime
             else
             {
                 // If the player has already taken a hit, we set IsDead to true
-                IsDead = true;
+                IsDead.Value = true;
                 Controller._input.enabled = false;
                 // If we are playerid 0, look for player object of player 1 and vice versa
                 if (NetworkManager.Singleton.SpawnManager.PlayerObjects[0].NetworkObjectId == NetworkObjectId)
@@ -109,6 +110,8 @@ namespace FPV.Runtime
                             player.Model.CinemachineCameraTarget.transform;
                         player.Model.Mesh.enabled = false; // Disable the other player's mesh
                         OnDeathRpc();
+                        //mute me on vivox
+                        VivoxService.Instance.MuteInputDevice();
                     }
                 }
                 else
@@ -135,6 +138,21 @@ namespace FPV.Runtime
             Debug.LogWarning("Player has died.");
             View.SetAnimatorBoolRpc("IsDead", true);
             View.SetAnimatorBool("IsDead", true);
+        }
+        
+        [Rpc(SendTo.Owner)]
+        public void ReviveRpc()
+        {
+            if (!IsOwner) return;
+            Debug.Log("Player has been revived.");
+            HasTakenAHit = false;
+            IsDead.Value = false;
+            View.SetAnimatorBoolRpc("IsDead", false);
+            View.SetAnimatorBool("IsDead", false);
+            Controller._input.enabled = true;
+            NetworkManager.SpawnManager.PlayerObjects[NetworkManager.LocalClientId == 0 ? 1 : 0].GetComponent<PlayerApplication>().Model.Mesh.enabled = true; // Re-enable the other player's mesh
+            _cinemachineCamera.GetComponent<CinemachineCamera>().Follow = Model.CinemachineCameraTarget.transform; // Reset camera follow to the local player
+            VivoxService.Instance.UnmuteInputDevice(); // Unmute the player on Vivox
         }
         
         [Rpc(SendTo.Owner)]

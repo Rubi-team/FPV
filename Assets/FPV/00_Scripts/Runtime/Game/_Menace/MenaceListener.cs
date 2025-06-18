@@ -1,5 +1,6 @@
 ﻿using System;
 using FPV.Runtime;
+using Unity.Services.Matchmaker.Models;
 using UnityEngine;
 
 namespace FPV
@@ -45,6 +46,16 @@ namespace FPV
 
             if (!Physics.Raycast(origin, directionToTarget, out var hitInfo, distanceToTarget - 2f, obstructionMask))
             {
+                if (hit.TryGetComponent<PlayerApplication>(out var playerApp)) 
+                {
+                    if (playerApp.IsDead.Value)
+                    {
+                        detectedPlayer = null;
+                        lastKnownPosition = Vector3.zero;
+                        if (showDebug) Debug.Log($"[DETECTION] Player {hit.transform.name} is dead, skipping detection.");
+                        continue;
+                    }
+                }
                 detectedPlayer = hit.transform;
 
                 if (showDebug)
@@ -77,6 +88,13 @@ namespace FPV
 
         if (detectedPlayer != null && hit.TryGetComponent<PlayerApplication>(out var player))
         {
+            if (player.IsDead.Value)
+            {
+                detectedPlayer = null;
+                if (showDebug) Debug.Log($"[DETECTION] Joueur {player.name} est mort, réinitialisation de la détection.");
+                continue;
+            }
+            
             if (player.CurrentLoudness > 0.09f)
             {
                 detectedPlayer = player.transform;

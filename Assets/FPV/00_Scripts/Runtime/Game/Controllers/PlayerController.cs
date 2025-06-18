@@ -89,7 +89,7 @@ namespace FPV.Runtime
         private void Update()
         {
             if (!App.IsOwner) return;
-            if (App.IsDead) return;
+            if (App.IsDead.Value) return;
 
             GroundedCheck();
 
@@ -190,6 +190,11 @@ namespace FPV.Runtime
             // Interaction avec un autre joueur si applicable
             if (interactable.GetTransform().GetComponent<PlayerApplication>() is { } player)
             {
+                if (player.IsDead.Value)
+                {
+                    player.ReviveRpc();
+                    return;
+                }
                 // Empêchez l'interaction si l'état ne le permet pas
                 if (player == null || Model.b_IsPickedUp.Value || Model.b_IsCarryingPlayer.Value ||
                     player.Model.b_IsPickedUp.Value || player.Model.b_IsCarryingPlayer.Value)

@@ -358,7 +358,7 @@ public class Menace : NetworkBehaviour
         if (other.gameObject.TryGetComponent<PlayerApplication>(out var player))
         {
             
-            if (player.IsDead) return; // Ignore if player is dead
+            if (player.IsDead.Value) return; // Ignore if player is dead
             
             // Calculate the direction and force to apply
             var direction = (other.transform.position - transform.position).normalized;

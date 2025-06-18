@@ -131,7 +131,12 @@ namespace FPV.Runtime
 
                 if (((1 << hit.collider.gameObject.layer) & detectionLayers) != 0)
                     if (hit.collider.TryGetComponent<PlayerApplication>(out var player))
+                    {
+                        if (player.IsDead.Value)
+                            return; // Ignore dead players
                         HandlePlayerHit(hit.collider.gameObject, player.Model);
+                    }
+                        
             }
 
             if (debugDrawRay)

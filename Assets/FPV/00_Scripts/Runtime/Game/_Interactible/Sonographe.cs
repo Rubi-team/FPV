@@ -67,6 +67,7 @@ namespace FPV
             for (var i = 0; i < numColliders; i++)
             {
                 var voip = hitColliders[i].GetComponent<PlayerApplication>();
+                if (voip.IsDead.Value || voip == null) continue;
                 if (voip != null && voip.CurrentLoudness > 0.1f)
                 {
                     ActivateSonographeServerRpc();
