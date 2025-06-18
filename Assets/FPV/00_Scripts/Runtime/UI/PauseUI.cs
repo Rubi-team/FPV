@@ -22,6 +22,14 @@ public class PauseUI : MonoBehaviour
         SetupBus();
     }
 
+    private void Start()
+    {
+        ChangeVolume(0); // Initialize master volume
+        ChangeVolume(1); // Initialize chat volume
+        ChangeVolume(2); // Initialize SFX volume
+        ChangeVolume(3); // Initialize ambience volume
+    }
+
     public void ChangeUI(bool state)
     {
         parentGObj.SetActive(state);
