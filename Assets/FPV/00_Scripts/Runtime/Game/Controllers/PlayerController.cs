@@ -6,6 +6,7 @@ using Audio;
 using FMODUnity;
 using Unity.Netcode;
 using Unity.Netcode.Components;
+using Unity.Services.Lobbies.Models;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem.Composites;
@@ -492,6 +493,13 @@ namespace FPV.Runtime
 
         private void FollowPicker()
         {
+            // Always check if the picker transform is not picked up too, if so depickup
+            if(Model.PickerTransform.GetComponent<PlayerApplication>().Model.b_IsPickedUp.Value)
+            {
+                Model.SetIsPickedUpRpc(false);
+                return;
+            }
+            
             // Be at Model.PickerTransform position but 1 y unit above
             if (Model.PickerTransform == null)
             {
