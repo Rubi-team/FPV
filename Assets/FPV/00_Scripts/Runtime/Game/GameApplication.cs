@@ -25,12 +25,12 @@ namespace FPV.Runtime
             Broadcast(new ServerPrepareGameEvent());
         }
 
-        protected void OnApplicationFocus(bool hasFocus)
+        internal void OnApplicationFocus(bool hasFocus)
         {
             LockCursor(hasFocus);
         }
 
-        protected void LockCursor(bool lockCursor)
+        internal void LockCursor(bool lockCursor)
         {
             if (lockCursor)
             {

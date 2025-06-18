@@ -90,6 +90,7 @@ namespace FPV.Runtime
         {
             if (!App.IsOwner) return;
             if (App.IsDead.Value) return;
+            if(PauseUI.Instance != null && PauseUI.Instance.pauseMenuActive) return;
 
             GroundedCheck();
 
@@ -254,8 +255,8 @@ namespace FPV.Runtime
             {
                 var deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-                _cinemachineTargetPitch += _input.look.y * Model.RotationSpeed * deltaTimeMultiplier;
-                _rotationVelocity += _input.look.x * Model.RotationSpeed * deltaTimeMultiplier;
+                _cinemachineTargetPitch += _input.look.y * Model.RotationSpeed * deltaTimeMultiplier * PauseUI.Instance.sensitivity;
+                _rotationVelocity += _input.look.x * Model.RotationSpeed * deltaTimeMultiplier * PauseUI.Instance.sensitivity;
 
                 // Clamp pitch
                 _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, Model.BottomClamp, Model.TopClamp);

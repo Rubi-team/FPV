@@ -10,7 +10,7 @@ public class PauseUI : MonoBehaviour
     [SerializeField] private GameObject parentGObj;
     
     [SerializeField] private Slider masterVolumeSlider, chatVolumeSlider, sfxVolumeSlider, ambienceVolumeSlider, sensitivitySlider;
-    private float sensitivity;
+    public float sensitivity;
     private Bus masterBus, chatBus, sfxBus, ambienceBus;
     public bool pauseMenuActive;
     
@@ -25,10 +25,7 @@ public class PauseUI : MonoBehaviour
     public void ChangeUI(bool state)
     {
         parentGObj.SetActive(state);
-        
-        // Désactiver les inputs
-        // Ré-activer les inputs
-        
+        pauseMenuActive = state;
     }
 
     public void ChangeVolume(int sliderIndex)

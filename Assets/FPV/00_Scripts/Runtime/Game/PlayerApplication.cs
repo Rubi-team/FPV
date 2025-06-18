@@ -41,6 +41,26 @@ namespace FPV.Runtime
         {
             if (!IsOwner || !IsSpawned) return;
             CurrentLoudness = _Voip.GetLoudnessFromMicrophone();
+            
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                PauseUI.Instance.ChangeUI(!PauseUI.Instance.pauseMenuActive);
+            }
+            
+            if (PauseUI.Instance.pauseMenuActive)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                // Disable input when the pause menu is active
+                
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                // Enable input when the pause menu is not active
+                
+            }
         }
 
         private void Init()
