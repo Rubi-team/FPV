@@ -462,7 +462,7 @@ public class Menace : NetworkBehaviour
         else
         {
             // Trop loin : téléporter la menace à un des waypoints spéciaux si la distance est supérieure à 100
-            if (distanceToPlayer > 100)
+            if (distanceToPlayer > 50)
             {
                 // Trouver tous les waypoints spéciaux (à toi de leur attribuer un tag ou une catégorie identifiable)
                 var specialWaypoints = GameObject.FindGameObjectsWithTag("MenaceTP");

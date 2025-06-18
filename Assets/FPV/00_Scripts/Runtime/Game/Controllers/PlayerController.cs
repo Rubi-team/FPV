@@ -91,15 +91,16 @@ namespace FPV.Runtime
         {
             if (!App.IsOwner) return;
             if (App.IsDead.Value) return;
-            if(PauseUI.Instance != null && PauseUI.Instance.pauseMenuActive) return;
-
-            GroundedCheck();
-
             if (Model.b_IsPickedUp.Value)
             {
                 FollowPicker();
                 return;
             }
+            if(PauseUI.Instance != null && PauseUI.Instance.pauseMenuActive) return;
+
+            GroundedCheck();
+
+           
 
             if (Model.b_CanInteract.Value) Interact();
 
@@ -129,6 +130,8 @@ namespace FPV.Runtime
         private void LateUpdate()
         {
             if (!App.IsOwner) return;
+            
+            if(PauseUI.Instance != null && PauseUI.Instance.pauseMenuActive) return;
 
             CameraRotation();
         }
