@@ -240,9 +240,9 @@ public class Menace : NetworkBehaviour
     {
         if (!_navMeshAgent.pathPending && _navMeshAgent.hasPath && _navMeshAgent.remainingDistance < Mathf.Infinity)
         {
-            if (_navMeshAgent.remainingDistance > 20)
+            if (_navMeshAgent.remainingDistance > 15)
             {
-                _navMeshAgent.speed = 3.5f + _navMeshAgent.remainingDistance / 2;
+                _navMeshAgent.speed = 3.5f + _navMeshAgent.remainingDistance / 1.5f;
             }
             else
             {
