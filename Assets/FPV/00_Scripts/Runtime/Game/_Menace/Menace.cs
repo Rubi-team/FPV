@@ -52,6 +52,15 @@ public class Menace : NetworkBehaviour
     private float _stateEnteredTime;
     private MenaceState _previousState;
     private const float MinStateDuration = 1f;
+    
+    private float _goingToStartTime;
+    private const float GoingToTimeout = 15f;
+    
+    private float _lastMovedTime;
+    private Vector3 _lastPosition;
+    private const float TeleportIfIdleDuration = 10f;
+
+
 
 
     public static Menace Instance { get; private set; }
@@ -63,6 +72,9 @@ public class Menace : NetworkBehaviour
         MenaceListener = GetComponentInChildren<MenaceListener>();
         _currentState = MenaceState.Roaming;
         _lastTarget = null;
+        _lastPosition = transform.position;
+        _lastMovedTime = Time.time;
+
 
         Instance = this;
     }
@@ -106,6 +118,26 @@ public class Menace : NetworkBehaviour
                 HandleChasing();
                 break;
         }
+        
+        // Vérifier si Menace n'a pas bougé depuis 10 secondes
+        if (Vector3.Distance(transform.position, _lastPosition) > 0.1f)
+        {
+            _lastMovedTime = Time.time;
+            _lastPosition = transform.position;
+        }
+        else if (Time.time - _lastMovedTime > TeleportIfIdleDuration)
+        {
+            var menaceStart = FindObjectOfType<MenaceStart>();
+            if (menaceStart != null)
+            {
+                Debug.LogWarning("Menace bloquée, téléportation à MenaceStart.");
+                _navMeshAgent.Warp(menaceStart.transform.position);
+                _lastMovedTime = Time.time;
+                _lastPosition = transform.position;
+                _currentWaypoint = null;
+            }
+        }
+
     }
 
     private void FixedUpdate()
@@ -220,7 +252,16 @@ public class Menace : NetworkBehaviour
             if (_navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
             {
                 _currentState = MenaceState.Patrolling;
+                return;
             }
+        }
+
+        // Timeout : si ça fait plus de 15s qu'on est en GoingTo, revenir à Roaming
+        if (Time.time - _goingToStartTime >= GoingToTimeout)
+        {
+            Debug.Log("Timeout reached in GoingTo. Switching to Roaming.");
+            _currentState = MenaceState.Roaming;
+            return;
         }
 
         // Vérifier si un joueur est détecté
@@ -230,6 +271,7 @@ public class Menace : NetworkBehaviour
             _lastTarget = MenaceListener.detectedPlayer;
         }
     }
+
 
 
     private void HandleChasing()
@@ -282,8 +324,10 @@ public class Menace : NetworkBehaviour
     public void SetGoingTo(Vector3 destination)
     {
         _currentState = MenaceState.GoingTo;
+        _goingToStartTime = Time.time; // Enregistre le moment d'entrée dans l'état
         _navMeshAgent.SetDestination(destination);
     }
+
 
     private void Charge()
     {
