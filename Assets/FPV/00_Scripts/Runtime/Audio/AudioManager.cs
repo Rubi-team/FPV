@@ -45,6 +45,7 @@ namespace Audio
         [field: SerializeField] public EventReference grabItem { get; private set; }
         [field: SerializeField] public EventReference throwPlayer { get; private set; }
         [field: SerializeField] public EventReference throwItem { get; private set; }
+        [field: SerializeField] public EventReference revive { get; private set; }
 
 
         [field: Header("Threat")]
